@@ -26,6 +26,12 @@ as well as armor specific ones such as `catharsis:texture` or `catharsis:model`.
 <span><TypeIcon type="object"/> Root object</span>
 
 - <TypeIcon type="object"/> **model**: Set the **Armor Model** to use.
+- <TypeIcon type="object"/> **part_visibility**: Optional. What body parts should be visible when equipped.
+    - <TypeIcon/> Can be any of `head`, `chest`, `left_arm`, `right_arm`, `left_leg`, or `right_leg`.
+        - <TypeIcon type="boolean"/> Will hide both the part and the layer on top ie. sleeves or pants layer.
+        - <TypeIcon type="object"/> Part Visibility Object
+            - <TypeIcon type="boolean"/> **base**: Optional. Whether to show the body part. Defaults to `true`.
+            - <TypeIcon type="boolean"/> **overlay**: Optional. Whether to show the part overlay. Defaults to `true`.
 
 </TreeView>
 
@@ -34,7 +40,7 @@ as well as armor specific ones such as `catharsis:texture` or `catharsis:model`.
 <TreeView>
 <span><TypeIcon type="object"/> An <b>Armor Model</b> object</span>
 
-- <TypeIcon type="string"/> **type**: One of `minecraft:condition`, `minecraft:range_dispatch`, or `catharsis:texture`.
+- <TypeIcon type="string"/> **type**: One of `minecraft:condition`, `minecraft:range_dispatch`, `catharsis:texture` or `catharsis:model`.
 - <TypeIcon/> Additional fields depending on the value of type, see the respective model type documentation for more details.
 
 </TreeView>
@@ -49,8 +55,12 @@ Render a specific texture for the armor.
 <span><TypeIcon type="object"/> Root <b>texture</b> armor model object</span>
 
 - <TypeIcon type="string"/> **type**: `catharsis:texture`
-- <TypeIcon type="string"/> **texture**: The texture to use for the armor. This should be a resource location pointing to a PNG file.
-
+- <TypeIcon type="array"/> **layers**: The layers of the armor, each layer is rendered on top of the previous one.
+    - <TypeIcon type="string"/> The texture to use for the armor. This should be a resource location pointing to a PNG file.
+- <TypeIcon type="array"/> **tints**: Optional. The color tints to apply to each layer of the armor.
+    - <TypeIcon type="object"/> Tint Object
+        - <TypeIcon type="string"/> **type**: The tint source type.
+        - <TypeIcon/> You can find information about what tint sources are available on the Minecraft wiki at [Tint Source Types](https://minecraft.wiki/w/Items_model_definition#Tint_sources_types).
 </TreeView>
 
 #### **Model** (`catharsis:model`)
@@ -61,8 +71,13 @@ Render a specific bedrock armor geometry for the armor.
 <span><TypeIcon type="object"/> Root <b>model</b> armor model object</span>
 
 - <TypeIcon type="string"/> **type**: `catharsis:model`
-- <TypeIcon type="string"/> **texture**: The texture to use for the armor. This should be a resource location pointing to a PNG file.
 - <TypeIcon type="string"/> **model**: The geo model to use for the armor. This should be a resource location pointing to a GEO JSON file.
+- <TypeIcon type="array"/> **layers**: The layers of the armor, each layer is rendered on top of the previous one.
+    - <TypeIcon type="string"/> The texture to use for the armor. This should be a resource location pointing to a PNG file.
+- <TypeIcon type="array"/> **tints**: Optional. The color tints to apply to each layer of the armor.
+    - <TypeIcon type="object"/> Tint Object
+        - <TypeIcon type="string"/> **type**: The tint source type.
+        - <TypeIcon/> You can find information about what tint sources are available on the Minecraft wiki at [Tint Source Types](https://minecraft.wiki/w/Items_model_definition#Tint_sources_types).
 
 </TreeView>
 
