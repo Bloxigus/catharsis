@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.generated.CatharsisCodecs
+import me.owdding.catharsis.generated.CodecUtils
 import me.owdding.catharsis.generated.EnumCodec
 import me.owdding.catharsis.utils.extensions.isEnum
 import me.owdding.catharsis.utils.extensions.isNumber
@@ -77,6 +78,9 @@ object DataTypeProperties {
         register(DataTypes.FUEL_TANK)
         register(DataTypes.ENGINE)
         register(DataTypes.UPGRADE_MODULE)
+        register(DataTypes.SNOWBALLS, Codec.INT.xmap({ it to it }, { it.first }))
+        register(DataTypes.UUID, CodecUtils.UUID_CODEC)
+        register(DataTypes.DUNGEONBREAKER_CHARGES, Codec.INT.xmap({ it to it }, { it.first }))
     }
 
     @JvmName("registerEnum")
