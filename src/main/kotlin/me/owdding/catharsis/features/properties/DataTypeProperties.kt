@@ -7,6 +7,7 @@ import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.catharsis.generated.CodecUtils
 import me.owdding.catharsis.generated.EnumCodec
+import me.owdding.catharsis.mixins.DataTypesRegistryAccessor
 import me.owdding.catharsis.utils.extensions.isEnum
 import me.owdding.catharsis.utils.extensions.isNumber
 import me.owdding.catharsis.utils.extensions.set
@@ -24,6 +25,7 @@ import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import tech.thatgravyboat.skyblockapi.api.datatype.DataType
 import tech.thatgravyboat.skyblockapi.api.datatype.DataTypes
+import tech.thatgravyboat.skyblockapi.impl.DataTypesRegistry
 import tech.thatgravyboat.skyblockapi.utils.extentions.get
 import java.util.*
 
@@ -39,45 +41,21 @@ object DataTypeProperties {
     private val types: ExtraCodecs.LateBoundIdMapper<String, DataTypeEntry<*>> = ExtraCodecs.LateBoundIdMapper()
 
     init {
+        @Suppress("CAST_NEVER_SUCCEEDS")
+        val dataTypes = (DataTypesRegistry as DataTypesRegistryAccessor).`catharsis$getDataTypes`()
+        dataTypes.filterIsInstance<DataType<Boolean>>().forEach(::register)
+        dataTypes.filterIsInstance<DataType<String>>().forEach(::register)
+        dataTypes.filterIsInstance<DataType<Int>>().forEach(::register)
+        dataTypes.filterIsInstance<DataType<Long>>().forEach(::register)
+        dataTypes.filterIsInstance<DataType<Short>>().forEach(::register)
+        dataTypes.filterIsInstance<DataType<Double>>().forEach(::register)
+        dataTypes.filterIsInstance<DataType<Float>>().forEach(::register)
+
         register(DataTypes.RARITY)
-        register(DataTypes.MODIFIER)
-        register(DataTypes.RECOMBOBULATOR)
-        register(DataTypes.HOT_POTATO_BOOKS)
-        register(DataTypes.ART_OF_WAR)
-        register(DataTypes.ART_OF_PEACE)
-        register(DataTypes.JALAPENO_BOOK)
-        register(DataTypes.MIDAS_WEAPON_PAID)
-        register(DataTypes.QUIVER_ARROW)
-        register(DataTypes.PERSONAL_ACCESSORY_ACTIVE)
-        register(DataTypes.POTION)
-        register(DataTypes.POTION_LEVEL)
-        register(DataTypes.CROPS_BROKEN)
-        register(DataTypes.BOOK_OF_STATS)
-        register(DataTypes.APPLIED_DYE)
-        register(DataTypes.HELMET_SKIN)
-        register(DataTypes.ABSORB_LOGS)
-        register(DataTypes.LOGS_CUT)
-        register(DataTypes.GILDED_GIFTED_COINS)
-        register(DataTypes.SECONDS_HELD)
-        register(DataTypes.BOTTLE_OF_JYRRE_SECONDS)
-        register(DataTypes.RIFT_DISCRITE_SECONDS)
-        register(DataTypes.DUNGEON_ITEM)
-        register(DataTypes.STAR_COUNT)
-        register(DataTypes.DUNGEON_TIER)
-        register(DataTypes.DUNGEON_QUALITY)
-        register(DataTypes.WET_BOOK)
         register(DataTypes.HOOK, Codec.STRING.xmap({ UUID.randomUUID() to it }, { it.second }))
         register(DataTypes.LINE, Codec.STRING.xmap({ UUID.randomUUID() to it }, { it.second }))
         register(DataTypes.SINKER, Codec.STRING.xmap({ UUID.randomUUID() to it }, { it.second }))
         register(DataTypes.FUEL, Codec.INT.xmap({ it to it }, { it.first }))
-        register(DataTypes.PICKONIMBUS_DURABILITY)
-        register(DataTypes.COMPACT_BLOCKS)
-        register(DataTypes.DIVAN_POWDER_COATING)
-        register(DataTypes.POLARVOID)
-        register(DataTypes.POWER_ABILITY_SCROLL)
-        register(DataTypes.FUEL_TANK)
-        register(DataTypes.ENGINE)
-        register(DataTypes.UPGRADE_MODULE)
         register(DataTypes.SNOWBALLS, Codec.INT.xmap({ it to it }, { it.first }))
         register(DataTypes.UUID, CodecUtils.UUID_CODEC)
         register(DataTypes.DUNGEONBREAKER_CHARGES, Codec.INT.xmap({ it to it }, { it.first }))
@@ -85,8 +63,16 @@ object DataTypeProperties {
 
     @JvmName("registerEnum")
     private inline fun <reified Type : Enum<Type>> register(type: DataType<Type>) = register(type, EnumCodec.forKCodec(Type::class.java.enumConstants))
-    @JvmName("registerNumber")
-    private inline fun <reified Type : Number> register(type: DataType<Type>) = register(type, CatharsisCodecs.getCodec())
+    @JvmName("registerInt")
+    private fun register(type: DataType<Int>) = register(type, CatharsisCodecs.getCodec())
+    @JvmName("registerFloat")
+    private fun register(type: DataType<Float>) = register(type, CatharsisCodecs.getCodec())
+    @JvmName("registerDouble")
+    private fun register(type: DataType<Double>) = register(type, CatharsisCodecs.getCodec())
+    @JvmName("registerLong")
+    private fun register(type: DataType<Long>) = register(type, CatharsisCodecs.getCodec())
+    @JvmName("registerShort")
+    private fun register(type: DataType<Short>) = register(type, CatharsisCodecs.getCodec())
     @JvmName("registerString")
     private fun register(type: DataType<String>) = register(type, Codec.STRING)
     @JvmName("registerBoolean")
