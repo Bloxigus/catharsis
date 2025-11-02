@@ -7,10 +7,11 @@ import tech.thatgravyboat.skyblockapi.impl.DataTypesRegistry;
 
 import java.util.List;
 
+// Todo remove once list is exposed
 @Mixin(DataTypesRegistry.class)
 public interface DataTypesRegistryAccessor {
 
     @Accessor("types")
-    public List<DataType<?>> catharsis$getDataTypes();
+    List<DataType<?>> catharsis$getDataTypes();
 
 }
