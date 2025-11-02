@@ -38,7 +38,6 @@ object DataTypeProperties {
     private val types: ExtraCodecs.LateBoundIdMapper<String, DataTypeEntry<*>> = ExtraCodecs.LateBoundIdMapper()
 
     init {
-        // TODO needs to be automatically registered, probably ksp?
         register(DataTypes.RARITY)
         register(DataTypes.MODIFIER)
         register(DataTypes.RECOMBOBULATOR)
@@ -80,9 +79,13 @@ object DataTypeProperties {
         register(DataTypes.UPGRADE_MODULE)
     }
 
+    @JvmName("registerEnum")
     private inline fun <reified Type : Enum<Type>> register(type: DataType<Type>) = register(type, EnumCodec.forKCodec(Type::class.java.enumConstants))
+    @JvmName("registerNumber")
     private inline fun <reified Type : Number> register(type: DataType<Type>) = register(type, CatharsisCodecs.getCodec())
+    @JvmName("registerString")
     private fun register(type: DataType<String>) = register(type, Codec.STRING)
+    @JvmName("registerBoolean")
     private fun register(type: DataType<Boolean>) = register(type, Codec.BOOL)
 
     private inline fun <reified Type> register(type: DataType<Type>, codec: Codec<Type>) = register(type.id, type, codec)
