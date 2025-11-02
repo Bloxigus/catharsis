@@ -4,12 +4,14 @@ package me.owdding.catharsis.features.properties
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import me.owdding.catharsis.Catharsis
+import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.catharsis.utils.extensions.isEnum
 import me.owdding.catharsis.utils.extensions.isNumber
 import me.owdding.catharsis.utils.extensions.set
 import me.owdding.catharsis.utils.extensions.unsafeCast
 import me.owdding.ktmodules.Module
 import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.client.renderer.item.SelectItemModel
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperty
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty
 import net.minecraft.client.renderer.item.properties.select.SelectItemModelProperty
@@ -22,6 +24,8 @@ import tech.thatgravyboat.skyblockapi.api.datatype.DataType
 import tech.thatgravyboat.skyblockapi.api.datatype.DataTypes
 import tech.thatgravyboat.skyblockapi.utils.extentions.get
 
+data class DataTypeEntry<Type>(val type: DataType<Type>, val codec: Codec<Type>)
+
 @Module
 object DataTypeProperties {
 
@@ -29,17 +33,17 @@ object DataTypeProperties {
 
     private val conditionalTypes: ExtraCodecs.LateBoundIdMapper<String, DataType<Boolean>> = ExtraCodecs.LateBoundIdMapper()
     private val numericalTypes: ExtraCodecs.LateBoundIdMapper<String, DataType<*>> = ExtraCodecs.LateBoundIdMapper()
-    private val types: ExtraCodecs.LateBoundIdMapper<String, DataType<*>> = ExtraCodecs.LateBoundIdMapper()
+    private val types: ExtraCodecs.LateBoundIdMapper<String, DataTypeEntry<*>> = ExtraCodecs.LateBoundIdMapper()
 
     init {
         // TODO needs to be automatically registered, probably ksp?
-        register(DataTypes.RARITY)
+        register(DataTypes.RARITY, CatharsisCodecs.getCodec())
     }
 
-    private inline fun <reified Type> register(type: DataType<Type>) = register(type.id, type)
+    private inline fun <reified Type> register(type: DataType<Type>, codec: Codec<Type>) = register(type.id, type, codec)
 
-    private inline fun <reified Type> register(location: String, type: DataType<Type>) {
-        types[location] = type
+    private inline fun <reified Type> register(location: String, type: DataType<Type>, codec: Codec<Type>) {
+        types[location] = DataTypeEntry(type, codec)
         if (Type::class.isNumber || Type::class.isEnum) {
             numericalTypes[location] = type
         }
@@ -48,24 +52,27 @@ object DataTypeProperties {
         }
     }
 
-    data class SelectDataTypeItemProperty<Type>(val type: DataType<Type>) : SelectItemModelProperty<String> {
-        override fun get(stack: ItemStack, level: ClientLevel?, entity: LivingEntity?, seed: Int, displayContext: ItemDisplayContext): String {
-            val value = stack[type] ?: return ""
-            return when {
-                value is Enum<*> -> value.name.lowercase()
-                else -> value.toString().lowercase()
-            }
-        }
-
-        override fun valueCodec(): Codec<String> = Codec.STRING
-        override fun type(): SelectItemModelProperty.Type<out SelectItemModelProperty<String>, String> = TYPE
+    data class SelectDataTypeItemProperty<Type>(val entry: DataTypeEntry<Type>) : SelectItemModelProperty<Type> {
+        override fun get(stack: ItemStack, level: ClientLevel?, entity: LivingEntity?, seed: Int, displayContext: ItemDisplayContext): Type? = stack[entry.type]
+        override fun valueCodec(): Codec<Type> = entry.codec
+        override fun type(): SelectItemModelProperty.Type<out SelectItemModelProperty<Type>, Type> = TYPE.unsafeCast()
 
         companion object {
-            val CODEC: MapCodec<SelectDataTypeItemProperty<*>> = types.codec(Codec.STRING).fieldOf("data_type").xmap(
-                { dataType -> SelectDataTypeItemProperty(dataType) },
-                { property -> property.type }
-            )
-            val TYPE: SelectItemModelProperty.Type<SelectDataTypeItemProperty<*>, String> = SelectItemModelProperty.Type.create(CODEC, Codec.STRING)
+
+            private fun <Type> createCodec(entry: DataTypeEntry<Type>): MapCodec<SelectItemModel.UnbakedSwitch<SelectDataTypeItemProperty<Type>, Type>> {
+                return SelectItemModelProperty.Type.createCasesFieldCodec(entry.codec).xmap(
+                    { cases -> SelectItemModel.UnbakedSwitch(SelectDataTypeItemProperty(entry), cases) },
+                    { switch -> switch.cases }
+                )
+            }
+
+            private fun <Type> createType(): SelectItemModelProperty.Type<SelectDataTypeItemProperty<Type>, Type> = SelectItemModelProperty.Type(types.codec(Codec.STRING).dispatchMap(
+                "data_type",
+                { case -> (case.property as SelectDataTypeItemProperty).entry },
+                { entry -> createCodec(entry).unsafeCast() }
+            ))
+
+            val TYPE: SelectItemModelProperty.Type<SelectDataTypeItemProperty<Any>, Any> = createType<Any>()
         }
     }
 
