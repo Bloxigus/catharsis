@@ -9,7 +9,7 @@
 
 </div>
 
-Retexture SkyBlock Items in a vanilla-like way.
+Retexture Hypixel SkyBlock Items in a vanilla-like way.
 
 ## Installation Guide
 
@@ -20,3 +20,23 @@ Retexture SkyBlock Items in a vanilla-like way.
 ## How to create a Catharsis Texture Pack
 
 Check out our [wiki](https://catharsis.meowdd.ing) for information.
+
+## What can be retextured?
+
+Catharsis allows resourcepacks to retexture any item or Ore Vein in SkyBlock.
+To help with this, we add custom predicates:
+
+### Item Predicates
+
+- `catharsis:data_type` - Custom handled datatypes that are in the NBT data of items.
+- `catharsis:item_model` - The item model ID of the item.
+- `catharsis:skyblock_island` - The island id the player is currently in.
+- `catharsis:skyblock_area` - The area the player is currently in.
+
+### Armor Models
+
+Texturepacks can hide player body/armor parts, add different conditions like sneaking, render fully 3d armor models and more!
+
+### Block Replacement
+
+Replace a specific block, island specific blocks, custom provided areas and more!
