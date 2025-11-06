@@ -16,7 +16,11 @@
     "items.ModelManagerMixin",
     "pack.FolderPackDetectorMixin",
     "pack.PackDetectorMixin",
+    "pack.PackMixin",
+    "pack.PackMixin$MetadataMixin",
+    "pack.PackSelectionModelEntryBaseMixin",
     "pack.PackSelectionScreenDropMixin",
+    "pack.TransferableSelectionListPackEntryMixin",
     "textures.TextureManagerMixin"
   ],
   "injectors": {
