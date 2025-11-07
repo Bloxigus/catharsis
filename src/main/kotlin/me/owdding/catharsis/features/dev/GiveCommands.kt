@@ -15,8 +15,11 @@ import me.owdding.catharsis.utils.types.commands.SkyBlockIdArgument
 import me.owdding.catharsis.utils.types.suggestion.IterableSuggestionProvider
 import me.owdding.ktmodules.Module
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
+import net.minecraft.core.component.DataComponents
 import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
+import net.minecraft.world.item.component.ItemContainerContents
 import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
 import tech.thatgravyboat.skyblockapi.api.events.misc.RegisterCommandsEvent
 import tech.thatgravyboat.skyblockapi.api.events.misc.RegisterCommandsEvent.Companion.argument
@@ -35,8 +38,11 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextBuilder.append
 import tech.thatgravyboat.skyblockapi.utils.text.TextProperties.stripped
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.color
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.hover
+import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.italic
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.onClick
 import java.util.concurrent.CompletableFuture
+import kotlin.math.min
+
 
 @Module
 // TODO: move into package
@@ -110,6 +116,7 @@ object GiveCommands {
 
     fun findBy(flags: Map<FindFlag, Any>, search: String, converter: (SkyBlockId) -> String) {
         val caseInsensitive = !flags.containsKey(FindFlag.MATCH_CASE)
+        val give = flags.containsKey(FindFlag.GIVE)
         val searchType: (filter: String, element: String) -> Boolean = when {
             flags.containsKey(FindFlag.REGEX) -> { filter: String, element: String ->
                 Regex(
@@ -125,7 +132,7 @@ object GiveCommands {
             else -> { filter: String, element: String -> element.contains(filter, ignoreCase = caseInsensitive) }
         }
 
-        val limit = flags.getOrDefault(FindFlag.LIMIT, 100).unsafeCast<Int>()
+        val limit = flags.getOrDefault(FindFlag.LIMIT, if (flags.containsKey(FindFlag.ALL)) Int.MAX_VALUE else 100).unsafeCast<Int>()
 
         CompletableFuture.runAsync {
             val items = SimpleItemAPI.getAllIds().filter {
@@ -139,34 +146,75 @@ object GiveCommands {
                     }
                     append(" items matching the search!")
                 }.sendWithPrefix("catharsis-dev-find")
-                items.take(limit).forEachIndexed { index, id ->
-                    val stack = id.toItem()
-                    Text.of((index + 1).toFormattedString()) {
-                        append(". ")
-                        color = CatppuccinColors.Mocha.text
-                        append(stack.hoverName) {
-                            hover = Text.multiline(stack.getLore())
-                            onClick { tryGive(stack) }
-                        }
-                        append(" [id]") {
-                            color = CatppuccinColors.Macchiato.pink
-                            onClick {
-                                val location = ItemUtils.getCustomLocation(stack)
-                                if (location == null) {
-                                    Text.of("No model id for item!", CatppuccinColors.Frappe.red).sendWithPrefix("catharsis-dev-find-location-not-found")
-                                    return@onClick
-                                }
-                                Text.of("Copied model id to clipboard!", CatppuccinColors.Frappe.yellow).sendWithPrefix("catharsis-dev-find-copied-location")
-                                McClient.clipboard = location.path
+
+                if (!give) {
+                    items.take(limit).forEachIndexed { index, id ->
+                        val stack = id.toItem()
+                        Text.of((index + 1).toFormattedString()) {
+                            append(". ")
+                            color = CatppuccinColors.Mocha.text
+                            append(stack.hoverName) {
+                                hover = Text.multiline(stack.getLore())
+                                onClick { tryGive(stack) }
                             }
-                        }
-                    }.send("catharsis-find-result-$index")
+                            append(" [id]") {
+                                color = CatppuccinColors.Macchiato.pink
+                                onClick {
+                                    val location = ItemUtils.getCustomLocation(stack)
+                                    if (location == null) {
+                                        Text.of("No model id for item!", CatppuccinColors.Frappe.red).sendWithPrefix("catharsis-dev-find-location-not-found")
+                                        return@onClick
+                                    }
+                                    Text.of("Copied model id to clipboard!", CatppuccinColors.Frappe.yellow).sendWithPrefix("catharsis-dev-find-copied-location")
+                                    McClient.clipboard = location.path
+                                }
+                            }
+                        }.send("catharsis-find-result-$index")
+                    }
+                } else {
+                    val limitedItems = items.take(limit)
+                    if (limitedItems.size > 20) {
+                        fillAndGiveShulkers(limitedItems.map { it.toItem() })
+                    } else {
+                        limitedItems.forEach { tryGive(it.toItem()) }
+                    }
                 }
             }
         }
     }
 
+    fun fillAndGiveShulkers(items: List<ItemStack>) {
+        val maxAmount = items.size
+        items.chunked(28).mapIndexed { index, items ->
+            when ((index + 10) % 16) {
+                0 -> Items.WHITE_SHULKER_BOX
+                1 -> Items.ORANGE_SHULKER_BOX
+                2 -> Items.MAGENTA_SHULKER_BOX
+                3 -> Items.LIGHT_BLUE_SHULKER_BOX
+                4 -> Items.YELLOW_SHULKER_BOX
+                5 -> Items.LIME_SHULKER_BOX
+                6 -> Items.PINK_SHULKER_BOX
+                7 -> Items.GRAY_SHULKER_BOX
+                8 -> Items.LIGHT_GRAY_SHULKER_BOX
+                9 -> Items.CYAN_SHULKER_BOX
+                10 -> Items.PURPLE_SHULKER_BOX
+                11 -> Items.BLUE_SHULKER_BOX
+                12 -> Items.BROWN_SHULKER_BOX
+                13 -> Items.GREEN_SHULKER_BOX
+                14 -> Items.RED_SHULKER_BOX
+                15 -> Items.BLACK_SHULKER_BOX
+                else -> TODO("no.")
+            }.defaultInstance.apply {
+                set(DataComponents.CONTAINER, ItemContainerContents.fromItems(items))
+                set(DataComponents.CUSTOM_NAME, Text.of("Items ${index * 27}-${min((index + 1) * 27, maxAmount)}") {
+                    italic = false
+                })
+            }
+        }.forEach(::tryGive)
+    }
+
     private const val OPERATOR_GROUP = "operator"
+    private const val LIMIT_GROUP = "limits"
 
     enum class FindFlag(
         override val shortName: Char,
@@ -179,7 +227,9 @@ object GiveCommands {
         STARTS_WITH('s'),
         ENDS_WITH('e'),
         MATCH_CASE('m', group = null),
-        LIMIT('l', IntegerArgumentType.integer(0), null),
+        LIMIT('l', IntegerArgumentType.integer(0), LIMIT_GROUP),
+        ALL('a', group = LIMIT_GROUP),
+        GIVE('g', group = null)
         ;
 
         override val longName = (longName ?: name).lowercase()
@@ -199,7 +249,7 @@ object GiveCommands {
             }
             append(" to your inventory!")
             color = CatppuccinColors.Frappe.green
-        }.sendWithPrefix("catharsis-dev-give-added-${item.getSkyBlockId()}")
+        }.sendWithPrefix("catharsis-dev-give-added-${item.getSkyBlockId() ?: item.hoverName.stripped}")
 
         val freeSlot = McClient.self.player?.inventory?.freeSlot ?: -1
         McClient.self.player?.inventory?.setItem(freeSlot, itemStack)
