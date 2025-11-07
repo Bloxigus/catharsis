@@ -15,6 +15,7 @@ import me.owdding.catharsis.utils.types.commands.SkyBlockIdArgument
 import me.owdding.catharsis.utils.types.suggestion.IterableSuggestionProvider
 import me.owdding.ktmodules.Module
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
+import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket
 import net.minecraft.world.item.ItemStack
 import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
 import tech.thatgravyboat.skyblockapi.api.events.misc.RegisterCommandsEvent
@@ -38,6 +39,7 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.onClick
 import java.util.concurrent.CompletableFuture
 
 @Module
+// TODO: move into package
 object GiveCommands {
 
     @Subscription
@@ -198,7 +200,11 @@ object GiveCommands {
             append(" to your inventory!")
             color = CatppuccinColors.Frappe.green
         }.sendWithPrefix("catharsis-dev-give-added-${item.getSkyBlockId()}")
-        McClient.self.player?.inventory?.add(item)
+
+        val freeSlot = McClient.self.player?.inventory?.freeSlot ?: -1
+        McClient.self.player?.inventory?.setItem(freeSlot, itemStack)
+        McClient.connection?.send(ServerboundSetCreativeModeSlotPacket(36 + freeSlot, itemStack))
+        McClient.self.player?.containerMenu?.broadcastChanges()
     }
 
 }
