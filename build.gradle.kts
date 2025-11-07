@@ -49,7 +49,7 @@ dependencies {
     includeImplementation(libs.skyblockapi)
     includeImplementation(versionedCatalog["placeholders"])
     modImplementation(libs.fabric.loader)
-    modImplementation(libs.repo.lib)
+    includeImplementation(libs.repo.lib)
     modImplementation(libs.fabric.language.kotlin)
     modImplementation(versionedCatalog["fabric.api"])
     compileOnly(libs.meowdding.ktmodules)
