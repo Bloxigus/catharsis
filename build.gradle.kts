@@ -94,14 +94,10 @@ base {
 
 tasks.named("build") {
     doLast {
-        val modV = properties["version"]!!.toString()
-        stonecutter.versions.forEach {
-            val gameV = it.version
-            val sourceFile = rootProject.projectDir.resolve("versions/$gameV/build/libs/${archiveName}-$gameV-$modV.jar")
-            val targetFile = rootProject.projectDir.resolve("build/libs/${archiveName}-$gameV-$modV.jar")
-            targetFile.parentFile.mkdirs()
-            targetFile.writeBytes(sourceFile.readBytes())
-        }
+        val sourceFile = rootProject.projectDir.resolve("versions/${project.name}/build/libs/${archiveName}-${stonecutter.current.version}-$version.jar")
+        val targetFile = rootProject.projectDir.resolve("build/libs/${archiveName}-${stonecutter.current.version}-$version.jar")
+        targetFile.parentFile.mkdirs()
+        targetFile.writeBytes(sourceFile.readBytes())
     }
 }
 
