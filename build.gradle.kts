@@ -49,7 +49,7 @@ dependencies {
     includeImplementation(libs.skyblockapi)
     includeImplementation(versionedCatalog["placeholders"])
     modImplementation(libs.fabric.loader)
-    includeImplementation(libs.repo.lib)
+    modImplementation(libs.repo.lib)
     modImplementation(libs.fabric.language.kotlin)
     modImplementation(versionedCatalog["fabric.api"])
     compileOnly(libs.meowdding.ktmodules)
@@ -98,12 +98,17 @@ tasks.withType<KotlinCompile>().configureEach {
 
 tasks.processResources {
     inputs.property("version", version)
+    inputs.property("sbapi_version", libs.versions.skyblockapi)
+    inputs.property("minecraft", versionedCatalog.versions["minecraft"])
 
     filesMatching("fabric.mod.json") {
-        expand(mapOf(
-            "version" to version,
-            "minecraft" to versionedCatalog.versions["minecraft"]
-        ))
+        expand(
+            mapOf(
+                "version" to version,
+                "minecraft" to versionedCatalog.versions["minecraft"],
+                "sbapi" to libs.versions.skyblockapi.get()
+            )
+        )
     }
 }
 
