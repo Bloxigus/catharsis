@@ -51,6 +51,7 @@ export default defineConfig({
                 "text": "Dev Tools",
                 "link": "/dev_tools/index",
                 "items": [
+                    {"text": "Commands", "link": "/dev_tools/commands"},
                     {"text": "Area selection", "link": "/dev_tools/area_selection"},
                 ]
             }
