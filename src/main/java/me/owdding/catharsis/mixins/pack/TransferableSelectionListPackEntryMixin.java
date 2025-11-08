@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Mixin(TransferableSelectionList.PackEntry.class)
-public abstract class TransferableSelectionListPackEntryMixin extends ObjectSelectionList.Entry<TransferableSelectionList.Entry> {
+public abstract class TransferableSelectionListPackEntryMixin extends ObjectSelectionList.Entry {
 
     @Shadow
     @Final
@@ -55,7 +55,7 @@ public abstract class TransferableSelectionListPackEntryMixin extends ObjectSele
     private FormattedCharSequence catharsis$incompatibleModNameDisplayCache;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void init(TransferableSelectionList transferableSelectionList, Minecraft minecraft, TransferableSelectionList parent, PackSelectionModel.Entry entry, CallbackInfo ci) {
+    private void init(CallbackInfo ci, @Local(argsOnly = true) Minecraft minecraft) {
         this.catharsis$incompatibleModNameDisplayCache = cacheName(minecraft, Component.translatable("pack.catharsis.incompatible.title"));
         this.catharsis$incompatibleModDescriptionDisplayCache = cacheDescription(minecraft, Component.translatable("pack.catharsis.incompatible.desc"));
     }
@@ -63,7 +63,7 @@ public abstract class TransferableSelectionListPackEntryMixin extends ObjectSele
     @Definition(id = "incompatibleDescriptionDisplayCache", field = "Lnet/minecraft/client/gui/screens/packs/TransferableSelectionList$PackEntry;incompatibleDescriptionDisplayCache:Lnet/minecraft/client/gui/components/MultiLineLabel;")
     @Expression("? = ?.incompatibleDescriptionDisplayCache")
     @Inject(
-        method = "renderContent",
+        method = /*? if >= 1.21.9 {*/ "renderContent" /*?} else {*/ /*"render" *//*?}*/,
         at = @At(
             value = "MIXINEXTRAS:EXPRESSION",
             shift = At.Shift.AFTER

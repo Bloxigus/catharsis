@@ -12,6 +12,9 @@ import net.minecraft.util.RegistryContextSwapper
 import net.minecraft.world.entity.ItemOwner
 import net.minecraft.world.item.ItemStack
 
+//? = 1.21.8
+/*import me.owdding.catharsis.utils.extensions.asLivingEntity*/
+
 class TextureArmorModel(
     private val textures: Array<ResourceLocation>,
     private val tints: List<ItemTintSource>,
