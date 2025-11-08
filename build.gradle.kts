@@ -95,7 +95,7 @@ base {
 tasks.named("build") {
     doLast {
         val sourceFile = rootProject.projectDir.resolve("versions/${project.name}/build/libs/${archiveName}-${stonecutter.current.version}-$version.jar")
-        val targetFile = rootProject.projectDir.resolve("build/libs/${archiveName}-${stonecutter.current.version}-$version.jar")
+        val targetFile = rootProject.projectDir.resolve("build/libs/${archiveName}-$version-${stonecutter.current.version}.jar")
         targetFile.parentFile.mkdirs()
         targetFile.writeBytes(sourceFile.readBytes())
     }
