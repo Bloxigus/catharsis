@@ -24,8 +24,8 @@ Check out our [wiki](https://catharsis.meowdd.ing) for information.
 ## What can be retextured?
 
 Catharsis allows resourcepacks to retexture any item or Ore Vein in SkyBlock.
-For a full list, visit our wiki.
-To help with this, we add custom predicates:
+<br>For a full list, visit our [wiki](https://catharsis.meowdd.ing).
+<br>To help with this, we add custom predicates:
 
 ### Item Predicates
 
