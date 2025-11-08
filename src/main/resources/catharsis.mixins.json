@@ -21,7 +21,9 @@
     "pack.PackSelectionModelEntryBaseMixin",
     "pack.PackSelectionScreenDropMixin",
     "pack.TransferableSelectionListPackEntryMixin",
-    "textures.TextureManagerMixin"
+    "textures.TextureManagerMixin",
+    "text.ItemLoreMixin",
+    "text.ItemStackMixin"
   ],
   "injectors": {
     "defaultRequire": 1

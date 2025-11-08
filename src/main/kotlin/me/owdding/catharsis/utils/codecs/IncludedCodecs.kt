@@ -1,6 +1,7 @@
 package me.owdding.catharsis.utils.codecs
 
 import com.mojang.serialization.Codec
+import com.mojang.serialization.DataResult
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import me.owdding.catharsis.Catharsis
@@ -18,6 +19,7 @@ import net.minecraft.world.item.Item
 import org.joml.Quaternionf
 import org.joml.Vector2i
 import org.joml.Vector2ic
+import tech.thatgravyboat.skyblockapi.utils.regex.component.ComponentRegex
 import java.net.URI
 
 object IncludedCodecs {
@@ -40,6 +42,10 @@ object IncludedCodecs {
     @IncludedCodec val componentCodec: Codec<Component> = ComponentSerialization.CODEC
     @IncludedCodec val uriCodec: Codec<URI> = ExtraCodecs.UNTRUSTED_URI // This is actually "trusted", it requires https and http
     @IncludedCodec val tintSources: Codec<ItemTintSource> = ItemTintSources.CODEC
+    @IncludedCodec val componentRegex: Codec<ComponentRegex> = Codec.STRING.comapFlatMap(
+        { str -> runCatching { DataResult.success(ComponentRegex(str)) }.getOrElse { DataResult.error { it.message } } },
+        { regex -> regex.regex().pattern }
+    )
 
     // Registries
     // TODO this is broken because of the generic
