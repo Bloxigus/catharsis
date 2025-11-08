@@ -26,11 +26,11 @@ import tech.thatgravyboat.skyblockapi.api.datatype.DataType
 import tech.thatgravyboat.skyblockapi.api.datatype.DataTypes
 import tech.thatgravyboat.skyblockapi.impl.DataTypesRegistry
 import tech.thatgravyboat.skyblockapi.utils.extentions.get
-import java.util.*
+import java.util.function.Function
 import kotlin.reflect.javaType
 import kotlin.reflect.typeOf
 
-data class DataTypeEntry<Type>(val type: DataType<Type>, val codec: Codec<Type>)
+data class DataTypeEntry<Type, CompareType>(val type: DataType<Type>, val codec: Codec<CompareType>, val converter: Function<Type, CompareType>)
 
 @Module
 object DataTypeProperties {
@@ -39,7 +39,7 @@ object DataTypeProperties {
 
     private val conditionalTypes: ExtraCodecs.LateBoundIdMapper<String, DataType<Boolean>> = ExtraCodecs.LateBoundIdMapper()
     private val numericalTypes: ExtraCodecs.LateBoundIdMapper<String, DataType<*>> = ExtraCodecs.LateBoundIdMapper()
-    private val types: ExtraCodecs.LateBoundIdMapper<String, DataTypeEntry<*>> = ExtraCodecs.LateBoundIdMapper()
+    private val types: ExtraCodecs.LateBoundIdMapper<String, DataTypeEntry<*, *>> = ExtraCodecs.LateBoundIdMapper()
 
     init {
         @Suppress("CAST_NEVER_SUCCEEDS")
@@ -53,13 +53,13 @@ object DataTypeProperties {
         dataTypes.filterType<Float>().forEach(::register)
 
         register(DataTypes.RARITY)
-        register(DataTypes.HOOK, Codec.STRING.xmap({ UUID.randomUUID() to it }, { it.second }))
-        register(DataTypes.LINE, Codec.STRING.xmap({ UUID.randomUUID() to it }, { it.second }))
-        register(DataTypes.SINKER, Codec.STRING.xmap({ UUID.randomUUID() to it }, { it.second }))
-        register(DataTypes.FUEL, Codec.INT.xmap({ it to it }, { it.first }))
-        register(DataTypes.SNOWBALLS, Codec.INT.xmap({ it to it }, { it.first }))
+        register(DataTypes.HOOK, Codec.STRING, Pair<*, String>::second)
+        register(DataTypes.LINE, Codec.STRING, Pair<*, String>::second)
+        register(DataTypes.SINKER, Codec.STRING, Pair<*, String>::second)
+        register(DataTypes.FUEL, Codec.INT, Pair<Int, *>::first)
+        register(DataTypes.SNOWBALLS, Codec.INT, Pair<Int, *>::first)
         register(DataTypes.UUID, CodecUtils.UUID_CODEC)
-        register(DataTypes.DUNGEONBREAKER_CHARGES, Codec.INT.xmap({ it to it }, { it.first }))
+        register(DataTypes.DUNGEONBREAKER_CHARGES, Codec.INT, Pair<Int, *>::first)
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -89,9 +89,11 @@ object DataTypeProperties {
     private fun register(type: DataType<Boolean>) = register(type, Codec.BOOL)
 
     private inline fun <reified Type> register(type: DataType<Type>, codec: Codec<Type>) = register(type.id, type, codec)
+    private inline fun <reified Type, CompareType> register(type: DataType<Type>, codec: Codec<CompareType>, converter: Function<Type, CompareType>) = register(type.id, type, codec, converter)
 
-    private inline fun <reified Type> register(location: String, type: DataType<Type>, codec: Codec<Type>) {
-        types[location] = DataTypeEntry(type, codec)
+    private inline fun <reified Type> register(location: String, type: DataType<Type>, codec: Codec<Type>) = register(location, type, codec, Function.identity())
+    private inline fun <reified Type, CompareType> register(location: String, type: DataType<Type>, codec: Codec<CompareType>, converter: Function<Type, CompareType>) {
+        types[location] = DataTypeEntry(type, codec, converter)
         if (Type::class.isNumber || Type::class.isEnum) {
             numericalTypes[location] = type
         }
@@ -100,21 +102,23 @@ object DataTypeProperties {
         }
     }
 
-    data class SelectDataTypeItemProperty<Type>(val entry: DataTypeEntry<Type>) : SelectItemModelProperty<Type> {
-        override fun get(stack: ItemStack, level: ClientLevel?, entity: LivingEntity?, seed: Int, displayContext: ItemDisplayContext): Type? = stack[entry.type]
-        override fun valueCodec(): Codec<Type> = entry.codec
-        override fun type(): SelectItemModelProperty.Type<out SelectItemModelProperty<Type>, Type> = TYPE.unsafeCast()
+    data class SelectDataTypeItemProperty<Type, CompareType>(val entry: DataTypeEntry<Type, CompareType>) : SelectItemModelProperty<CompareType> {
+        override fun get(stack: ItemStack, level: ClientLevel?, entity: LivingEntity?, seed: Int, displayContext: ItemDisplayContext): CompareType? =
+            stack[entry.type]?.let { entry.converter.apply(it) }
+
+        override fun valueCodec(): Codec<CompareType> = entry.codec
+        override fun type(): SelectItemModelProperty.Type<out SelectItemModelProperty<CompareType>, CompareType> = TYPE.unsafeCast()
 
         companion object {
 
-            private fun <Type> createCodec(entry: DataTypeEntry<Type>): MapCodec<SelectItemModel.UnbakedSwitch<SelectDataTypeItemProperty<Type>, Type>> {
+            private fun <Type, CompareType> createCodec(entry: DataTypeEntry<Type, CompareType>): MapCodec<SelectItemModel.UnbakedSwitch<SelectDataTypeItemProperty<Type, CompareType>, CompareType>> {
                 return SelectItemModelProperty.Type.createCasesFieldCodec(entry.codec).xmap(
                     { cases -> SelectItemModel.UnbakedSwitch(SelectDataTypeItemProperty(entry), cases) },
                     { switch -> switch.cases },
                 )
             }
 
-            private fun <Type> createType(): SelectItemModelProperty.Type<SelectDataTypeItemProperty<Type>, Type> = SelectItemModelProperty.Type(
+            private fun <Type, CompareType> createType(): SelectItemModelProperty.Type<SelectDataTypeItemProperty<Type, CompareType>, CompareType> = SelectItemModelProperty.Type(
                 types.codec(Codec.STRING).dispatchMap(
                     "data_type",
                     { case -> (case.property as SelectDataTypeItemProperty).entry },
@@ -122,7 +126,7 @@ object DataTypeProperties {
                 ),
             )
 
-            val TYPE: SelectItemModelProperty.Type<SelectDataTypeItemProperty<Any>, Any> = createType<Any>()
+            val TYPE: SelectItemModelProperty.Type<SelectDataTypeItemProperty<Any, Any>, Any> = createType<Any, Any>()
         }
     }
 
