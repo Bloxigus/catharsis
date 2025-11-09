@@ -39,9 +39,30 @@ Clears all entries from the allow list.
 
 ### `/catharsis dev give <type>`
 
-#### `/catharsis dev give mannequin|armorstand <query>`
+#### `/catharsis dev give armorstand <query>`
 
-Gives a mannequin or armorstand with the armor set of the specified SkyBlock item.
+Gives an armorstand with the armor set of the specified SkyBlock item.
+
+#### `/catharsis dev give mannequin [flags] <query>`
+
+Gives a mannequin with the armor set of the specified SkyBlock item.
+
+Usage: `/catharsis dev give mannequin [-d|-c|-s|-f|-e] [-i] [-l] <query>`
+
+#### Flags
+
+Pose Flags (only one allowed)
+
+> - `-d`/`--standing` (default)
+> - `-c`/`--crouching`
+> - `-s`/`--swimming`
+> - `-f`/`--fall_flying`
+> - `-e`/`--sleeping`
+
+Misc flags
+
+> - `-i`/`--immovalbe` Makes the mannequin immovable.
+> - `-l`/`--left_handed` Makes the primary hand the left hand. 
 
 #### `/catharsis dev give item id|name <query>`
 

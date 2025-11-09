@@ -4,13 +4,20 @@ package me.owdding.catharsis.features.dev.give
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.component.TypedEntityData
 import java.util.*
+import me.owdding.catharsis.utils.types.commands.CommandFlag
+import me.owdding.catharsis.utils.types.commands.FlagArgument
+import com.mojang.brigadier.arguments.ArgumentType
+import net.minecraft.world.item.component.ResolvableProfile
+import tech.thatgravyboat.skyblockapi.utils.text.Text.wrap
 //?} else {
 /*import net.minecraft.world.item.component.CustomData
 *///?}
 
+import com.mojang.brigadier.context.CommandContext
 import me.owdding.catharsis.features.dev.GiveCommands
 import me.owdding.catharsis.utils.types.commands.SkyBlockIdArgument
 import me.owdding.ktmodules.Module
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import net.minecraft.core.component.DataComponents
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.NbtOps
@@ -26,43 +33,86 @@ import tech.thatgravyboat.skyblockapi.api.remote.api.SkyBlockId
 import tech.thatgravyboat.skyblockapi.api.remote.hypixel.museum.MuseumData
 import tech.thatgravyboat.skyblockapi.utils.extentions.putCompound
 import tech.thatgravyboat.skyblockapi.utils.text.Text
-import tech.thatgravyboat.skyblockapi.api.events.misc.LiteralCommandBuilder
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.italic
 import tech.thatgravyboat.skyblockapi.api.datatype.DataTypes
-import net.minecraft.world.item.component.ResolvableProfile
+import tech.thatgravyboat.skyblockapi.api.events.misc.CommandBuilder
 import tech.thatgravyboat.skyblockapi.utils.extentions.get
 
 @Module
 object GiveArmorstand {
+
+
+    //? if > 1.21.8 {
+    enum class MannequinFlag(
+        override val shortName: Char,
+        longName: String? = null,
+        override val group: String? = null,
+        override val flagType: ArgumentType<*>? = null
+    ) : CommandFlag {
+        IMMOVALBE('i'),
+        STANDING('d', group = "pose"),
+        CROUCHING('c', group = "pose"),
+        SWIMMING('s', group = "pose"),
+        FALL_FLYING('f', group = "pose"),
+        SLEEPING('e', group = "pose"),
+        LEFT_HANDED('l'),
+        ;
+
+        override val longName: String = longName ?: name.lowercase()
+    }
+    //?}
 
     private val regex = "(?i)_(?:HELMET|MASK|CHESTPLATE|LEGGINGS|PANTS|BOOTS)$".toRegex()
 
     @Subscription
     private fun RegisterCommandsEvent.onRegister() {
         register("catharsis dev give") {
-            createGive("armorstand") { tag, skyBlockId ->
-                Items.ARMOR_STAND.defaultInstance.apply {
-                    set(
-                        DataComponents.ENTITY_DATA,
-                        //? if >1.21.8 {
-                        TypedEntityData.of(EntityType.ARMOR_STAND, tag),
-                        //?} else {
-                        /*CustomData.of(tag.apply {
-                            putString("id", "minecraft:armor_stand")
-                        })
-                        *///?}
-                    )
-                    set(DataComponents.CUSTOM_NAME, Text.of(skyBlockId) { italic = false })
+            then("armorstand") {
+                createGive { tag, skyBlockId ->
+                    Items.ARMOR_STAND.defaultInstance.apply {
+                        set(
+                            DataComponents.ENTITY_DATA,
+                            //? if >1.21.8 {
+                            TypedEntityData.of(EntityType.ARMOR_STAND, tag),
+                            //?} else {
+                            /*CustomData.of(tag.apply {
+                                putString("id", "minecraft:armor_stand")
+                            })
+                            *///?}
+                        )
+                        set(DataComponents.CUSTOM_NAME, Text.of(skyBlockId) { italic = false })
+                    }
                 }
             }
 
             //? if > 1.21.8 {
-            createGive("mannequin") { tag, skyBlockId ->
-                Items.FOX_SPAWN_EGG.defaultInstance.apply {
+            fun createMannequin(flags: Set<MannequinFlag>, tag: CompoundTag, skyBlockId: String): ItemStack {
+                return Items.FOX_SPAWN_EGG.defaultInstance.apply {
+                    tag.putBoolean("hide_description", true)
+                    when {
+                        MannequinFlag.STANDING in flags -> tag.putString("pose", "standing")
+                        MannequinFlag.CROUCHING in flags -> tag.putString("pose", "crouching")
+                        MannequinFlag.SWIMMING in flags -> tag.putString("pose", "swimming")
+                        MannequinFlag.FALL_FLYING in flags -> tag.putString("pose", "fall_flying")
+                        MannequinFlag.SLEEPING in flags -> tag.putString("pose", "sleeping")
+                    }
+                    tag.putBoolean("immovable", MannequinFlag.IMMOVALBE in flags)
+                    if (MannequinFlag.LEFT_HANDED in flags) tag.putString("main_hand", "left")
                     set(DataComponents.ENTITY_DATA, TypedEntityData.of(EntityType.MANNEQUIN, tag))
-                    set(DataComponents.CUSTOM_NAME, Text.of(skyBlockId) { italic = false })
+                    set(DataComponents.CUSTOM_NAME, Text.of(skyBlockId) {
+                        italic = false
+                        if (flags.isEmpty()) return@of
+                        append(Text.join(flags.map { it.longName }, separator = Text.of(", ")).wrap(" (", ")"))
+                    })
                     set(DataComponents.PROFILE, ResolvableProfile.createUnresolved(UUID.fromString("16102479-7162-4ea9-9975-a5059c6a2be3")))
                 }
+            }
+
+            then("mannequin") {
+                then("flag", FlagArgument.enum<MannequinFlag>()) {
+                    createGive { tag, skyBlockId -> createMannequin(argument<Map<MannequinFlag, *>>("flag").keys, tag, skyBlockId)}
+                }
+                createGive { tag, skyBlockId -> createMannequin(argument<Map<MannequinFlag, *>>("flag").keys, tag, skyBlockId)}
             }
             //?}
         }
@@ -76,9 +126,9 @@ object GiveArmorstand {
         "bracelet",
     )
 
-    private fun LiteralCommandBuilder.createGive(name: String, itemConstructor: (CompoundTag, String) -> ItemStack) {
+    private fun CommandBuilder<*>.createGive(itemConstructor: CommandContext<FabricClientCommandSource>.(CompoundTag, String) -> ItemStack) {
         val allIds = SimpleItemAPI.getAllIds()
-        thenCallback("$name id", SkyBlockIdArgument(allIds)) {
+        thenCallback("id", SkyBlockIdArgument(allIds)) {
             val id = argument<SkyBlockId>("id")
             val skyBlockId = id.skyblockId
 
