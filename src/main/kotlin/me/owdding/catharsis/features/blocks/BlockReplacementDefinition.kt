@@ -123,7 +123,7 @@ data class PerAreaBlockReplacement(
     @GenerateCodec
     @NamedCodec("CompletablePerAreaBlockReplacement")
     data class Completable(
-        @FieldName("values") val values: Map<ResourceLocation, BlockReplacement.Completable>,
+        @FieldName("entries") val values: Map<ResourceLocation, BlockReplacement.Completable>,
     ) : BlockReplacement.Completable {
         override val codec: MapCodec<Completable> = CatharsisCodecs.getMapCodec()
         override fun virtualStates() = values.values.flatMap { it.virtualStates() }
