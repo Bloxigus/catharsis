@@ -89,15 +89,15 @@ object DataTypeProperties {
     private fun register(type: DataType<Boolean>) = register(type, Codec.BOOL)
 
     private inline fun <reified Type> register(type: DataType<Type>, codec: Codec<Type>) = register(type.id, type, codec)
-    private inline fun <reified Type, CompareType> register(type: DataType<Type>, codec: Codec<CompareType>, converter: Function<Type, CompareType>) = register(type.id, type, codec, converter)
+    private inline fun <reified Type, reified CompareType> register(type: DataType<Type>, codec: Codec<CompareType>, converter: Function<Type, CompareType>) = register(type.id, type, codec, converter)
 
     private inline fun <reified Type> register(location: String, type: DataType<Type>, codec: Codec<Type>) = register(location, type, codec, Function.identity())
-    private inline fun <reified Type, CompareType> register(location: String, type: DataType<Type>, codec: Codec<CompareType>, converter: Function<Type, CompareType>) {
+    private inline fun <reified Type, reified CompareType> register(location: String, type: DataType<Type>, codec: Codec<CompareType>, converter: Function<Type, CompareType>) {
         types[location] = DataTypeEntry(type, codec, converter)
-        if (Type::class.isNumber || Type::class.isEnum) {
+        if (CompareType::class.isNumber || CompareType::class.isEnum) {
             numericalTypes[location] = type
         }
-        if (Type::class == Boolean::class) {
+        if (CompareType::class == Boolean::class) {
             conditionalTypes[location] = type.unsafeCast()
         }
     }
