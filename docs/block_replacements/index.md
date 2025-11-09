@@ -64,7 +64,7 @@ Allows for having a different block per [area](/block_replacements/areas).
 <span><TypeIcon type="object"/> Root <b>per area</b> object</span>
 
 - <TypeIcon type="string"/> **type**: `catharsis:per_area`
-- <TypeIcon type="object"/> **entries**: An object of area to block replacement definition.
+- <TypeIcon type="object"/> **values**: An object of area to block replacement definition.
     - <TypeIcon type="array"/> **&lt;area id&gt;**: The area to test
         - <TypeIcon type="object"/> A [block replacement definition](#definition)
 </TreeView>
