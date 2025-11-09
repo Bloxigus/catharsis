@@ -91,7 +91,7 @@ data class RedirectBlockReplacement(
     ) : BlockReplacement.Completable {
         override val codec: MapCodec<Completable> = CatharsisCodecs.getMapCodec()
         override fun virtualStates() = listOf(virtualState)
-        override fun bake(bakery: BlockReplacementBakery): BlockReplacement = RedirectBlockReplacement(bakery.virtualStates[virtualState]!!)
+        override fun bake(bakery: BlockReplacementBakery): BlockReplacement = RedirectBlockReplacement(bakery.virtualStates[virtualState]!!.copy())
     }
 }
 
