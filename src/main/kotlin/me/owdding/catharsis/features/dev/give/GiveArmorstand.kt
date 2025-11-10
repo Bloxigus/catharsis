@@ -47,7 +47,7 @@ object GiveArmorstand {
         override val shortName: Char,
         longName: String? = null,
         override val group: String? = null,
-        override val flagType: ArgumentType<*>? = null
+        override val flagType: ArgumentType<*>? = null,
     ) : CommandFlag {
         IMMOVALBE('i'),
         STANDING('d', group = "pose"),
@@ -62,7 +62,7 @@ object GiveArmorstand {
     }
     //?}
 
-    private val regex = "(?i)_(?:HELMET|MASK|CHESTPLATE|LEGGINGS|PANTS|BOOTS)$".toRegex()
+    private val regex = "(?i)([\\s\\S]+?_)(?:HELMET|MASK|CHESTPLATE|LEGGINGS|PANTS|BOOTS)(_[\\s\\S]*)?$".toRegex()
 
     @Subscription
     private fun RegisterCommandsEvent.onRegister() {
@@ -99,20 +99,23 @@ object GiveArmorstand {
                     tag.putBoolean("immovable", MannequinFlag.IMMOVALBE in flags)
                     if (MannequinFlag.LEFT_HANDED in flags) tag.putString("main_hand", "left")
                     set(DataComponents.ENTITY_DATA, TypedEntityData.of(EntityType.MANNEQUIN, tag))
-                    set(DataComponents.CUSTOM_NAME, Text.of(skyBlockId) {
-                        italic = false
-                        if (flags.isEmpty()) return@of
-                        append(Text.join(flags.map { it.longName }, separator = Text.of(", ")).wrap(" (", ")"))
-                    })
+                    set(
+                        DataComponents.CUSTOM_NAME,
+                        Text.of(skyBlockId) {
+                            italic = false
+                            if (flags.isEmpty()) return@of
+                            append(Text.join(flags.map { it.longName }, separator = Text.of(", ")).wrap(" (", ")"))
+                        },
+                    )
                     set(DataComponents.PROFILE, ResolvableProfile.createUnresolved(UUID.fromString("16102479-7162-4ea9-9975-a5059c6a2be3")))
                 }
             }
 
             then("mannequin") {
                 then("flag", FlagArgument.enum<MannequinFlag>()) {
-                    createGive { tag, skyBlockId -> createMannequin(argument<Map<MannequinFlag, *>>("flag").keys, tag, skyBlockId)}
+                    createGive { tag, skyBlockId -> createMannequin(argument<Map<MannequinFlag, *>>("flag").keys, tag, skyBlockId) }
                 }
-                createGive { tag, skyBlockId -> createMannequin(argument<Map<MannequinFlag, *>>("flag").keys, tag, skyBlockId)}
+                createGive { tag, skyBlockId -> createMannequin(emptySet(), tag, skyBlockId) }
             }
             //?}
         }
@@ -126,16 +129,24 @@ object GiveArmorstand {
         "bracelet",
     )
 
+    private val armorTypes = mutableSetOf(
+        "HELMET",
+        "MASK",
+        "CHESTPLATE",
+        "LEGGINGS",
+        "PANTS",
+        "BOOTS"
+    )
+
     private fun CommandBuilder<*>.createGive(itemConstructor: CommandContext<FabricClientCommandSource>.(CompoundTag, String) -> ItemStack) {
-        val allIds = SimpleItemAPI.getAllIds()
-        thenCallback("id", SkyBlockIdArgument(allIds)) {
+        thenCallback("id", SkyBlockIdArgument(SimpleItemAPI.getAllIds())) {
             val id = argument<SkyBlockId>("id")
             val skyBlockId = id.skyblockId
 
             val items = (MuseumData.museumData.armorSets.entries.find { skyBlockId in it.value }?.value?.map { RepoItemsAPI.getItem(it) } ?: run {
                 // If museum data is not found, try to find items by matching stripped IDs
-                val shortenedId = skyBlockId.replace(regex, "")
-                allIds.filter { it.skyblockId.replace(regex, "") == shortenedId }.map { it.toItem() }
+
+                armorTypes.mapNotNull { SkyBlockId.unknownType(skyBlockId.replace(regex, "$1$it$2"))?.toItem() }
             }).filterNot { it[DataTypes.CATEGORY]?.name in ignoredCategories }.associateBy { it.toSlotType() }
 
             val itemCompound = CompoundTag().apply {
