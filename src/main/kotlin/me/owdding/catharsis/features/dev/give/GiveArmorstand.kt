@@ -62,7 +62,7 @@ object GiveArmorstand {
     }
     //?}
 
-    private val regex = "(?i)([\\s\\S]+?_)(?:HELMET|MASK|CHESTPLATE|LEGGINGS|PANTS|BOOTS)(_[\\s\\S]*)?$".toRegex()
+    private val regex = "(?i)([\\s\\S]+?_)(?:HELMET|MASK|CHESTPLATE|TUNIC|LEGGINGS|PANTS|TROUSERS|SLIPPERS|BOOTS)(_[\\s\\S]*)?$".toRegex()
 
     @Subscription
     private fun RegisterCommandsEvent.onRegister() {
