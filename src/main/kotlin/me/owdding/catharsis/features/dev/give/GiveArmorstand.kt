@@ -62,7 +62,7 @@ object GiveArmorstand {
     }
     //?}
 
-    private val regex = "(?i)([\\s\\S]+?_)(?:HELMET|MASK|CHESTPLATE|TUNIC|LEGGINGS|PANTS|TROUSERS|SLIPPERS|BOOTS)(_[\\s\\S]*)?$".toRegex()
+    private val regex = "(?i)([\\s\\S]+?_)(?:${armorTypes.joinToString("|")})(_[\\s\\S]*)?$".toRegex()
 
     @Subscription
     private fun RegisterCommandsEvent.onRegister() {
@@ -133,8 +133,11 @@ object GiveArmorstand {
         "HELMET",
         "MASK",
         "CHESTPLATE",
+        "TUNIC",
         "LEGGINGS",
         "PANTS",
+        "TROUSERS",
+        "SLIPPERS",
         "BOOTS"
     )
 
