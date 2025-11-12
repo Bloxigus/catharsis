@@ -24,6 +24,7 @@ object ItemProperties {
         register(SkyBlockIslandProperty.ID, SkyBlockIslandProperty.TYPE)
         register(SkyBlockAreaProperty.ID, SkyBlockAreaProperty.TYPE)
         register(DungeonClassProperty.ID, DungeonClassProperty.TYPE)
+        register(OwnerUuidProperty.ID, OwnerUuidProperty.TYPE)
     }
 
     @Subscription
