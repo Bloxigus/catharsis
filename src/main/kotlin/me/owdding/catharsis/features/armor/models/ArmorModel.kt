@@ -61,7 +61,7 @@ object ArmorModels {
     init {
         ID_MAPPER.put(Catharsis.mc("condition"), ConditionalArmorModel.Unbaked.CODEC)
         ID_MAPPER.put(Catharsis.mc("range_dispatch"), RangeSelectArmorModel.Unbaked.CODEC)
-        // TODO add select, requires creating a whole custom case system as vanilla has this locked to ItemModels unlike conditions and ranges
+        ID_MAPPER.put(Catharsis.mc("select"), SelectArmorModel.Unbaked.CODEC)
         ID_MAPPER.put(Catharsis.id("texture"), CatharsisCodecs.getMapCodec<TextureArmorModel.UnbakedTexture>())
         ID_MAPPER.put(Catharsis.id("model"), CatharsisCodecs.getMapCodec<BedrockArmorModel.UnbakedBedrock>())
         ID_MAPPER.put(Catharsis.id("redirect"), CatharsisCodecs.getMapCodec<RedirectedArmorModel.UnbakedRedirect>())

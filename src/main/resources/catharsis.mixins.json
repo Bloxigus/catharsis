@@ -4,10 +4,12 @@
   "package": "me.owdding.catharsis.mixins",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "armor.ComponentContentsMixin",
     "armor.EquipmentLayerRendererMixin",
     "armor.HumanoidArmorModelMixin",
     "armor.HumanoidModelMixin",
     "armor.LivingEntityRenderStateMixin",
+    "armor.SelectItemModelPropertyTypeMixin",
     "gui.AbstractContainerScreenElementsMixin",
     "gui.AbstractContainerScreenSlotsMixin",
     "gui.SlotMixin",
