@@ -16,6 +16,7 @@ object ItemProperties {
         register(AnyConditionalItemProperty.ID, AnyConditionalItemProperty.CODEC)
         register(AllConditionalItemProperty.ID, AllConditionalItemProperty.CODEC)
         register(InAreaProperty.ID, InAreaProperty.CODEC)
+        register(DataTypeProperties.ID.withPrefix("is_").withSuffix("_present"), DataTypeProperties.DataTypePresentItemProperty.CODEC)
     }
 
     @Subscription

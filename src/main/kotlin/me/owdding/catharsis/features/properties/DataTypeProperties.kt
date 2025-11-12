@@ -3,6 +3,9 @@ package me.owdding.catharsis.features.properties
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
+import java.util.function.Function
+import kotlin.reflect.javaType
+import kotlin.reflect.typeOf
 import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.features.armor.models.SelectArmorModel
 import me.owdding.catharsis.features.armor.models.hook
@@ -26,11 +29,9 @@ import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import tech.thatgravyboat.skyblockapi.api.datatype.DataType
 import tech.thatgravyboat.skyblockapi.api.datatype.DataTypes
+import tech.thatgravyboat.skyblockapi.api.datatype.getDataTypes
 import tech.thatgravyboat.skyblockapi.impl.DataTypesRegistry
 import tech.thatgravyboat.skyblockapi.utils.extentions.get
-import java.util.function.Function
-import kotlin.reflect.javaType
-import kotlin.reflect.typeOf
 
 data class DataTypeEntry<Type, CompareType>(val type: DataType<Type>, val codec: Codec<CompareType>, val converter: Function<Type, CompareType>)
 
@@ -42,6 +43,7 @@ object DataTypeProperties {
     private val conditionalTypes: ExtraCodecs.LateBoundIdMapper<String, DataType<Boolean>> = ExtraCodecs.LateBoundIdMapper()
     private val numericalTypes: ExtraCodecs.LateBoundIdMapper<String, DataType<*>> = ExtraCodecs.LateBoundIdMapper()
     private val types: ExtraCodecs.LateBoundIdMapper<String, DataTypeEntry<*, *>> = ExtraCodecs.LateBoundIdMapper()
+    private val allTypes: ExtraCodecs.LateBoundIdMapper<String, DataType<*>> = ExtraCodecs.LateBoundIdMapper()
 
     init {
         @Suppress("CAST_NEVER_SUCCEEDS")
@@ -62,6 +64,7 @@ object DataTypeProperties {
         register(DataTypes.SNOWBALLS, Codec.INT, Pair<Int, *>::first)
         register(DataTypes.UUID, CodecUtils.UUID_CODEC)
         register(DataTypes.DUNGEONBREAKER_CHARGES, Codec.INT, Pair<Int, *>::first)
+        dataTypes.forEach { allTypes[it.id] = it }
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -179,5 +182,25 @@ object DataTypeProperties {
                 { property -> property.type },
             )
         }
+    }
+
+    data class DataTypePresentItemProperty(val type: DataType<*>) : ConditionalItemModelProperty {
+        companion object {
+            val CODEC: MapCodec<DataTypePresentItemProperty> = allTypes.codec(Codec.STRING).fieldOf("data_type").xmap(
+                { dataType -> DataTypePresentItemProperty(dataType) },
+                { property -> property.type }
+            )
+        }
+
+        override fun type(): MapCodec<out ConditionalItemModelProperty> = CODEC
+
+        override fun get(
+            stack: ItemStack,
+            level: ClientLevel?,
+            entity: LivingEntity?,
+            seed: Int,
+            displayContext: ItemDisplayContext,
+        ): Boolean = stack.getDataTypes().containsKey(type)
+
     }
 }
