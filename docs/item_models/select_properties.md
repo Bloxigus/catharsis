@@ -26,7 +26,11 @@ Names are equal to the value of `mode` in `/locraw`
 Returns the current skyblock area the player is in. <br>
 Names are equal to the scoreboard line.
 
-### `catharsis:item_model`
+### `catharsis:owner_uuid`
 
-Returns the item model of the current item.
+Returns the uuid of the entity associated with the item.
 
+### `catharsis:dungeon_class`
+
+Returns the dungeon class of the player who owns the item. <br>
+Values can be `archer`, `berserker`, `healer`, `mage` or `tank`, in case there is no class associate with the player it returns null.
