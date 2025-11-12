@@ -30,6 +30,8 @@ object Utils {
         }
     }
 
+    fun ResourceLocation.copy() = ResourceLocation.fromNamespaceAndPath(this.namespace, this.path)
+
     //? < 1.21.9 {
     /*data class ReloadListenerWrapper(
         val id: ResourceLocation,
