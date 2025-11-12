@@ -3,7 +3,6 @@ package me.owdding.catharsis.features.properties
 import me.owdding.catharsis.events.BootstrapConditionalPropertiesEvent
 import me.owdding.catharsis.events.BootstrapNumericPropertiesEvent
 import me.owdding.catharsis.events.BootstrapSelectPropertiesEvent
-import me.owdding.catharsis.utils.Utils.copy
 import me.owdding.ktmodules.Module
 import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
 
@@ -17,8 +16,8 @@ object ItemProperties {
         register(AnyConditionalItemProperty.ID, AnyConditionalItemProperty.CODEC)
         register(AllConditionalItemProperty.ID, AllConditionalItemProperty.CODEC)
         register(InAreaProperty.ID, InAreaProperty.CODEC)
-        register(DataTypeProperties.ID.copy().withPrefix("is_").withSuffix("_present"), DataTypeProperties.DataTypePresentItemProperty.CODEC)
-        register(DataTypeProperties.ID.copy().withPrefix("has"), DataTypeProperties.DataTypePresentItemProperty.CODEC)
+        register(DataTypeProperties.ID.withPrefix("is_").withSuffix("_present"), DataTypeProperties.DataTypePresentItemProperty.CODEC)
+        register(DataTypeProperties.ID.withPrefix("has"), DataTypeProperties.DataTypePresentItemProperty.CODEC)
     }
 
     @Subscription
