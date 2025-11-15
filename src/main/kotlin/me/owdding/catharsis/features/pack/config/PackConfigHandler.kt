@@ -10,6 +10,7 @@ import tech.thatgravyboat.skyblockapi.api.events.base.predicates.TimePassed
 import tech.thatgravyboat.skyblockapi.api.events.time.TickEvent
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.utils.Scheduling
+import kotlin.io.path.notExists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
@@ -39,6 +40,7 @@ object PackConfigHandler {
 
     init {
         logger.runCatching("Loading pack configurations") {
+            if (path.notExists()) return@runCatching
             val json = GsonHelper.parse(path.readText())
             for ((key, value) in json.entrySet()) {
                 configs[key] = PackConfig(JsonObject(), value.asJsonObject)
