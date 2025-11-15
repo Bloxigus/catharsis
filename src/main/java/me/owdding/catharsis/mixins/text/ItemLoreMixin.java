@@ -36,6 +36,8 @@ public class ItemLoreMixin implements TooltipProviderHook {
     @Unique
     private List<Component> catharsis$getOrCreateCache(ItemStack stack) {
         if (this.catharsis$cachedLore == null || this.catharsis$cacheKey != ItemTextReplacements.INSTANCE.getCacheKey()) {
+            // Replacing on the unstyled lines and then applying the style is to workaround issues with mods like SkyHanni that
+            // have a bug that will remove the dark purple but instead of only the MC lore style it also removes dark purple explicitly set.
             this.catharsis$cachedLore = Lists.transform(
                 ItemTextReplacements.INSTANCE.replace(stack, this.lines),
                 component -> ComponentUtils.mergeStyles(component.copy(), LORE_STYLE)
