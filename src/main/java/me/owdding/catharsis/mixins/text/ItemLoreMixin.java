@@ -1,9 +1,12 @@
 package me.owdding.catharsis.mixins.text;
 
+import com.google.common.collect.Lists;
 import me.owdding.catharsis.features.text.targets.ItemTextReplacements;
 import me.owdding.catharsis.hooks.text.TooltipProviderHook;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -19,9 +22,8 @@ import java.util.function.Consumer;
 @Mixin(ItemLore.class)
 public class ItemLoreMixin implements TooltipProviderHook {
 
-    @Shadow
-    @Final
-    private List<Component> styledLines;
+    @Shadow @Final private static Style LORE_STYLE;
+    @Shadow @Final private List<Component> lines;
 
     @Unique private List<Component> catharsis$cachedLore = null;
     @Unique int catharsis$cacheKey = -1;
@@ -34,7 +36,10 @@ public class ItemLoreMixin implements TooltipProviderHook {
     @Unique
     private List<Component> catharsis$getOrCreateCache(ItemStack stack) {
         if (this.catharsis$cachedLore == null || this.catharsis$cacheKey != ItemTextReplacements.INSTANCE.getCacheKey()) {
-            this.catharsis$cachedLore = ItemTextReplacements.INSTANCE.replace(stack, this.styledLines);
+            this.catharsis$cachedLore = Lists.transform(
+                ItemTextReplacements.INSTANCE.replace(stack, this.lines),
+                component -> ComponentUtils.mergeStyles(component.copy(), LORE_STYLE)
+            );
         }
         return this.catharsis$cachedLore;
     }
