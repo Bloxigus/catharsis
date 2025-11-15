@@ -11,7 +11,10 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
+import tech.thatgravyboat.skyblockapi.helpers.McFont
 import tech.thatgravyboat.skyblockapi.utils.extentions.asBoolean
+import tech.thatgravyboat.skyblockapi.utils.extentions.asString
+import kotlin.math.max
 
 class PackConfigScreen(private val parent: Screen?, pack: String, private val options: List<PackConfigOption>) : Screen(Component.empty()) {
 
@@ -64,7 +67,7 @@ class PackConfigScreen(private val parent: Screen?, pack: String, private val op
             this.addChild(MultiLineTextWidget(option.description, font).apply {
                 this.setColor(CommonColors.LIGHT_GRAY)
                 this.setCentered(false)
-                this.setMaxWidth(250)
+                this.setMaxWidth(225)
             })
         })
         getOptionWidget(option)?.let(line::addChild)
@@ -85,6 +88,18 @@ class PackConfigScreen(private val parent: Screen?, pack: String, private val op
             CycleButton.onOffBuilder(value).displayOnlyValue().create(0, 0, 44, 20, Component.empty()) { _, newValue ->
                 config.set(option.id, JsonPrimitive(newValue))
             }
+        }
+        is PackConfigOption.Dropdown -> {
+            val value = config.get(option.id).asString()?.let { option.options.find { entry -> entry.value == it } } ?: option.default
+            val width = max(option.options.maxOf { McFont.width(it.text) } + 8, 44)
+
+            CycleButton.builder(PackConfigOption.Dropdown.Entry::text)
+                .displayOnlyValue()
+                .withValues(option.options)
+                .withInitialValue(value)
+                .create(0, 0, width, 20, Component.empty()) { _, entry ->
+                    config.set(option.id, JsonPrimitive(entry.value))
+                }
         }
         else -> null
     }

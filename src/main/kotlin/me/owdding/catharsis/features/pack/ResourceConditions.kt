@@ -1,5 +1,6 @@
 package me.owdding.catharsis.features.pack
 
+import com.google.gson.JsonPrimitive
 import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.features.pack.config.PackConfigHandler
 import me.owdding.catharsis.generated.CatharsisCodecs
@@ -9,14 +10,18 @@ import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions
 import net.minecraft.resources.RegistryOps
-import tech.thatgravyboat.skyblockapi.utils.extentions.asBoolean
 
 @GenerateCodec
-data class ConfigResourceCondition(val pack: String, val id: String) : ResourceCondition {
+data class ConfigResourceCondition(val pack: String, val id: String, val value: String?) : ResourceCondition {
 
     override fun getType(): ResourceConditionType<*> = TYPE
     override fun test(registryInfo: RegistryOps.RegistryInfoLookup?): Boolean {
-        return PackConfigHandler.getConfig(pack).get(id).asBoolean(false)
+        val entry = PackConfigHandler.getConfig(pack).get(id) as? JsonPrimitive ?: return false
+        return when {
+            entry.isBoolean -> entry.asBoolean
+            entry.isString -> entry.asString == this.value
+            else -> false
+        }
     }
 
     @Module

@@ -3,6 +3,7 @@ package me.owdding.catharsis.features.pack.config
 import com.google.gson.JsonElement
 import com.google.gson.JsonPrimitive
 import com.mojang.serialization.Codec
+import com.mojang.serialization.DataResult
 import com.mojang.serialization.MapCodec
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.ktcodecs.GenerateCodec
@@ -32,11 +33,38 @@ sealed interface PackConfigOption {
         override val id: String,
         override val title: Component,
         override val description: Component,
-        val default: Boolean = false
+        val default: Boolean = false,
     ) : PackConfigOption {
 
         override val type: MapCodec<out PackConfigOption> = CatharsisCodecs.getMapCodec<Bool>()
         override val asJson: JsonElement get() = JsonPrimitive(default)
+    }
+
+    @GenerateCodec
+    data class Dropdown(
+        override val id: String,
+        override val title: Component,
+        override val description: Component,
+        val options: List<Entry>,
+    ) : PackConfigOption {
+
+        val default: Entry by lazy { this.options.first(Entry::default) }
+
+        override val type: MapCodec<out PackConfigOption> = CatharsisCodecs.getMapCodec<Dropdown>().validate {
+            val values = it.options.map(Entry::value).toSet()
+            val defaults = it.options.filter(Entry::default)
+
+            when {
+                values.size != it.options.size -> DataResult.error { "Dropdown values have duplicate values." }
+                defaults.size > 1 -> DataResult.error { "Dropdown has more than 1 default value." }
+                defaults.isEmpty() -> DataResult.error { "Dropdown must have 1 default value" }
+                else -> DataResult.success(it)
+            }
+        }
+        override val asJson: JsonElement get() = JsonPrimitive(options.first { it.default }.value)
+
+        @GenerateCodec
+        data class Entry(val value: String, val text: Component, val default: Boolean = false)
     }
 
     companion object {
@@ -48,6 +76,7 @@ sealed interface PackConfigOption {
         init {
             ID_MAPPER.put("separator", CatharsisCodecs.getMapCodec<Separator>())
             ID_MAPPER.put("boolean", CatharsisCodecs.getMapCodec<Bool>())
+            ID_MAPPER.put("dropdown", CatharsisCodecs.getMapCodec<Dropdown>())
         }
     }
 }
