@@ -1,6 +1,5 @@
 package me.owdding.catharsis.features.properties
 
-import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import me.owdding.catharsis.events.BootstrapConditionalPropertiesEvent
 import me.owdding.catharsis.events.BootstrapNumericPropertiesEvent
@@ -20,6 +19,7 @@ object ItemProperties {
         register(InAreaProperty.ID, InAreaProperty.CODEC)
         register(DataTypeProperties.ID.withPrefix("is_").withSuffix("_present"), DataTypeProperties.DataTypePresentItemProperty.CODEC)
         register(DataTypeProperties.ID.withPrefix("has"), DataTypeProperties.DataTypePresentItemProperty.CODEC.let { MapCodec.of(it, it) { "HasDataType" } })
+        register(GemstoneProperty.ID, GemstoneProperty.CODEC)
     }
 
     @Subscription

@@ -7,26 +7,69 @@ lang: en-US
 
 This page lists all custom conditional item properties that are added ontop of the vanilla ones.
 
-### `catharsis:datatype`
+#### **All/And** (`catharsis:all`)
 
-> Returns item specific data like, rarity, reforge, fuel...
-> #### Additional fields
-> - `data_type`, defines the data type to use. [all supported types](data_types)
+Check if a list of conditions are true, useful for chaining conditions.
 
-### `catharsis:all`
+<TreeView>
+<span>additional fields:</span>
 
-> Returns true if all of the given conditions are met.
-> #### Additional fields
-> - `conditions`, an array of other item conditions to check.
+- <TypeIcon type="array"/> **conditions**: a list of conditions to check through.
+</TreeView>
 
-### `catharsis:any`
+#### **Any/Or** (`catharsis:any`)
 
-> Returns true if any of the given conditions are met.
-> #### Additional fields
-> - `conditions`, an array of other item conditions to check.
+Check if any in list of conditions are true, useful for chaining conditions.
 
-### `catharsis:in_area`
+<TreeView>
+<span>additional fields:</span>
 
-> Returns true if the player is in the specified area.
-> #### Additional fields
-> - `area` The id of the area as defined [here](/block_replacements/areas)
+- <TypeIcon type="array"/> **conditions**: a list of conditions to check through.
+</TreeView>
+
+#### **Data Type** (`catharsis:datatype`)
+
+Check against a specific boolean data type.
+
+<TreeView>
+<span>additional fields:</span>
+
+- <TypeIcon type="string"/> **data_type**: defines the data type to use. [all supported types](data_types)
+</TreeView>
+
+#### **Has Data Type** (`catharsis:has_data_type`)
+
+Returns `true` if the item has a specified data type.
+
+<TreeView>
+<span>additional fields:</span>
+
+- <TypeIcon type="string"/> **data_type**: defines the data type to use. [all supported types](data_types)
+</TreeView>
+
+#### **Has Gemstones** (`catharsis:has_gemstones`)
+
+Returns `true` if the item has specified amount of gemstones.
+
+<TreeView>
+<span>additional fields:</span>
+
+- <TypeIcon type="int"/> **amount**: the amount of gemstones to check for.
+- <TypeIcon type="string"/> **slot**: Optional. The slot the gemstones can fit it, by default will act as universal slot.
+- <TypeIcon type="string"/> **quality**: Optional. The quality of the gemstones, by default any quality is accepted.
+</TreeView>
+
+
+#### **In Area** (`catharsis:in_area`)
+
+Returns `true` if the player is in the specified area.
+
+<TreeView>
+<span>additional fields:</span>
+
+- <TypeIcon type="string"/> **area**: The id of the area as defined [here](/block_replacements/areas)
+</TreeView>
+
+#### **Is Hovered** (`catharsis:hovered`)
+
+Returns `true` if the item is hovered.
