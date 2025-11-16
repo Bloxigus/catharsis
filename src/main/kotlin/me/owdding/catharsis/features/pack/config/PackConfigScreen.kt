@@ -1,6 +1,7 @@
 package me.owdding.catharsis.features.pack.config
 
 import com.google.gson.JsonPrimitive
+import net.minecraft.Util
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.components.*
 import net.minecraft.client.gui.layouts.EqualSpacingLayout
@@ -8,9 +9,11 @@ import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
 import net.minecraft.client.gui.layouts.LayoutElement
 import net.minecraft.client.gui.layouts.LinearLayout
 import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.ClickEvent
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.util.CommonColors
+import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.helpers.McFont
 import tech.thatgravyboat.skyblockapi.utils.extentions.asBoolean
 import tech.thatgravyboat.skyblockapi.utils.extentions.asString
@@ -62,14 +65,28 @@ class PackConfigScreen(private val parent: Screen?, pack: String, private val op
         val font = Minecraft.getInstance().font
         val line = EqualSpacingLayout(310, 0, EqualSpacingLayout.Orientation.HORIZONTAL)
 
-        line.addChild(LinearLayout.vertical().spacing(4).apply {
-            this.addChild(StringWidget(option.title, font))
-            this.addChild(MultiLineTextWidget(option.description, font).apply {
-                this.setColor(CommonColors.LIGHT_GRAY)
-                this.setCentered(false)
-                this.setMaxWidth(225)
-            })
-        })
+        line.addChild(
+            LinearLayout.vertical().spacing(4).apply {
+                this.addChild(StringWidget(option.title, font))
+                this.addChild(
+                    MultiLineTextWidget(option.description, font).apply {
+                        this.active = true
+                        this.setColor(CommonColors.LIGHT_GRAY)
+                        this.setCentered(false)
+                        this.setMaxWidth(225)
+                        this.configureStyleHandling(true) {
+                            it.clickEvent?.let { event ->
+                                when (event) {
+                                    is ClickEvent.OpenUrl -> Util.getPlatform().openUri(event.uri)
+                                    is ClickEvent.CopyToClipboard -> McClient.clipboard = event.value
+                                    else -> println("Cannot handle click event of type ${event.action()}")
+                                }
+                            }
+                        }
+                    },
+                )
+            },
+        )
         getOptionWidget(option)?.let(line::addChild)
 
         if (option is PackConfigOption.Separator) {
