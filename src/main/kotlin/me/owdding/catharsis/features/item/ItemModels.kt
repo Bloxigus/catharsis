@@ -10,5 +10,6 @@ object ItemModels {
     @Subscription
     fun onItemModelBootstrap(event: BootstrapItemModelsEvent) {
         event.register(RedirectedItemModel.Unbaked.ID, RedirectedItemModel.Unbaked.CODEC)
+        event.register(FallThroughItemModel.Unbaked.ID, FallThroughItemModel.Unbaked.CODEC)
     }
 }
