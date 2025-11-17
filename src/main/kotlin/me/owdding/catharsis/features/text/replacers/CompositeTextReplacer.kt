@@ -15,19 +15,21 @@ data class CompositeTextReplacer(
 
     override fun replace(text: Component): ReplacementResult {
         var text = text
+        var replaced = false
 
         for (replacer in replacers) {
             val result = replacer.replace(text)
             text = result.text
+            replaced = replaced || result.replaced
             if (result is ReplacementResult.Break) {
                 if (!this.propagate) {
-                    return ReplacementResult.Break(text)
+                    return ReplacementResult.Break(text, replaced)
                 }
                 break
             }
         }
 
-        return ReplacementResult.Continue(text)
+        return ReplacementResult.Continue(text, replaced)
     }
 
 }

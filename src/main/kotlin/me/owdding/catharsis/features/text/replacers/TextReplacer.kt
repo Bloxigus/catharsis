@@ -16,9 +16,9 @@ interface TextReplacer {
     fun replace(text: Component): ReplacementResult
 }
 
-sealed class ReplacementResult(val text: Component) {
-    class Continue(text: Component) : ReplacementResult(text)
-    class Break(text: Component) : ReplacementResult(text)
+sealed class ReplacementResult(val text: Component, val replaced: Boolean = true) {
+    class Continue(text: Component, replaced: Boolean) : ReplacementResult(text, replaced)
+    class Break(text: Component, replaced: Boolean) : ReplacementResult(text, replaced)
 }
 
 object TextReplacers {

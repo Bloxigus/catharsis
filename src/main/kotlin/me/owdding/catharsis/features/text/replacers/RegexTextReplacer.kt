@@ -17,8 +17,12 @@ data class RegexTextReplacer(
     override val codec: MapCodec<out TextReplacer> = CatharsisCodecs.getMapCodec<RegexTextReplacer>()
 
     override fun replace(text: Component): ReplacementResult {
-        val replacement = this.regex.replace(text) { result -> this.replacement.resolve(result) }
-        return if (this.propagate) ReplacementResult.Continue(replacement) else ReplacementResult.Break(replacement)
+        var replaced = false
+        val replacement = this.regex.replace(text) { result ->
+            replaced = true
+            this.replacement.resolve(result)
+        }
+        return if (this.propagate) ReplacementResult.Continue(replacement, replaced) else ReplacementResult.Break(replacement, replaced)
     }
 
 }

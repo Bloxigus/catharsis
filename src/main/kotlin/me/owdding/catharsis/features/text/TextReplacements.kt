@@ -34,18 +34,27 @@ abstract class TextReplacements<Context>(path: String) : SimplePreparableReloadL
     }
 
     fun replace(context: Context, texts: List<Component>): List<Component> {
-        return if (texts.isEmpty()) return texts else replace(context, Text.multiline(texts)).splitLines()
+        return when {
+            texts.isEmpty() -> texts
+            else -> tryReplace(context, Text.multiline(texts))?.splitLines() ?: texts
+        }
     }
 
     fun replace(context: Context, text: Component): Component {
+        return tryReplace(context, text) ?: text
+    }
+
+    private fun tryReplace(context: Context, text: Component): Component? {
         var result = text
+        var replaced = false
         for (replacement in replacements) {
             val replacement = replacement.replacer.replace(result)
+            replaced = replaced || replacement.replaced
             result = replacement.text
             if (replacement is ReplacementResult.Break) {
                 break
             }
         }
-        return result
+        return result.takeIf { replaced }
     }
 }
