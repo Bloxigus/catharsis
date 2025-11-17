@@ -112,18 +112,17 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 tasks.processResources {
-    inputs.property("version", version)
-    inputs.property("sbapi_version", libs.versions.skyblockapi)
-    inputs.property("minecraft", versionedCatalog.versions["minecraft"])
+    val replacements = mapOf(
+        "version" to version,
+        "minecraft_start" to versionedCatalog.versions.getOrFallback("minecraft.start", "minecraft"),
+        "minecraft_end" to versionedCatalog.versions.getOrFallback("minecraft.end", "minecraft"),
+        "fabric_lang_kotlin" to libs.versions.fabric.language.kotlin.get(),
+        "sbapi" to libs.versions.skyblockapi.get(),
+    )
+    inputs.properties(replacements)
 
     filesMatching("fabric.mod.json") {
-        expand(
-            mapOf(
-                "version" to version,
-                "minecraft" to versionedCatalog.versions["minecraft"],
-                "sbapi" to libs.versions.skyblockapi.get()
-            )
-        )
+        expand(replacements)
     }
 }
 
