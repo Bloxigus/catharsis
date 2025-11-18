@@ -43,6 +43,11 @@ object ArmorDefinitionRenderStateHandler {
         state.updateState(entity, EquipmentSlot.CHEST) { def, armor -> def.chest = armor }
         state.updateState(entity, EquipmentSlot.LEGS) { def, armor -> def.legs = armor }
         state.updateState(entity, EquipmentSlot.FEET) { def, armor -> def.feet = armor }
+
+        if (state.head != null && event.state != null) {
+            event.state!!.wornHeadType = null
+            event.state!!.wornHeadProfile = null
+        }
     }
 
     private fun ArmorDefinitionRenderState.updateState(entity: LivingEntity, slot: EquipmentSlot, updater: (ArmorDefinitionRenderState, ArmorModelState?) -> Unit) {
