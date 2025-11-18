@@ -29,7 +29,6 @@ object ItemProperties {
         register(SkyBlockAreaProperty.ID, SkyBlockAreaProperty.TYPE)
         register(DungeonClassProperty.ID, DungeonClassProperty.TYPE)
         register(OwnerUuidProperty.ID, OwnerUuidProperty.TYPE)
-        register(OwnerEntityTypeProperty.ID, OwnerEntityTypeProperty.TYPE)
     }
 
     @Subscription
