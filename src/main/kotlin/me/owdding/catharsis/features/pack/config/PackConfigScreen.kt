@@ -7,12 +7,7 @@ import net.minecraft.client.gui.components.*
 import net.minecraft.client.gui.components.tabs.Tab
 import net.minecraft.client.gui.components.tabs.TabManager
 import net.minecraft.client.gui.components.tabs.TabNavigationBar
-import net.minecraft.client.gui.layouts.EqualSpacingLayout
-import net.minecraft.client.gui.layouts.FrameLayout
-import net.minecraft.client.gui.layouts.HeaderAndFooterLayout
-import net.minecraft.client.gui.layouts.Layout
-import net.minecraft.client.gui.layouts.LayoutElement
-import net.minecraft.client.gui.layouts.LinearLayout
+import net.minecraft.client.gui.layouts.*
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.ClickEvent
@@ -166,7 +161,7 @@ class PackConfigScreenTab(val title: Component, contents: Layout) : Tab {
     }
 
     override fun getTabTitle(): Component = title
-    override fun getTabExtraNarration(): Component? = null
+    override fun getTabExtraNarration(): Component = Component.empty()
     override fun visitChildren(consumer: Consumer<AbstractWidget>) = layout.visitWidgets(consumer)
     override fun doLayout(rectangle: ScreenRectangle) {
         this.layout.setMaxHeight(rectangle.height - 20)
