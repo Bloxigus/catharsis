@@ -258,7 +258,7 @@ object GiveCommands {
 
     fun tryGive(itemStack: ItemStack) {
         val item = itemStack.copyWithCount(1)
-        if (McPlayer.self?.gameMode()?.isCreative != true && McClient.self.isSingleplayer) {
+        if (McPlayer.self?.gameMode()?.isCreative != true || !McClient.self.isSingleplayer) {
             Text.of("Not in singleplayer and creative!", CatppuccinColors.Mocha.red).sendWithPrefix("catharsis-dev-give-singleplayer")
             return
         }
