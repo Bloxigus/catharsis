@@ -29,10 +29,13 @@ object ItemProperties {
         register(SkyBlockAreaProperty.ID, SkyBlockAreaProperty.TYPE)
         register(DungeonClassProperty.ID, DungeonClassProperty.TYPE)
         register(OwnerUuidProperty.ID, OwnerUuidProperty.TYPE)
+        register(SkyBlockSeasonProperty.ID, SkyBlockSeasonProperty.TYPE)
     }
 
     @Subscription
     private fun BootstrapNumericPropertiesEvent.onRangeProperties() {
         register(DataTypeProperties.ID, DataTypeProperties.RangeDataTypeItemProperty.CODEC)
+        register(SkyBlockDayProperty.ID, SkyBlockDayProperty.CODEC)
+        register(SkyBlockHourProperty.ID, SkyBlockHourProperty.CODEC)
     }
 }
