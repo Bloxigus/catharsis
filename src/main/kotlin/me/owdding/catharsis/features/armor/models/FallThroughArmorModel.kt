@@ -1,3 +1,4 @@
+//~ item_holder
 package me.owdding.catharsis.features.armor.models
 
 import com.mojang.serialization.MapCodec
@@ -7,7 +8,7 @@ import net.minecraft.util.RegistryContextSwapper
 import net.minecraft.world.entity.ItemOwner
 import net.minecraft.world.item.ItemStack
 
-object FallthroughArmorModel : ArmorModel, ArmorModel.Unbaked {
+object FallThroughArmorModel : ArmorModel, ArmorModel.Unbaked {
     override fun resolve(
         stack: ItemStack,
         level: ClientLevel?,

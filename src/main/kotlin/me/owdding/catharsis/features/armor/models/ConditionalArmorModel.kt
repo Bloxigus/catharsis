@@ -1,8 +1,6 @@
 //~ item_holder
 package me.owdding.catharsis.features.armor.models
 
-//? = 1.21.8
-/*import me.owdding.catharsis.utils.extensions.asLivingEntity*/
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import me.owdding.catharsis.utils.TypedResourceManager

@@ -65,7 +65,7 @@ object ArmorModels {
         ID_MAPPER.put(Catharsis.id("texture"), CatharsisCodecs.getMapCodec<TextureArmorModel.UnbakedTexture>())
         ID_MAPPER.put(Catharsis.id("model"), CatharsisCodecs.getMapCodec<BedrockArmorModel.UnbakedBedrock>())
         ID_MAPPER.put(Catharsis.id("redirect"), CatharsisCodecs.getMapCodec<RedirectedArmorModel.UnbakedRedirect>())
-        ID_MAPPER.put(Catharsis.id("fallthrough"), FallthroughArmorModel.codec)
+        ID_MAPPER.put(Catharsis.id("fallthrough"), FallThroughArmorModel.codec)
         ID_MAPPER.put(Catharsis.id("missing"), MissingArmorModel.codec)
     }
 }

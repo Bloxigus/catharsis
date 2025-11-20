@@ -13,9 +13,6 @@ import net.minecraft.world.entity.ItemOwner
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 
-//? = 1.21.8
-/*import me.owdding.catharsis.utils.extensions.asLivingEntity*/
-
 object FallThroughItemModel: ItemModel {
 
     override fun update(state: ItemStackRenderState, stack: ItemStack, resolver: ItemModelResolver, context: ItemDisplayContext, level: ClientLevel?, owner: ItemOwner?, seed: Int) {
