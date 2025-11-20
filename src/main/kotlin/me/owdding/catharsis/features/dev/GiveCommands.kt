@@ -42,6 +42,11 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.italic
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.onClick
 import java.util.concurrent.CompletableFuture
 import kotlin.math.min
+import net.minecraft.commands.arguments.NbtTagArgument
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.Tag
+import net.minecraft.world.item.component.CustomData
+import tech.thatgravyboat.skyblockapi.utils.builders.ItemBuilder
 
 
 @Module
@@ -117,6 +122,7 @@ object GiveCommands {
     fun findBy(flags: Map<FindFlag, Any>, search: String, converter: (SkyBlockId) -> String) {
         val caseInsensitive = !flags.containsKey(FindFlag.MATCH_CASE)
         val give = flags.containsKey(FindFlag.GIVE)
+        val tag = flags[FindFlag.CUSTOM_DATA] as? Tag
         val searchType: (filter: String, element: String) -> Boolean = when {
             flags.containsKey(FindFlag.REGEX) -> { filter: String, element: String ->
                 Regex(
@@ -146,10 +152,23 @@ object GiveCommands {
                     }
                     append(" items matching the search!")
                 }.sendWithPrefix("catharsis-dev-find")
+                if (tag !is CompoundTag) {
+                    Text.of("Custom data isn't a compound tag, ignoring!", CatppuccinColors.Frappe.red).sendWithPrefix()
+                }
 
+                val limitedItems = items.take(limit).map {
+                    ItemBuilder().apply {
+                        val original = it.toItem()
+                        copyFrom(original)
+                        val data = original.get(DataComponents.CUSTOM_DATA)
+                        val originTag = data?.copyTag() ?: CompoundTag()
+                        set(DataComponents.CUSTOM_DATA, CustomData.of(originTag.apply {
+                            (tag as? CompoundTag)?.forEach { key, value -> this.put(key, value) }
+                        }))
+                    }.build()
+                }
                 if (!give) {
-                    items.take(limit).forEachIndexed { index, id ->
-                        val stack = id.toItem()
+                    limitedItems.forEachIndexed { index, stack ->
                         Text.of((index + 1).toFormattedString()) {
                             append(". ")
                             color = CatppuccinColors.Mocha.text
@@ -172,11 +191,10 @@ object GiveCommands {
                         }.send("catharsis-find-result-$index")
                     }
                 } else {
-                    val limitedItems = items.take(limit)
                     if (limitedItems.size > 20) {
-                        fillAndGiveShulkers(limitedItems.map { it.toItem() })
+                        fillAndGiveShulkers(limitedItems)
                     } else {
-                        limitedItems.forEach { tryGive(it.toItem()) }
+                        limitedItems.forEach { tryGive(it) }
                     }
                 }
             }
@@ -229,7 +247,8 @@ object GiveCommands {
         MATCH_CASE('m', group = null),
         LIMIT('l', IntegerArgumentType.integer(0), LIMIT_GROUP),
         ALL('a', group = LIMIT_GROUP),
-        GIVE('g', group = null)
+        GIVE('g', group = null),
+        CUSTOM_DATA('d', NbtTagArgument.nbtTag(), group = null)
         ;
 
         override val longName = (longName ?: name).lowercase()
