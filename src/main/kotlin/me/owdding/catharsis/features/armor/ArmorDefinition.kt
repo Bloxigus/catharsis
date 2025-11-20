@@ -20,7 +20,7 @@ data class ArmorDefinition(
     val partVisibility: EnumMap<BodyPart, PartVisibilityState>,
 ) {
 
-    fun resolve(stack: ItemStack, entity: LivingEntity?, slot: EquipmentSlot): ArmorModelState {
+    fun resolve(stack: ItemStack, entity: LivingEntity?, slot: EquipmentSlot): ArmorModelState? {
         return model.resolve(stack, McClient.self.level, entity, slot.ordinal + (entity?.id ?: 0))
     }
 
