@@ -1,5 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
+import net.fabricmc.loom.task.ValidateAccessWidenerTask
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -65,6 +67,7 @@ fun DependencyHandler.includeImplementation(dep: Any) {
     modImplementation(dep)
 }
 
+val accessWidenerFile = rootProject.file("src/catharsis.accesswidener")
 val mcVersion = stonecutter.current.version.replace(".", "")
 loom {
     runConfigs["client"].apply {
@@ -73,7 +76,7 @@ loom {
         vmArg("-Dfabric.modsFolder=" + '"' + rootProject.projectDir.resolve("run/${mcVersion}Mods").absolutePath + '"')
     }
 
-    accessWidenerPath.set(project.file("catharsis.accesswidener"))
+    accessWidenerPath.set(accessWidenerFile)
 }
 
 ksp {
@@ -134,3 +137,12 @@ idea {
         excludeDirs.add(file("run"))
     }
 }
+
+tasks.withType<ProcessResources>().configureEach {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    with(copySpec {
+        from(accessWidenerFile)
+    })
+}
+
+tasks.withType<ValidateAccessWidenerTask> { enabled = false }
