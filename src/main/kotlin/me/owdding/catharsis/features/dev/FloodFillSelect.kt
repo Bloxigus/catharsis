@@ -244,7 +244,7 @@ object FloodFillSelect {
     @Subscription
     private fun RenderWorldEvent.AfterTranslucent.render() = atCamera {
         finishedRegions.values.filterNot { it.highlightType == HighlightType.NONE }.forEach {
-            if (it.highlightType == HighlightType.INDIVIDUAL) {
+            if (it.highlightType == HighlightType.REGION) {
                 ShapeRenderer.renderLineBox(poseStack.pose(), buffer.getBuffer(RenderType.SECONDARY_BLOCK_OUTLINE), it.aabb.toMinecraftAABB(), 1f, 1f, 1f, 1f)
             } else {
                 it.blocks.forEach {
