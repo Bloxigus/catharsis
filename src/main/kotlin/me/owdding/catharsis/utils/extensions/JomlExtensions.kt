@@ -1,6 +1,7 @@
 package me.owdding.catharsis.utils.extensions
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Vec3i
 import net.minecraft.world.phys.Vec3
 import org.joml.*
 
@@ -39,3 +40,6 @@ fun Vector3ic.toVec3() = Vec3(toBlockPos())
 fun Vec3.toVector3dc(): Vector3dc = toVector3d()
 fun Vec3.toVector3d(): Vector3d = Vector3d(x, y, z)
 fun Vector3dc.toVec3() = Vec3(x(), y(), z())
+
+fun Vec3i.toVector3i(): Vector3i = Vector3i(x, y, z)
+fun Vector3i.toVec3i(): Vec3i = Vec3i(x, y, z)

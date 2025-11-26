@@ -1,9 +1,12 @@
 package me.owdding.catharsis.features.dev
 
+import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import me.owdding.catharsis.utils.codecs.PosCodecs
 import me.owdding.catharsis.utils.extensions.*
 import me.owdding.catharsis.utils.types.boundingboxes.BoundingBox
+import me.owdding.catharsis.utils.types.commands.CommandFlag
+import me.owdding.catharsis.utils.types.commands.FlagArgument
 import me.owdding.catharsis.utils.types.suggestion.IterableSuggestionProvider
 import me.owdding.ktmodules.Module
 import net.minecraft.client.renderer.RenderType
@@ -12,13 +15,18 @@ import net.minecraft.commands.arguments.ResourceKeyArgument
 import net.minecraft.commands.arguments.UuidArgument
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.core.Vec3i
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.BlockHitResult
 import org.joml.Vector3i
+import org.joml.component1
+import org.joml.component2
+import org.joml.component3
 import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
 import tech.thatgravyboat.skyblockapi.api.events.misc.RegisterCommandsEvent
 import tech.thatgravyboat.skyblockapi.api.events.misc.RegisterCommandsEvent.Companion.argument
@@ -35,7 +43,9 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextBuilder.append
 import tech.thatgravyboat.skyblockapi.utils.text.TextColor
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.color
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.command
-import java.util.*
+import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.onClick
+import java.util.LinkedList
+import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
 @Module
@@ -55,6 +65,28 @@ object FloodFillSelect {
 
     private val validBlocks = mutableSetOf<Block>()
 
+    private const val STATE_GROUP = "state"
+    private const val EXPORT_FORMAT_GROUP = "export_format"
+
+    enum class FloodFillFlags(
+        override val shortName: Char,
+        longName: String?,
+        override val flagType: ArgumentType<*>?,
+        override val group: String?,
+    ) : CommandFlag {
+        DIAGONAL('d', group = null),
+        EXPOSED('e'),
+        COVERED('c'),
+        JSON('j', group = EXPORT_FORMAT_GROUP),
+        RAW('r', group = EXPORT_FORMAT_GROUP),
+        OUTLINE('o', group = null),
+        ;
+
+        override val longName = (longName ?: name).lowercase()
+
+        constructor(shortName: Char, argumentType: ArgumentType<*>? = null, group: String? = STATE_GROUP) : this(shortName, null, argumentType, group)
+    }
+
     @Subscription
     private fun RegisterCommandsEvent.register() {
         register("catharsis dev area_select") {
@@ -67,7 +99,8 @@ object FloodFillSelect {
                         this.color = TextColor.GREEN
                     }
                     append(", new total is ${validBlocks.size}")
-                }.sendWithPrefix()            }
+                }.sendWithPrefix()
+            }
             thenCallback("remove block", ResourceKeyArgument.key(Registries.BLOCK), IterableSuggestionProvider(validBlocks)) {
                 val resourceKey = argument<ResourceKey<Block>>("block")!!
                 validBlocks.remove(BuiltInRegistries.BLOCK.getValueOrThrow(resourceKey))
@@ -99,62 +132,44 @@ object FloodFillSelect {
                 }
             }
             thenCallback("run") { dispatch() }
+            thenCallback("run flags", FlagArgument.enum<FloodFillFlags>()) { dispatch(map = argument("flags")) }
+            then("run flags", FlagArgument.enum<FloodFillFlags>()) {
+                thenCallback("range", IntegerArgumentType.integer(1)) {
+                    dispatch(argument("range"), argument("flags"))
+                }
+            }
             thenCallback("run range", IntegerArgumentType.integer(1)) {
-                dispatch(argument("range")!!)
-            }
-            thenCallback("copy area uuid", UuidArgument.uuid(), IterableSuggestionProvider(finishedRegions.keys)) {
-                val uuid = argument<UUID>("uuid")!!
-                val box = finishedRegions[uuid]!!.aabb.toJsonOrThrow(BoundingBox.CODEC)
-                McClient.clipboard = box.toPrettyString()
-                Text.of("Copied final area to clipboard!").sendWithPrefix()
-            }
-            thenCallback("copy blocks uuid", UuidArgument.uuid(), IterableSuggestionProvider(finishedRegions.keys)) {
-                val uuid = argument<UUID>("uuid")!!
-                val blocks = finishedRegions[uuid]!!.blocks
-                val blocksJson = blocks.toJsonOrThrow(PosCodecs.vector3icCodec.listOf())
-                McClient.clipboard = blocksJson.toPrettyString()
-                Text.of("Copied final ${blocks.size} blocks to clipboard!").sendWithPrefix()
-            }
-            thenCallback("outlines uuid", UuidArgument.uuid(), IterableSuggestionProvider(finishedRegions.keys)) {
-                val uuid = argument<UUID>("uuid")!!
-                val region = finishedRegions[uuid]!!
-                if (region.highlightType == HighlightType.INDIVIDUAL) {
-                    region.highlightType = HighlightType.NONE
-                    Text.of("Disabled highlight for region!").sendWithPrefix()
-                } else {
-                    region.highlightType = HighlightType.INDIVIDUAL
-                    Text.of("Enabled individual block highlight for region!").sendWithPrefix()
-                }
-            }
-            thenCallback("highlight uuid", UuidArgument.uuid(), IterableSuggestionProvider(finishedRegions.keys)) {
-                val uuid = argument<UUID>("uuid")!!
-                val region = finishedRegions[uuid]!!
-                if (region.highlightType == HighlightType.REGION) {
-                    region.highlightType = HighlightType.NONE
-                    Text.of("Disabled highlight for region!").sendWithPrefix()
-                } else {
-                    region.highlightType = HighlightType.REGION
-                    Text.of("Enabled box highlight for region!").sendWithPrefix()
-                }
+                dispatch(argument("range"))
             }
         }
     }
 
-    private fun dispatch(range: Int = 100) {
+    private fun dispatch(range: Int = 100, map: Map<FloodFillFlags, Any> = emptyMap()) {
         val hitResult = McClient.self.gameRenderer.pick(McClient.self.cameraEntity!!, 100.0, 100.0, 0f)
         if (hitResult !is BlockHitResult) {
             Text.of("Not targeting any blocks!").sendWithPrefix()
             return
         }
+        val mustBeExposed = map.containsKey(FloodFillFlags.EXPOSED)
+        val mustBeCovered = map.containsKey(FloodFillFlags.COVERED)
+        val includeDiagonals = map.containsKey(FloodFillFlags.DIAGONAL)
         val startBlock = hitResult.blockPos
         val blocks = validBlocks.toList()
         Text.of("Dispatching select with ${blocks.size} valid blocks!").sendWithPrefix()
         if (range > 100) {
-            Text.of("Dispatched select range higher then 100 blocks, expect performance problems!")
+            Text.of("Dispatched select range higher then 100 blocks, expect potential performance problems!").sendWithPrefix()
         }
         val startedAt = currentInstant()
         CompletableFuture.runAsync {
-            val blocks = floodFill(startBlock, range, blocks::contains)
+            val blocks = floodFill(startBlock, range, includeDiagonals) { pos, block ->
+                if (block.block !in blocks) return@floodFill false
+
+                if (mustBeCovered && directions.any { McLevel[pos.offset(it)].isAir }) return@floodFill false
+
+                if (mustBeExposed && directions.none { McLevel[pos.offset(it)].isAir }) return@floodFill false
+
+                true
+            }
             val time = startedAt.since().toReadableTime(maxUnits = 10, allowMs = true)
             McClient.runNextTick {
                 if (blocks.isEmpty()) {
@@ -162,23 +177,64 @@ object FloodFillSelect {
                     return@runNextTick
                 }
                 val key = UUID.randomUUID()
-                finishedRegions[key] = Region(blocks.map { it.toVector3i() })
+                val region = Region(blocks.map { it.toVector3i() })
+                if (map.containsKey(FloodFillFlags.OUTLINE)) {
+                    region.highlightType = HighlightType.REGION
+                }
+                finishedRegions[key] = region
                 Text.of("Finished selecting ${blocks.size} in $time!") {
                     append(" [area]") {
                         this.color = TextColor.GREEN
-                        this.command = "catharsis dev area_select copy area $key"
+                        onClick {
+                            val serializedAabb = if (map.containsKey(FloodFillFlags.RAW)) {
+                                val (min, max) = region.aabb
+                                val (minX, minY, minZ) = min
+                                val (maxX, maxY, maxZ) = max
+                                "$minX, $minY, $minZ : $maxX, $maxY, $maxZ"
+                            } else {
+                                val box = region.aabb.toJsonOrThrow(BoundingBox.CODEC)
+                                box.toPrettyString()
+                            }
+                            McClient.clipboard = serializedAabb
+                            Text.of("Copied final area to clipboard!").sendWithPrefix()
+                        }
                     }
                     append(" [blocks]") {
                         this.color = TextColor.BLUE
-                        this.command = "catharsis dev area_select copy blocks $key"
+                        onClick {
+                            val serializedBlocks = if (map.containsKey(FloodFillFlags.RAW)) {
+                                region.blocks.joinToString("\n") { (x, y, z) -> "$x, $y, $z" }
+                            } else {
+                                val blocksJson = region.blocks.toJsonOrThrow(PosCodecs.vector3icCodec.listOf())
+                                blocksJson.toPrettyString()
+                            }
+                            McClient.clipboard = serializedBlocks
+                            Text.of("Copied final ${blocks.size} blocks to clipboard!").sendWithPrefix()
+                        }
                     }
                     append(" [outline]") {
                         this.color = TextColor.GOLD
-                        this.command = "catharsis dev area_select outlines $key"
+                        onClick {
+                            if (region.highlightType == HighlightType.INDIVIDUAL) {
+                                region.highlightType = HighlightType.NONE
+                                Text.of("Disabled highlight for region!").sendWithPrefix()
+                            } else {
+                                region.highlightType = HighlightType.INDIVIDUAL
+                                Text.of("Enabled individual block highlight for region!").sendWithPrefix()
+                            }
+                        }
                     }
                     append(" [highlight]") {
                         this.color = TextColor.AQUA
-                        this.command = "catharsis dev area_select highlight $key"
+                        onClick {
+                            if (region.highlightType == HighlightType.REGION) {
+                                region.highlightType = HighlightType.NONE
+                                Text.of("Disabled highlight for region!").sendWithPrefix()
+                            } else {
+                                region.highlightType = HighlightType.REGION
+                                Text.of("Enabled box highlight for region!").sendWithPrefix()
+                            }
+                        }
                     }
                 }.sendWithPrefix()
             }
@@ -198,24 +254,38 @@ object FloodFillSelect {
         }
     }
 
-    private fun floodFill(center: BlockPos, radius: Int, filter: (Block) -> Boolean): List<BlockPos> {
+    private val diagonals = buildList {
+        for (x in -1..1) {
+            for (y in -1..1) {
+                for (z in -1..1) {
+                    if (x == 0 && y == 0 && z == 0) continue
+                    add(Vec3i(x, y, z))
+                }
+            }
+        }
+    }
+
+    private val directions = Direction.entries.map { it.unitVec3i }
+
+    private fun floodFill(center: BlockPos, radius: Int, includeDiagonals: Boolean = false, filter: (position: BlockPos, blockState: BlockState) -> Boolean): List<BlockPos> {
         val queue = LinkedList<BlockPos>()
 
         queue.add(center.immutable())
         val positions = mutableListOf<BlockPos>()
 
-        val directions = Direction.entries
+        val offsets = if (includeDiagonals) diagonals else directions
         while (queue.isNotEmpty()) {
             val current = queue.pop()
-            directions.forEach { direction ->
-                val offset = current.relative(direction)
+            offsets.forEach { direction ->
+                val offset = current.offset(direction)
                 if (positions.contains(offset)) return@forEach
                 if (offset.distSqr(center) >= radius * radius) return@forEach
                 val block = McLevel[offset]
-                if (!filter(block.block)) return@forEach
+                if (!filter(offset, block)) return@forEach
                 queue.add(offset)
                 positions.add(offset)
             }
+
         }
 
         return positions

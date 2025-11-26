@@ -29,9 +29,27 @@ Adds/Removes the specified block to/from the allow list.
 
 Prints out the current allow list.
 
-#### `/catharsis dev area_selection run {100}`
+#### `/catharsis dev area_selection run {-j} {100}`
 
 Dispatches the area selection with the current allow list, the range is the max distance from the origin.
+
+Usage: `/catharsis dev area_selection run [-d] [-e|-c] [-j|-r] [-o] <query>`
+
+#### Flags
+
+State Flags (only one allowed)
+
+> - `-e`/`--exposed` A block must be connected to air on at least one side.
+> - `-c`/`--covered` A block must not be exposed to air at all.
+
+Data Flags (only one allowed)
+
+> - `-j`/`--json` Sets the export format to json (default)
+> - `-r`/`--raw` Set the export format to raw.
+
+Misc Flags
+> - `-d`/`--diagonal` Includes diagonals in the flood fill.
+> - `-o`/`--outline` Directly outlines the result.
 
 #### `/catharsis dev area_selection clear`
 
