@@ -33,7 +33,7 @@ Prints out the current allow list.
 
 Dispatches the area selection with the current allow list, the range is the max distance from the origin.
 
-Usage: `/catharsis dev area_selection run [-d] [-e|-c] [-j|-r] [-o] <query>`
+Usage: `/catharsis dev area_selection run [-d] [-e|-c] [-j|-r] [-a] [-o] <query>`
 
 #### Flags
 
@@ -50,6 +50,7 @@ Data Flags (only one allowed)
 Misc Flags
 > - `-d`/`--diagonal` Includes diagonals in the flood fill.
 > - `-o`/`--outline` Directly outlines the result.
+> - `a`/`--auto_dispatch` Tries to dispatch a flood fill select for every block in the radius (square).
 
 #### `/catharsis dev area_selection clear`
 
