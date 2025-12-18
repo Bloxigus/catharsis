@@ -1,8 +1,17 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package me.owdding.catharsis.features.dev
 
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import me.owdding.catharsis.utils.codecs.PosCodecs
+import me.owdding.catharsis.utils.extensions.PREFIX
 import me.owdding.catharsis.utils.extensions.renderLineBox
 import me.owdding.catharsis.utils.extensions.sendWithPrefix
 import me.owdding.catharsis.utils.extensions.toBlockPos
@@ -31,12 +40,15 @@ import org.joml.component3
 import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
 import tech.thatgravyboat.skyblockapi.api.events.misc.RegisterCommandsEvent
 import tech.thatgravyboat.skyblockapi.api.events.misc.RegisterCommandsEvent.Companion.argument
+import tech.thatgravyboat.skyblockapi.api.events.render.RenderHudEvent
 import tech.thatgravyboat.skyblockapi.api.events.render.RenderWorldEvent
 import tech.thatgravyboat.skyblockapi.helpers.McClient
+import tech.thatgravyboat.skyblockapi.helpers.McFont
 import tech.thatgravyboat.skyblockapi.helpers.McLevel
 import tech.thatgravyboat.skyblockapi.platform.identifier
 import tech.thatgravyboat.skyblockapi.utils.extentions.currentInstant
 import tech.thatgravyboat.skyblockapi.utils.extentions.since
+import tech.thatgravyboat.skyblockapi.utils.extentions.toFormattedString
 import tech.thatgravyboat.skyblockapi.utils.json.Json.toJsonOrThrow
 import tech.thatgravyboat.skyblockapi.utils.json.Json.toPrettyString
 import tech.thatgravyboat.skyblockapi.utils.text.Text
@@ -46,10 +58,24 @@ import tech.thatgravyboat.skyblockapi.utils.text.TextColor
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.color
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.onClick
 import java.util.*
-import java.util.concurrent.CompletableFuture
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.atomic.AtomicReference
 
 @Module
 object FloodFillSelect {
+
+    data class CurrentJob(
+        val job: Job,
+        val totalBlocks: Long,
+        val lastBlock: AtomicReference<BlockPos> = AtomicReference(null),
+        val blocksChecked: AtomicLong = AtomicLong(0),
+        val queued: AtomicInteger = AtomicInteger(0),
+    ) {
+        fun isRunning() = job.isActive
+    }
+
+    var job: CurrentJob? = null
 
     enum class HighlightType {
         REGION,
@@ -160,10 +186,30 @@ object FloodFillSelect {
             thenCallback("run range", IntegerArgumentType.integer(1)) {
                 dispatch(argument("range"))
             }
+            thenCallback("cancel") {
+                val job = job
+                if (job == null || !job.isRunning()) {
+                    Text.of("There is no active job!").sendWithPrefix()
+                } else {
+                    Text.of("Scheduled cancel!").sendWithPrefix()
+                    job.job.cancel("Interrupted by user!")
+                    job.job.invokeOnCompletion {
+                        McClient.runNextTick {
+                            Text.of("Successfully canceled!").sendWithPrefix()
+                        }
+                    }
+                }
+            }
         }
     }
 
     private fun dispatch(range: Int = 100, map: Map<FloodFillFlags, Any> = emptyMap()) {
+        val job = job
+        if (job != null && job.isRunning()) {
+            Text.of("There is currently a job running!").sendWithPrefix()
+            return
+        }
+
         val hitResult = McClient.self.cameraEntity!!.pick(100.0, 1f, false)
         if (hitResult !is BlockHitResult) {
             Text.of("Not targeting any blocks!").sendWithPrefix()
@@ -178,13 +224,22 @@ object FloodFillSelect {
         if (range > 100) {
             Text.of("Dispatched select range higher then 100 blocks, expect potential performance problems!").sendWithPrefix()
         }
-        CompletableFuture.runAsync {
+
+
+        this.job = CurrentJob(
+            CoroutineScope(Dispatchers.Default).launch {
+                if (!map.containsKey(FloodFillFlags.AUTO_DISPATCH)) {
+                    dispatchSingle(blocks, startBlock, range, includeDiagonals, mustBeCovered, mustBeExposed, map)
+                } else {
+                    dispatchMultiple(blocks, startBlock, range, includeDiagonals, mustBeCovered, mustBeExposed, map)
+                }
+            },
             if (!map.containsKey(FloodFillFlags.AUTO_DISPATCH)) {
-                dispatchSingle(blocks, startBlock, range, includeDiagonals, mustBeCovered, mustBeExposed, map)
+                -1
             } else {
-                dispatchMultiple(blocks, startBlock, range, includeDiagonals, mustBeCovered, mustBeExposed, map)
-            }
-        }
+                (range.toLong() * 2 + 1) * (range.toLong() * 2 + 1) * 320
+            },
+        )
     }
 
     private fun dispatchMultiple(
@@ -196,7 +251,6 @@ object FloodFillSelect {
         mustBeExposed: Boolean,
         map: Map<FloodFillFlags, Any>,
     ) {
-
         val vec = Vec3i(range, range, range)
         val start = startBlock.offset(vec).atY(256)
         val end = startBlock.offset(vec.multiply(-1)).atY(-64)
@@ -204,10 +258,12 @@ object FloodFillSelect {
         val startedAt = currentInstant()
         val rawRegions = BlockPos.betweenClosed(start, end).mapNotNull {
             if (checkedBlocks.contains(it)) return@mapNotNull null
+            this.job?.lastBlock?.set(it)
             dispatchSingle(block, it, range, includeDiagonals, mustBeCovered, mustBeExposed, checkedBlocks).takeUnless(List<*>::isEmpty)
         }
         val time = startedAt.since().toReadableTime(maxUnits = 10, allowMs = true)
         McClient.runNextTick {
+            job = null
             if (rawRegions.isEmpty()) {
                 Text.of("Unable to find any regions!").sendWithPrefix()
                 return@runNextTick
@@ -220,7 +276,7 @@ object FloodFillSelect {
                 val blocks = it.map { block -> block.toVector3i() }
                 UUID.randomUUID() to Region(
                     if (storeIndividual) blocks else emptyList(),
-                    BoundingBox.encapsulatingVectors(blocks)!!
+                    BoundingBox.encapsulatingVectors(blocks)!!,
                 )
             }
             if (map.containsKey(FloodFillFlags.OUTLINE)) {
@@ -317,6 +373,7 @@ object FloodFillSelect {
         val blocks = dispatchSingle(blocks, startBlock, range, includeDiagonals, mustBeCovered, mustBeExposed)
         val time = startedAt.since().toReadableTime(maxUnits = 10, allowMs = true)
         McClient.runNextTick {
+            job = null
             if (blocks.isEmpty()) {
                 Text.of("Unable to find any blocks!").sendWithPrefix()
                 return@runNextTick
@@ -382,7 +439,26 @@ object FloodFillSelect {
     }
 
     @Subscription
+    private fun RenderHudEvent.render() {
+        val job = job ?: return
+        this.graphics.drawCenteredString(
+            McFont.self,
+            Text.of {
+                append(PREFIX)
+                append(" Flood fill progress: ${job.blocksChecked.toFormattedString()}/${job.totalBlocks.toFormattedString()} blocks found, ")
+                append("${job.queued.toFormattedString()} positions queued")
+            },
+            graphics.guiWidth() / 2, graphics.guiHeight() / 8 * 7, -1,
+        )
+    }
+
+    @Subscription
     private fun RenderWorldEvent.AfterTranslucent.render() = atCamera {
+        val job = job
+        job?.lastBlock?.get()?.let {
+            this@render.renderLineBox(AABB(it), secondary = true)
+        }
+
         finishedRegions.values.filterNot { it.highlightType == HighlightType.NONE }.forEach {
             if (it.highlightType == HighlightType.REGION) {
                 this@render.renderLineBox(it.aabb.toMinecraftAABB(), secondary = true)
@@ -416,6 +492,8 @@ object FloodFillSelect {
     ): List<BlockPos> {
         val center = center.immutable()
         checkedBlocks.add(center)
+        this.job?.lastBlock?.set(center)
+        this.job?.blocksChecked?.set(checkedBlocks.size.toLong())
         if (!filter(center, McLevel[center])) {
             return emptyList()
         }
@@ -427,10 +505,13 @@ object FloodFillSelect {
 
         val offsets = if (includeDiagonals) diagonals else directions
         while (queue.isNotEmpty()) {
+            this.job?.queued?.set(queue.size)
             val current = queue.pop()
             offsets.forEach { direction ->
                 val offset = current.offset(direction)
+                this.job?.lastBlock?.set(offset)
                 checkedBlocks.add(offset)
+                this.job?.blocksChecked?.set(checkedBlocks.size.toLong())
                 if (positions.contains(offset)) return@forEach
                 if (offset.distSqr(center) >= radius * radius) return@forEach
                 val block = McLevel[offset]
