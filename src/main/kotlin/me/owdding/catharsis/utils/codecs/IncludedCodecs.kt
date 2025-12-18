@@ -13,8 +13,8 @@ import net.minecraft.client.renderer.block.model.BlockModelDefinition
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.sounds.SoundEvent
+import net.minecraft.resources.Identifier
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.item.Item
 import org.joml.Quaternionf
@@ -22,16 +22,17 @@ import org.joml.Vector2i
 import org.joml.Vector2ic
 import tech.thatgravyboat.skyblockapi.utils.regex.component.ComponentRegex
 import java.net.URI
+import java.util.function.UnaryOperator
 
 object IncludedCodecs {
 
     @IncludedCodec
     val regexCodec: Codec<Regex> = Codec.STRING.xmap({ str -> Regex(str) }, { regex -> regex.pattern })
     @IncludedCodec
-    val resourceLocationCodec: Codec<ResourceLocation> = ResourceLocation.CODEC
+    val resourceLocationCodec: Codec<Identifier> = Identifier.CODEC
     @IncludedCodec(named = "catharsis_location")
-    val catharsisResourceLocation: Codec<ResourceLocation> = Codec.STRING.xmap(
-        { Utils.resourceLocationWithDifferentFallbackNamespace(it, ResourceLocation.NAMESPACE_SEPARATOR, Catharsis.MOD_ID) },
+    val catharsisIdentifier: Codec<Identifier> = Codec.STRING.xmap(
+        { Utils.resourceLocationWithDifferentFallbackNamespace(it, Identifier.NAMESPACE_SEPARATOR, Catharsis.MOD_ID) },
         { it.toString() },
     )
     @IncludedCodec
@@ -49,7 +50,7 @@ object IncludedCodecs {
         ).apply(it, ::Vector2i)
     }
     @IncludedCodec
-    val quaternionCodec: Codec<Quaternionf> = ExtraCodecs.QUATERNIONF
+    val quaternionCodec: Codec<Quaternionf> = ExtraCodecs.QUATERNIONF.xmap(::Quaternionf, UnaryOperator.identity())
     @IncludedCodec
     val componentCodec: Codec<Component> = ComponentSerialization.CODEC
     @IncludedCodec
