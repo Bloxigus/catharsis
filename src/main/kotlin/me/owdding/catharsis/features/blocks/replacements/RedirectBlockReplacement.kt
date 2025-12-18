@@ -19,12 +19,13 @@ data class RedirectBlockReplacement(
     val virtualState: VirtualBlockStateDefinition,
 ) : BlockReplacement {
     override fun listStates(): List<VirtualBlockStateDefinition> = listOf(virtualState)
-    override fun bake(baker: ModelBaker, block: Block) = BlockReplacementSelector.always(Baked(virtualState.blend, virtualState.instantiate(block, baker)))
+    override fun bake(baker: ModelBaker, block: Block) = BlockReplacementSelector.always(Baked(virtualState.blend, virtualState.instantiate(block, baker), virtualState.ignoreOriginalOffset))
     override fun select(state: BlockState, pos: BlockPos, random: RandomSource): VirtualBlockStateDefinition = virtualState
 
     data class Baked(
         override val blend: BlendMode?,
         override val models: Map<BlockState, BlockStateModel>,
+        override val ignoreOriginalOffset: Boolean,
     ) : BlockReplacementEntry {
         override val transform: QuadTransform by lazy {
             if (blend != null) {

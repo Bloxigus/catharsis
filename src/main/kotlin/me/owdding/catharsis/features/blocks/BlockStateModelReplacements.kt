@@ -1,8 +1,8 @@
 package me.owdding.catharsis.features.blocks
 
+import me.owdding.catharsis.features.blocks.replacements.LayeredBlockReplacements
 import me.owdding.ktcodecs.FieldName
 import me.owdding.ktcodecs.GenerateCodec
-import me.owdding.catharsis.features.blocks.replacements.LayeredBlockReplacements
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter
 import net.fabricmc.fabric.api.renderer.v1.mesh.QuadTransform
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBlockStateModel
@@ -34,23 +34,42 @@ interface BlockReplacementEntry {
     val blend: BlendMode?
     val models: Map<BlockState, BlockStateModel>
     val transform: QuadTransform
+    val ignoreOriginalOffset: Boolean
 }
 
 data class BlockStateModelReplacement(
     val original: BlockStateModel,
     val replacementSelector: BlockReplacementSelector,
-): FabricBlockStateModel by original as FabricBlockStateModel, BlockStateModel {
+) : FabricBlockStateModel by original as FabricBlockStateModel, BlockStateModel {
     override fun emitQuads(emitter: QuadEmitter, blockView: BlockAndTintGetter, pos: BlockPos, state: BlockState, random: RandomSource, cullTest: Predicate<Direction?>) {
         val random = RandomSource.create(Mth.getSeed(pos))
         val replacement = replacementSelector.select(state, pos, random)
         val model = replacement?.models[state]
+
         if (model != null) {
+            if (replacement.ignoreOriginalOffset) {
+                val originalOffset = state.getOffset(pos)
+                emitter.pushTransform {
+                    for (i in 0..3) {
+                        it.pos(
+                            i,
+                            it.posByIndex(i, 0) - originalOffset.x.toFloat(),
+                            it.posByIndex(i, 1) - originalOffset.y.toFloat(),
+                            it.posByIndex(i, 2) - originalOffset.z.toFloat()
+                        )
+                    }
+                    true
+                }
+            }
             emitter.pushTransform(replacement.transform)
             model.emitQuads(emitter, blockView, pos, state, random, cullTest)
             emitter.popTransform()
+
+            if (replacement.ignoreOriginalOffset) {
+                emitter.popTransform()
+            }
             return
         }
-
         super<BlockStateModel>.emitQuads(emitter, blockView, pos, state, random, cullTest)
     }
 
@@ -83,7 +102,7 @@ data class UnbakedBlockStateModelReplacement(
         baker: ModelBaker,
     ): BlockStateModel = BlockStateModelReplacement(
         original.bake(state, baker),
-        entries.bake(baker, state.block)
+        entries.bake(baker, state.block),
     )
 
     override fun visualEqualityGroup(state: BlockState): Any? = original.visualEqualityGroup(state)

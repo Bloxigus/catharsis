@@ -1,6 +1,7 @@
 package me.owdding.catharsis.features.blocks
 
 
+import me.owdding.ktcodecs.FieldName
 import me.owdding.ktcodecs.GenerateCodec
 import me.owdding.ktcodecs.Inline
 import net.minecraft.client.renderer.block.model.BlockModelDefinition
@@ -16,6 +17,7 @@ data class VirtualBlockStateDefinition(
     @Inline val model: BlockModelDefinition,
     val sounds: BlockSoundDefinition?,
     val blend: BlendMode?,
+    @FieldName("ignore_original_offset") val ignoreOriginalOffset: Boolean = false,
 ) {
 
     private var roots: Map<BlockState, BlockStateModel.UnbakedRoot>? = null
