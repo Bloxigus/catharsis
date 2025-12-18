@@ -212,7 +212,17 @@ object FloodFillSelect {
                 Text.of("Unable to find any regions!").sendWithPrefix()
                 return@runNextTick
             }
-            val regions = rawRegions.associate { UUID.randomUUID() to Region(it.map { block -> block.toVector3i() }) }
+            val storeIndividual = checkedBlocks.size <= 1_000_000
+            if (!storeIndividual) {
+                Text.of("Not storing individual blocks due to it being over 1m!").sendWithPrefix()
+            }
+            val regions = rawRegions.associate {
+                val blocks = it.map { block -> block.toVector3i() }
+                UUID.randomUUID() to Region(
+                    if (storeIndividual) blocks else emptyList(),
+                    BoundingBox.encapsulatingVectors(blocks)!!
+                )
+            }
             if (map.containsKey(FloodFillFlags.OUTLINE)) {
                 regions.forEach { (_, region) -> region.highlightType = HighlightType.REGION }
             }
