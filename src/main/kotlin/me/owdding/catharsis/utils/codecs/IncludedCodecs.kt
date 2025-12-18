@@ -1,22 +1,27 @@
 package me.owdding.catharsis.utils.codecs
 
+import com.mojang.datafixers.util.Either
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import me.owdding.catharsis.Catharsis
+import me.owdding.catharsis.generated.CodecUtils
 import me.owdding.catharsis.utils.Utils
 import me.owdding.ktcodecs.IncludedCodec
 import net.minecraft.client.color.item.ItemTintSource
 import net.minecraft.client.color.item.ItemTintSources
 import net.minecraft.client.renderer.block.model.BlockModelDefinition
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.resources.Identifier
+import net.minecraft.tags.TagKey
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.item.Item
+import net.minecraft.world.level.block.Block
 import org.joml.Quaternionf
 import org.joml.Vector2i
 import org.joml.Vector2ic
@@ -29,8 +34,8 @@ object IncludedCodecs {
     @IncludedCodec
     val regexCodec: Codec<Regex> = Codec.STRING.xmap({ str -> Regex(str) }, { regex -> regex.pattern })
     @IncludedCodec
-    val resourceLocationCodec: Codec<Identifier> = Identifier.CODEC
-    @IncludedCodec(named = "catharsis_location")
+   (keyable = true) val resourceLocationCodec: Codec<Identifier> = Identifier.CODEC
+    @IncludedCodec(named = "catharsis_location", keyable = true)
     val catharsisIdentifier: Codec<Identifier> = Codec.STRING.xmap(
         { Utils.resourceLocationWithDifferentFallbackNamespace(it, Identifier.NAMESPACE_SEPARATOR, Catharsis.MOD_ID) },
         { it.toString() },
@@ -66,10 +71,23 @@ object IncludedCodecs {
     // Registries
     // TODO this is broken because of the generic
     //@IncludedCodec(keyable = true) val menuCodec = BuiltInRegistries.MENU.byNameCodec()
-    @IncludedCodec
-    val itemCodec: Codec<Item> = BuiltInRegistries.ITEM.byNameCodec()
-    @IncludedCodec
-    val blockModelDefinitionCodec: MapCodec<BlockModelDefinition> = MapCodec.assumeMapUnsafe(BlockModelDefinition.CODEC)
+    @IncludedCodec val itemCodec: Codec<Item> = BuiltInRegistries.ITEM.byNameCodec()
+    @IncludedCodec val blockModelDefinitionCodec: MapCodec<BlockModelDefinition> = MapCodec.assumeMapUnsafe(BlockModelDefinition.CODEC)
+
+    @IncludedCodec(named = "block_tag_or_list") val tagOrBlocksCodec: Codec<Either<TagKey<Block>, Set<Block>>> = Codec.either(
+        TagKey.hashedCodec(Registries.BLOCK),
+        CodecUtils.compactSet(BuiltInRegistries.BLOCK.byNameCodec())
+    )
+    @IncludedCodec(named = "blockstate_properties") val blockStatePropertiesCodec: Codec<Map<String, String>> = Codec.unboundedMap(
+        Codec.STRING,
+        Codec.withAlternative(
+            Codec.STRING,
+            Codec.withAlternative(
+                Codec.BOOL.xmap(Boolean::toString) { it.equals("true", ignoreCase = true) },
+                Codec.INT.xmap(Int::toString, String::toInt)
+            )
+        )
+    )
 
     @IncludedCodec
     val soundEventCodecRange: Codec<SoundEvent> = Codec.withAlternative(
@@ -79,6 +97,6 @@ object IncludedCodecs {
                 Codec.FLOAT.optionalFieldOf("range").forGetter { event -> event.fixedRange() },
             ).apply(it) { name, range -> SoundEvent(name, range) }
         },
-        ResourceLocation.CODEC.xmap(SoundEvent::createVariableRangeEvent, SoundEvent::location),
+        Identifier.CODEC.xmap(SoundEvent::createVariableRangeEvent, SoundEvent::location),
     )
 }
