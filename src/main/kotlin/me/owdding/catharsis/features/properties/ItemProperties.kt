@@ -37,5 +37,6 @@ object ItemProperties {
         register(DataTypeProperties.ID, DataTypeProperties.RangeDataTypeItemProperty.CODEC)
         register(SkyBlockDayProperty.ID, SkyBlockDayProperty.CODEC)
         register(SkyBlockHourProperty.ID, SkyBlockHourProperty.CODEC)
+        register(EnchantedBookLevelProperty.ID, EnchantedBookLevelProperty.CODEC)
     }
 }
