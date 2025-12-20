@@ -1,4 +1,3 @@
-//~ item_holder
 package me.owdding.catharsis.features.item
 
 import com.mojang.serialization.MapCodec

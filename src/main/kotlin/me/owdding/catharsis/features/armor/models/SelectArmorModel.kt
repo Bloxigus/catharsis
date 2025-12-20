@@ -1,4 +1,3 @@
-//~ item_holder
 package me.owdding.catharsis.features.armor.models
 
 import com.google.common.collect.HashMultiset

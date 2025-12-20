@@ -7,10 +7,6 @@ stonecutter active "1.21.11"
 stonecutter parameters {
     swaps["mod_version"] = "\"" + property("version") + "\";"
     swaps["minecraft"] = "\"" + node.metadata.version + "\";"
-    replacements.string("item_holder") {
-        direction = eval(current.version, "=1.21.8")
-        replace("import net.minecraft.world.entity.ItemOwner", "import net.minecraft.world.entity.LivingEntity as ItemOwner")
-    }
     Replacements.read(project).replacements.forEach { (name, replacement) ->
         when (replacement) {
             is StringReplacement if replacement.named -> replacements.string(name) {
