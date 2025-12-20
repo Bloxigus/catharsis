@@ -7,6 +7,9 @@ import net.minecraft.world.phys.AABB
 import org.apache.commons.lang3.mutable.MutableInt
 import tech.thatgravyboat.skyblockapi.api.events.render.RenderWorldEvent
 import tech.thatgravyboat.skyblockapi.helpers.McPlayer
+import tech.thatgravyboat.skyblockapi.helpers.McPlayer.contains
+import kotlin.math.abs
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 object OctreeDebugRenderer {
@@ -20,14 +23,27 @@ object OctreeDebugRenderer {
         }
 
         val nodesRendered = MutableInt()
-        val playerNode = octree.findLeaf(McPlayer.self?.blockPosition() ?: BlockPos.ZERO)
+        val playerPosition: BlockPos = McPlayer.self?.blockPosition() ?: BlockPos.ZERO
+        val playerNode = octree.findLeaf(playerPosition)
         octree.visitNode { node, depth ->
-            visit(event, node, nodesRendered, depth, playerNode)
+            visit(event, node, nodesRendered, depth, playerNode, playerPosition)
         }
     }
 
-    fun visit(event: RenderWorldEvent, node: Node, nodesRendered: MutableInt, depth: Int, playerNode: Leaf?) {
+    fun visit(event: RenderWorldEvent, node: Node, nodesRendered: MutableInt, depth: Int, playerNode: Leaf?, playerPosition: BlockPos) {
         val aabb: AABB = node.getBox().toMinecraftAABB()
+        if (
+            (min(
+                abs(aabb.maxX - playerPosition.x),
+                abs(aabb.minX - playerPosition.x),
+            ) > 50 && min(
+                abs(aabb.maxY - playerPosition.y),
+                abs(aabb.minY - playerPosition.y),
+            ) > 50 && min(
+                abs(aabb.maxZ - playerPosition.z),
+                abs(aabb.minZ - playerPosition.z),
+            ) > 50) || aabb.contains(McPlayer)
+        ) return
         val color = (aabb.xsize / 16.0).roundToInt()
         val colorValue = color + 5L
         val camX = event.cameraPosition.x
