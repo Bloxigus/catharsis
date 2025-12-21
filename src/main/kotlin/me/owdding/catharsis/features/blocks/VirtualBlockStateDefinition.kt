@@ -18,6 +18,7 @@ data class VirtualBlockStateDefinition(
     val sounds: BlockSoundDefinition?,
     val blend: BlendMode?,
     @FieldName("ignore_original_offset") val ignoreOriginalOffset: Boolean = false,
+    val overrides: Map<Block, VirtualBlockStateDefinition> = emptyMap(),
 ) {
 
     private var roots: Map<BlockState, BlockStateModel.UnbakedRoot>? = null
