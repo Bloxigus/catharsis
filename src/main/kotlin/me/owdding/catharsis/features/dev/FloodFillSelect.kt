@@ -229,7 +229,7 @@ object FloodFillSelect {
         }
 
         val top = map[FloodFillFlags.MAX_Y] as? Int? ?: 256
-        val bottom = map[FloodFillFlags.MAX_Y] as? Int? ?: 0
+        val bottom = map[FloodFillFlags.MIN_Y] as? Int? ?: 0
 
         this.job = CurrentJob(
             CoroutineScope(Dispatchers.Default).launch {
