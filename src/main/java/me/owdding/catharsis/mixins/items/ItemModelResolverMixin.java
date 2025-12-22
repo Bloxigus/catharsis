@@ -11,13 +11,13 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import tech.thatgravyboat.skyblockapi.helpers.McPlayer;
 
 @Mixin(ItemModelResolver.class)
 public class ItemModelResolverMixin {
@@ -34,13 +34,12 @@ public class ItemModelResolverMixin {
     private Object catharsis$modifyDataComponentType(
         Object original,
         @Local(argsOnly = true) ItemStack stack,
-        @Local(argsOnly = true) ItemStackRenderState state,
-        @Local(argsOnly = true) ItemOwner owner
+        @Local(argsOnly = true) ItemStackRenderState state
     ) {
         if (manager == null) return original;
         if (state instanceof ItemStackRenderStateHook hook && !hook.catharsis$canFallthrough()) return original;
 
-        var isCarried = owner != null && owner.asLivingEntity() instanceof LocalPlayer player && player.containerMenu.getCarried() == stack;
+        var isCarried = McPlayer.INSTANCE.getSelf() instanceof LocalPlayer player && player.containerMenu.getCarried() == stack;
         var slot = AbstractContainerScreenHook.SLOT.get();
         var guiId = isCarried || slot != null ? GuiDefinitions.getSlot(isCarried ? -1 : slot.index, stack) : null;
         var itemId = ItemUtils.INSTANCE.getCustomLocation(stack);
