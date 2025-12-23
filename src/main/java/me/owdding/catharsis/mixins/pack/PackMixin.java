@@ -55,21 +55,21 @@ public class PackMixin implements PackMetadataHook {
          /*var metadata = original.call(info, resources, config);
          *///?}
 
-        //noinspection ConstantValue
-        if ((Object)metadata instanceof PackMetadataHook hook) {
-            hook.catharsis$setMetadata(catharsisMetadata);
+        if (metadata != null) {
+            metadata.catharsis$setMetadata(catharsisMetadata);
         }
+
         return metadata;
     }
 
     @Override
     public void catharsis$setMetadata(CatharsisMetadataSection metadata) {
-        ((PackMetadataHook) (Object) this.metadata).catharsis$setMetadata(metadata);
+        this.metadata.catharsis$setMetadata(metadata);
     }
 
     @Override
     public CatharsisMetadataSection catharsis$getMetadata() {
-        return ((PackMetadataHook) (Object) this.metadata).catharsis$getMetadata();
+        return this.metadata.catharsis$getMetadata();
     }
 
     @Unique

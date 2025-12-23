@@ -4,7 +4,11 @@ import me.owdding.catharsis.features.armor.ArmorDefinitionRenderState;
 
 public interface LivingEntityRenderStateHook {
 
-    boolean catharsis$getAndSetFirstDraw();
+    default boolean catharsis$getAndSetFirstDraw() {
+        throw new UnsupportedOperationException();
+    }
 
-    ArmorDefinitionRenderState catharsis$getArmorDefinitionRenderState();
+    default ArmorDefinitionRenderState catharsis$getArmorDefinitionRenderState() {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -3,7 +3,6 @@ package me.owdding.catharsis.mixins.armor;
 
 import me.owdding.catharsis.features.armor.BodyPart;
 import me.owdding.catharsis.features.armor.PartVisibilityState;
-import me.owdding.catharsis.hooks.armor.LivingEntityRenderStateHook;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
@@ -17,11 +16,11 @@ public class HumanoidModelMixin<T extends HumanoidRenderState> {
 
     @Inject(method = "setupAnim(Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;)V", at = @At(value = "TAIL"))
     private void modifyModel(T renderState, CallbackInfo ci) {
-        if (!(renderState instanceof LivingEntityRenderStateHook hook)) return;
-        if (!hook.catharsis$getAndSetFirstDraw()) return;
+        if (renderState == null) return;
+        if (!renderState.catharsis$getAndSetFirstDraw()) return;
 
         var self = (HumanoidModel<?>) (Object) this;
-        var parts = hook.catharsis$getArmorDefinitionRenderState().getPartVisibility();
+        var parts = renderState.catharsis$getArmorDefinitionRenderState().getPartVisibility();
 
         self.head.visible = parts.getOrDefault(BodyPart.HEAD, PartVisibilityState.DEFAULT).getBase();
         self.hat.visible = self.hat.visible && parts.getOrDefault(BodyPart.HEAD, PartVisibilityState.DEFAULT).getOverlay();

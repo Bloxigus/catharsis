@@ -44,7 +44,7 @@ public class SelectItemModelPropertyTypeMixin<P extends SelectItemModelProperty<
         );
 
         //noinspection unchecked
-        ((SelectItemModelPropertyTypeHook<P, T>) (Object) original).catharsis$setArmorSwitchCodec(codec);
+        original.catharsis$setArmorSwitchCodec(codec);
         return original;
     }
 }

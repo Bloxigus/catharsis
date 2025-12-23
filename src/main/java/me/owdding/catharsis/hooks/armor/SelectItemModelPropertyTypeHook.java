@@ -6,7 +6,11 @@ import net.minecraft.client.renderer.item.properties.select.SelectItemModelPrope
 
 public interface SelectItemModelPropertyTypeHook<P extends SelectItemModelProperty<T>, T> {
 
-    MapCodec<SelectArmorModel.UnbakedSwitch<P, T>> catharsis$getArmorSwitchCodec();
+    default MapCodec<SelectArmorModel.UnbakedSwitch<P, T>> catharsis$getArmorSwitchCodec() {
+        throw new UnsupportedOperationException();
+    }
 
-    void catharsis$setArmorSwitchCodec(MapCodec<SelectArmorModel.UnbakedSwitch<P, T>> codec);
+    default void catharsis$setArmorSwitchCodec(MapCodec<SelectArmorModel.UnbakedSwitch<P, T>> codec) {
+        throw new UnsupportedOperationException();
+    }
 }

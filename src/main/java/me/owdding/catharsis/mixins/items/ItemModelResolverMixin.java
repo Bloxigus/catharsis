@@ -4,8 +4,6 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import me.owdding.catharsis.features.gui.definitions.GuiDefinitions;
 import me.owdding.catharsis.hooks.items.AbstractContainerScreenHook;
-import me.owdding.catharsis.hooks.items.ItemStackRenderStateHook;
-import me.owdding.catharsis.hooks.items.ModelManagerHook;
 import me.owdding.catharsis.utils.ItemUtils;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.item.ItemModelResolver;
@@ -23,11 +21,11 @@ import tech.thatgravyboat.skyblockapi.helpers.McPlayer;
 public class ItemModelResolverMixin {
 
     @Unique
-    private ModelManagerHook manager;
+    private ModelManager manager;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void catharsis$storeModelManager(ModelManager modelManager, CallbackInfo ci) {
-        this.manager = modelManager instanceof ModelManagerHook hook ? hook : null;
+        this.manager = modelManager;
     }
 
     @ModifyExpressionValue(method = "appendItemLayers", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;"))
@@ -36,8 +34,8 @@ public class ItemModelResolverMixin {
         @Local(argsOnly = true) ItemStack stack,
         @Local(argsOnly = true) ItemStackRenderState state
     ) {
-        if (manager == null) return original;
-        if (state instanceof ItemStackRenderStateHook hook && !hook.catharsis$canFallthrough()) return original;
+        if (manager == null || state == null) return original;
+        if (!state.catharsis$canFallthrough()) return original;
 
         var isCarried = McPlayer.INSTANCE.getSelf() instanceof LocalPlayer player && player.containerMenu.getCarried() == stack;
         var slot = AbstractContainerScreenHook.SLOT.get();
