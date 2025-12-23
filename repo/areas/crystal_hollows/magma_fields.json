@@ -1,0 +1,11 @@
+{
+  "_comment": "Magma fields area in Crystal Hollows",
+  "type": "multiple",
+  "boxes": [
+    {
+      "min": "201:30:201",
+      "max": "824:63:824"
+    }
+  ],
+  "islands": "crystal_hollows"
+}

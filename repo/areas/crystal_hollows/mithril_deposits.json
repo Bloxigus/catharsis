@@ -1,0 +1,11 @@
+{
+  "_comment": "Mithril Deposits in Crystal Hollows",
+  "type": "multiple",
+  "boxes": [
+    {
+      "min": "824:64:201",
+      "max": "512:189:513"
+    }
+  ],
+  "islands": "crystal_hollows"
+}
