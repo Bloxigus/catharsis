@@ -5,5 +5,7 @@ import net.minecraft.resources.Identifier;
 
 public interface ModelManagerHook {
 
-    boolean catharsis$hasCustomModel(Identifier model);
+    default boolean catharsis$hasCustomModel(Identifier model) {
+        throw new UnsupportedOperationException();
+    }
 }

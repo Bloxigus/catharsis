@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import me.owdding.catharsis.features.gui.modifications.GuiModifiers;
 import me.owdding.catharsis.features.gui.modifications.modifiers.SlotModifier;
-import me.owdding.catharsis.hooks.gui.SlotHook;
 import net.minecraft.Optionull;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -32,11 +31,10 @@ public abstract class AbstractContainerScreenSlotsMixin<T extends AbstractContai
         var modifier = GuiModifiers.getActiveModifier();
         for (var slot : this.menu.slots) {
             var slotModifier = modifier != null ? modifier.getSlot(slot.index) : null;
-            var hook = (SlotHook) slot;
 
-            hook.catharsis$setPosition(Optionull.map(slotModifier, SlotModifier::getPosition));
-            hook.catharsis$setHidden(slotModifier != null && slotModifier.getHidden());
-            hook.catharsis$setHighlightable(slotModifier == null || slotModifier.getHighlightable());
+            slot.catharsis$setPosition(Optionull.map(slotModifier, SlotModifier::getPosition));
+            slot.catharsis$setHidden(slotModifier != null && slotModifier.getHidden());
+            slot.catharsis$setHighlightable(slotModifier == null || slotModifier.getHighlightable());
         }
     }
 

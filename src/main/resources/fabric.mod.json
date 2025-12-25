@@ -21,7 +21,7 @@
     "catharsis.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.16.10",
+    "fabricloader": ">=0.18.0",
     "minecraft": ">=${minecraft_start} <=${minecraft_end}",
     "fabric": "*",
     "fabric-language-kotlin": ">=${fabric_lang_kotlin}",

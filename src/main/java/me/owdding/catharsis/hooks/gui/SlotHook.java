@@ -5,9 +5,15 @@ import org.joml.Vector2ic;
 
 public interface SlotHook {
 
-    void catharsis$setPosition(@Nullable Vector2ic position);
+    default void catharsis$setPosition(@Nullable Vector2ic position) {
+        throw new UnsupportedOperationException();
+    }
 
-    void catharsis$setHidden(boolean hidden);
+    default void catharsis$setHidden(boolean hidden) {
+        throw new UnsupportedOperationException();
+    }
 
-    void catharsis$setHighlightable(boolean highlightable);
+    default void catharsis$setHighlightable(boolean highlightable) {
+        throw new UnsupportedOperationException();
+    }
 }

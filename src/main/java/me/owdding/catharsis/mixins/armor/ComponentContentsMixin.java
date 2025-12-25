@@ -5,7 +5,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import me.owdding.catharsis.features.armor.models.SelectArmorModel;
-import me.owdding.catharsis.hooks.armor.SelectItemModelPropertyTypeHook;
 import net.minecraft.client.renderer.item.properties.select.ComponentContents;
 import net.minecraft.client.renderer.item.properties.select.SelectItemModelProperty;
 import net.minecraft.core.component.DataComponentType;
@@ -30,7 +29,7 @@ public class ComponentContentsMixin {
             type -> catharsis$createCodec(type)
         );
 
-        ((SelectItemModelPropertyTypeHook<ComponentContents<T>, T>) (Object) original).catharsis$setArmorSwitchCodec(codec);
+        original.catharsis$setArmorSwitchCodec(codec);
         return original;
     }
 

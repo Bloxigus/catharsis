@@ -2,7 +2,6 @@ package me.owdding.catharsis.mixins.pack;
 
 import me.owdding.catharsis.features.pack.meta.CatharsisMetadataSection;
 import me.owdding.catharsis.hooks.pack.PackEntryHook;
-import me.owdding.catharsis.hooks.pack.PackMetadataHook;
 import net.minecraft.server.packs.repository.Pack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,8 +16,8 @@ public class PackSelectionModelEntryBaseMixin implements PackEntryHook {
 
     @Override
     public CatharsisMetadataSection catharsis$getMetadata() {
-        if (this.pack instanceof PackMetadataHook hook) {
-            return hook.catharsis$getMetadata();
+        if (this.pack != null) {
+            return this.pack.catharsis$getMetadata();
         }
         return null;
     }

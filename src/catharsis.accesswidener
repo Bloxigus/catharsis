@@ -1,3 +1,13 @@
-accessWidener v2 named
+classTweaker v1 named
 accessible method net/minecraft/client/renderer/GameRenderer pick (Lnet/minecraft/world/entity/Entity;DDF)Lnet/minecraft/world/phys/HitResult;
 accessible field net/minecraft/client/model/PlayerCapeModel cape Lnet/minecraft/client/model/geom/ModelPart;
+
+inject-interface net/minecraft/client/gui/screens/packs/PackSelectionModel$EntryBase me/owdding/catharsis/hooks/pack/PackEntryHook
+inject-interface net/minecraft/client/renderer/item/properties/select/SelectItemModelProperty$Type me/owdding/catharsis/hooks/armor/SelectItemModelPropertyTypeHook
+inject-interface net/minecraft/client/renderer/entity/state/LivingEntityRenderState me/owdding/catharsis/hooks/armor/LivingEntityRenderStateHook
+inject-interface net/minecraft/client/renderer/item/ItemStackRenderState me/owdding/catharsis/hooks/items/ItemStackRenderStateHook
+inject-interface net/minecraft/client/resources/model/ModelManager me/owdding/catharsis/hooks/items/ModelManagerHook
+inject-interface net/minecraft/server/packs/repository/Pack me/owdding/catharsis/hooks/pack/PackMetadataHook
+inject-interface net/minecraft/server/packs/repository/Pack$Metadata me/owdding/catharsis/hooks/pack/PackMetadataHook
+inject-interface net/minecraft/world/inventory/Slot me/owdding/catharsis/hooks/gui/SlotHook
+inject-interface net/minecraft/world/item/component/ItemLore me/owdding/catharsis/hooks/text/TooltipProviderHook

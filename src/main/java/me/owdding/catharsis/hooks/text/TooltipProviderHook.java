@@ -10,5 +10,7 @@ import java.util.function.Consumer;
 
 public interface TooltipProviderHook {
 
-    void catharsis$addToTooltip(ItemStack stack, Item.TooltipContext context, Consumer<Component> adder, TooltipFlag flag, DataComponentGetter components);
+    default void catharsis$addToTooltip(ItemStack stack, Item.TooltipContext context, Consumer<Component> adder, TooltipFlag flag, DataComponentGetter components) {
+        throw new UnsupportedOperationException();
+    }
 }

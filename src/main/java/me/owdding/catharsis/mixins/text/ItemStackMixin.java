@@ -2,12 +2,12 @@ package me.owdding.catharsis.mixins.text;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import me.owdding.catharsis.hooks.text.TooltipProviderHook;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.TooltipProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,7 +25,7 @@ public class ItemStackMixin {
         TooltipFlag flag, DataComponentGetter components,
         Operation<Void> original
     ) {
-        if (instance instanceof TooltipProviderHook hook) {
+        if (instance instanceof ItemLore hook) {
             hook.catharsis$addToTooltip((ItemStack)(Object)this, context, adder, flag, components);
         } else {
             original.call(instance, context, adder, flag, components);

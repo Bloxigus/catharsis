@@ -2,8 +2,12 @@ package me.owdding.catharsis.hooks.items;
 
 public interface ItemStackRenderStateHook {
 
-    void catharsis$setCanFallthrough(boolean canFallthrough);
+    default void catharsis$setCanFallthrough(boolean canFallthrough) {
+        throw new UnsupportedOperationException();
+    }
 
-    boolean catharsis$canFallthrough();
+    default boolean catharsis$canFallthrough() {
+        throw new UnsupportedOperationException();
+    }
 
 }

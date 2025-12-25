@@ -4,5 +4,7 @@ import me.owdding.catharsis.features.pack.meta.CatharsisMetadataSection;
 
 public interface PackEntryHook {
 
-    CatharsisMetadataSection catharsis$getMetadata();
+    default CatharsisMetadataSection catharsis$getMetadata() {
+        throw new UnsupportedOperationException();
+    }
 }
