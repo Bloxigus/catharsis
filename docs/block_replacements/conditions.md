@@ -115,3 +115,15 @@ Changes the block context for the sub condition.
 - <Position positionType="int" customText> <b>offset</b>: The block to check relative to the current position.</Position>
 - <TypeIcon type="object"/> **condition**: The condition to check with the offset applied.
 </TreeView>
+
+### In Island (`in_island`)
+
+Checks if the player in on a certain island.
+
+<TreeView>
+<span><TypeIcon type="object"/> Root <b>in island</b> object</span>
+
+- <TypeIcon type="string"/> **type**: `in_island`
+- <TypeIcon type="string"/> **island**: A skyblock island.
+    - <Island/>
+</TreeView>
