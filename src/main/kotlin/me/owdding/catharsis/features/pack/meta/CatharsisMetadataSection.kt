@@ -80,8 +80,7 @@ data class CatharsisMetadataSection(
         val default = PackConfigHandler.getConfig(this.id).default
         default.asMap().clear()
         for (option in this.config) {
-            val id = option.id ?: continue
-            default.add(id, option.asJson)
+            option.addToDefault(default)
         }
     }
 

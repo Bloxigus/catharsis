@@ -1,10 +1,12 @@
 package me.owdding.catharsis.features.pack.config
 
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.MapCodec
+import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.ktcodecs.GenerateCodec
 import me.owdding.ktcodecs.IncludedCodec
@@ -21,6 +23,13 @@ sealed interface PackConfigOption {
     val id: String? get() = null
 
     val asJson: JsonElement? get() = null
+
+    fun addToDefault(json: JsonObject) {
+        val id = id ?: return
+        val value = asJson ?: return
+        if (json.has(id)) Catharsis.error("Duplicate pack config option id '$id' found when generating default config!")
+        json.add(id, value)
+    }
 
     @GenerateCodec
     data class Separator(override val title: Component, override val description: Component) : PackConfigOption {
@@ -82,6 +91,12 @@ sealed interface PackConfigOption {
         override val type: MapCodec<out PackConfigOption> = CODEC
         override val id: String? = null
         override val description: Component = CommonText.EMPTY
+
+        override fun addToDefault(json: JsonObject) {
+            for (option in options) {
+                option.addToDefault(json)
+            }
+        }
 
         companion object {
             val CODEC: MapCodec<Tab> = CatharsisCodecs.getMapCodec<Tab>().validate {
