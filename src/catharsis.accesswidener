@@ -2,10 +2,6 @@ classTweaker v1 named
 accessible method net/minecraft/client/renderer/GameRenderer pick (Lnet/minecraft/world/entity/Entity;DDF)Lnet/minecraft/world/phys/HitResult;
 accessible field net/minecraft/client/model/PlayerCapeModel cape Lnet/minecraft/client/model/geom/ModelPart;
 
-extendable class net/minecraft/client/model/geom/ModelPart
-accessible field net/minecraft/client/model/geom/ModelPart children Ljava/util/Map;
-accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List;
-
 inject-interface net/minecraft/client/gui/screens/packs/PackSelectionModel$EntryBase me/owdding/catharsis/hooks/pack/PackEntryHook
 inject-interface net/minecraft/client/renderer/item/properties/select/SelectItemModelProperty$Type me/owdding/catharsis/hooks/armor/SelectItemModelPropertyTypeHook
 inject-interface net/minecraft/client/renderer/entity/state/EntityRenderState me/owdding/catharsis/hooks/entity/EntityRenderStateHook
