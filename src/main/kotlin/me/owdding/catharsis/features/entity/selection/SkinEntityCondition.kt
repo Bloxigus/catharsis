@@ -5,7 +5,11 @@ import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.ktcodecs.Compact
 import me.owdding.ktcodecs.FieldNames
 import me.owdding.ktcodecs.GenerateCodec
+//? if > 1.21.8 {
 import net.minecraft.client.entity.ClientAvatarEntity
+//?} else {
+/*import net.minecraft.client.player.AbstractClientPlayer as ClientAvatarEntity
+*///?}
 import net.minecraft.core.ClientAsset
 import net.minecraft.world.entity.Entity
 
@@ -16,11 +20,17 @@ data class SkinEntityCondition(
     override fun matches(entity: Entity): Boolean {
         if (entity !is ClientAvatarEntity) return false
 
+        //? if > 1.21.8 {
         val bodySkin = entity.skin.body
-
         if (bodySkin !is ClientAsset.DownloadedTexture) return false
+        val skinUrl = bodySkin.url
+        //?} else {
+        /*val skinUrl = entity.skin.textureUrl
+        *///?}
 
-        return skins.any { it == bodySkin.url }
+
+
+        return skins.any { it == skinUrl }
     }
 
     override fun codec(): MapCodec<SkinEntityCondition> = CatharsisCodecs.getMapCodec()
