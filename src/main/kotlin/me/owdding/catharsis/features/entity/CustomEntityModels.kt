@@ -12,6 +12,7 @@ import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
 import tech.thatgravyboat.skyblockapi.helpers.McClient
+import tech.thatgravyboat.skyblockapi.helpers.McLevel
 
 @Module
 object CustomEntityModels : SimplePreparableReloadListener<Map<Identifier, CustomEntityModel>>() {
@@ -45,6 +46,12 @@ object CustomEntityModels : SimplePreparableReloadListener<Map<Identifier, Custo
     ) {
         this.definitions.clear()
         this.definitions.putAll(definitions)
+
+        if (McLevel.hasLevel) {
+            for (entity in McLevel.level.entitiesForRendering()) {
+                entity.`catharsis$removeCustomModel`()
+            }
+        }
     }
 
     @JvmStatic

@@ -12,7 +12,6 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.entity.Entity
 import tech.thatgravyboat.skyblockapi.helpers.McClient
-import tech.thatgravyboat.skyblockapi.helpers.McLevel
 
 @Module
 object CustomEntityDefinitions : SimplePreparableReloadListener<List<CustomEntityDefinition>>() {
@@ -41,12 +40,6 @@ object CustomEntityDefinitions : SimplePreparableReloadListener<List<CustomEntit
     ) {
         this.definitions.clear()
         this.definitions.addAll(definitions)
-
-        if (McLevel.hasLevel) {
-            for (entity in McLevel.level.entitiesForRendering()) {
-                entity.`catharsis$removeCustomTexture`()
-            }
-        }
     }
 
     @JvmStatic

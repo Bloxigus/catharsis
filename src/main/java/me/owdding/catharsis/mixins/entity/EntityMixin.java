@@ -12,26 +12,25 @@ import org.spongepowered.asm.mixin.Unique;
 public class EntityMixin implements EntityHook {
 
     @Unique
-    private boolean catharsis$hasComputedTexture = false;
+    private boolean catharsis$hasComputedModel = false;
     @Unique
     private CustomEntityModel catharsis$computedReplacement = null;
 
     //TODO: call this whenever attributes or equipment gets updated
     @Override
-    public void catharsis$removeCustomTexture() {
-        catharsis$hasComputedTexture = false;
+    public void catharsis$removeCustomModel() {
+        catharsis$hasComputedModel = false;
     }
 
     @Override
     public CustomEntityModel catharsis$getCustomEntityModel() {
-        if (catharsis$hasComputedTexture) {
-            if (catharsis$computedReplacement != null) return catharsis$computedReplacement;
-            return null;
+        if (catharsis$hasComputedModel) {
+            return catharsis$computedReplacement;
         }
 
         var customEntity = CustomEntityDefinitions.getFor((Entity) (Object) this);
 
-        catharsis$hasComputedTexture = true;
+        catharsis$hasComputedModel = true;
 
         CustomEntityModel customModel = null;
 

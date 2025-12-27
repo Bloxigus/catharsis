@@ -4,7 +4,7 @@ import me.owdding.catharsis.features.entity.CustomEntityModel;
 
 public interface EntityHook {
 
-    default void catharsis$removeCustomTexture() {
+    default void catharsis$removeCustomModel() {
         throw new UnsupportedOperationException();
     }
 

@@ -20,7 +20,7 @@ public class EnderDragonRendererMixin {
         ),
         method = "submit(Lnet/minecraft/client/renderer/entity/state/EnderDragonRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V"
     )
-    public void handleDragonTextureReplacement(Args args) {
+    public void catharsis$handleDragonTextureReplacement(Args args) {
         EnderDragonRenderState state = args.get(1);
 
         CustomEntityModel customEntityModel = state.catharsis$getCustomEntityModel();
@@ -28,5 +28,23 @@ public class EnderDragonRendererMixin {
         if (customEntityModel == null) return;
 
         args.set(3, RenderTypes.entityCutoutNoCull(customEntityModel.getTexture()));
+    }
+
+    @ModifyArgs(
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/OrderedSubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/rendertype/RenderType;IIILnet/minecraft/client/renderer/texture/TextureAtlasSprite;ILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V",
+            ordinal = 1
+        ),
+        method = "submit(Lnet/minecraft/client/renderer/entity/state/EnderDragonRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V"
+    )
+    public void catharsis$handleDragonTextureReplacementDecal(Args args) {
+        EnderDragonRenderState state = args.get(1);
+
+        CustomEntityModel customEntityModel = state.catharsis$getCustomEntityModel();
+
+        if (customEntityModel == null) return;
+
+        args.set(3, RenderTypes.entityDecal(customEntityModel.getTexture()));
     }
 }
