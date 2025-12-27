@@ -46,6 +46,9 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
         if (customModel != null) {
             if (customModel.getModel() != null && model instanceof EntityModel<? super S> entityModel) {
                 customEntityModel = SafeModelPart.replaceModel(entityModel, renderState);
+
+                // bad model :c
+                if (customEntityModel.getClass() != entityModel.getClass()) customEntityModel = entityModel;
             }
 
             customRenderType = catharsis$createEntityTextureRenderType(renderState, customModel);
