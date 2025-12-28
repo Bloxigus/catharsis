@@ -1,16 +1,13 @@
-package me.owdding.catharsis.features.entity.models
+package me.owdding.catharsis.utils.geometry
 
 import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.utils.extensions.toVector3f
-import me.owdding.catharsis.utils.geometry.BedrockGeometry
-import net.minecraft.client.model.EntityModel
 import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.client.model.geom.PartPose
 import net.minecraft.client.model.geom.builders.CubeDeformation
 import net.minecraft.client.model.geom.builders.CubeListBuilder
 import net.minecraft.client.model.geom.builders.MeshDefinition
 import net.minecraft.client.model.geom.builders.PartDefinition
-import net.minecraft.client.renderer.entity.state.EntityRenderState
 import org.joml.Vector3f
 import org.joml.plus
 import java.util.function.Function
@@ -58,19 +55,6 @@ class SafeModelPart(
     }
 
     companion object {
-
-        @JvmStatic
-        fun <T : EntityRenderState> replaceModel(model: EntityModel<T>, renderState: T): EntityModel<T> {
-
-            val newCustomEntityModel = renderState.`catharsis$getCustomEntityModel`()?.model ?: return model
-
-            val modelConstructor = model.javaClass.getConstructor(ModelPart::class.java)
-
-            val newModel = modelConstructor.newInstance(newCustomEntityModel)
-
-            return newModel
-        }
-
         fun convertFromBedrockModel(model: BedrockGeometry?): ModelPart? {
             if (model == null) return null
 

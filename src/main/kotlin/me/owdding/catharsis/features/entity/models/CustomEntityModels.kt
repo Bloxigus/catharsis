@@ -1,4 +1,4 @@
-package me.owdding.catharsis.features.entity
+package me.owdding.catharsis.features.entity.models
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
@@ -17,7 +17,7 @@ import tech.thatgravyboat.skyblockapi.helpers.McLevel
 
 @Module
 object CustomEntityModels : SimplePreparableReloadListener<Map<Identifier, CustomEntityModel>>() {
-    private val converter = FileToIdConverter.json("catharsis/entities")
+    private val converter = FileToIdConverter.json("entities")
     private val gson = GsonBuilder().create()
     private val codec = CatharsisCodecs.getCodec<CustomEntityModel.Unbaked>()
 
@@ -32,7 +32,15 @@ object CustomEntityModels : SimplePreparableReloadListener<Map<Identifier, Custo
         return converter.listMatchingResources(resourceManager)
             .mapNotNull { (fileName, resource) ->
                 resource.openAsReader().use { bufferedReader ->
-                    val definition = codec.parse(JsonOps.INSTANCE, gson.fromJson(bufferedReader, JsonElement::class.java)).orThrow.bake(resources)
+                    val definition = codec.parse(
+                        JsonOps.INSTANCE,
+                        gson.fromJson(
+                            bufferedReader,
+                            JsonElement::class.java,
+                        ),
+                    )
+                        .orThrow
+                        .bake(resources)
 
                     val id = converter.fileToId(fileName)
 

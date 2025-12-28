@@ -6,8 +6,7 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
-import me.owdding.catharsis.features.entity.CustomEntityModel;
-import me.owdding.catharsis.features.entity.models.SafeModelPart;
+import me.owdding.catharsis.features.entity.models.CustomEntityModel;
 import net.minecraft.client.model.EntityModel;
 //? if > 1.21.8 {
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -57,7 +56,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
 
         if (customModel != null && customModel.getModel() != null && model instanceof EntityModel<? super S> entityModel) {
             //noinspection unchecked
-            this.model = (M) SafeModelPart.replaceModel(entityModel, renderState);
+            this.model = (M) customModel.replaceModel(entityModel);
         }
 
         //? if > 1.21.8 {

@@ -1,12 +1,14 @@
-package me.owdding.catharsis.features.entity
+package me.owdding.catharsis.features.entity.models
 
-import me.owdding.catharsis.features.entity.models.SafeModelPart
+import me.owdding.catharsis.utils.geometry.SafeModelPart
 import me.owdding.catharsis.utils.TypedResourceManager
 import me.owdding.catharsis.utils.geometry.BedrockGeometry
 import me.owdding.ktcodecs.FieldName
 import me.owdding.ktcodecs.GenerateCodec
 import me.owdding.ktcodecs.NamedCodec
+import net.minecraft.client.model.EntityModel
 import net.minecraft.client.model.geom.ModelPart
+import net.minecraft.client.renderer.entity.state.EntityRenderState
 import net.minecraft.resources.Identifier
 
 data class CustomEntityModel(
@@ -14,6 +16,17 @@ data class CustomEntityModel(
     val emissiveTexture: Identifier?,
     val model: ModelPart?
 ) {
+
+    fun <T : EntityRenderState> replaceModel(oldModel: EntityModel<T>): EntityModel<T> {
+        val newCustomEntityModel = model ?: return oldModel
+
+        val modelConstructor = oldModel.javaClass.getConstructor(ModelPart::class.java)
+
+        val newModel = modelConstructor.newInstance(newCustomEntityModel)
+
+        return newModel
+    }
+
     @GenerateCodec
     @NamedCodec("UnbakedCustomEntityModel")
     data class Unbaked(

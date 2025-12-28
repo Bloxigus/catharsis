@@ -1,6 +1,6 @@
 package me.owdding.catharsis.mixins.entity;
 
-import me.owdding.catharsis.features.entity.CustomEntityModel;
+import me.owdding.catharsis.features.entity.models.CustomEntityModel;
 import me.owdding.catharsis.hooks.entity.EntityRenderStateHook;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import org.spongepowered.asm.mixin.Mixin;

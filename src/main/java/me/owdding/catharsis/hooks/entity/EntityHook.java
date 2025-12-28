@@ -1,6 +1,6 @@
 package me.owdding.catharsis.hooks.entity;
 
-import me.owdding.catharsis.features.entity.CustomEntityModel;
+import me.owdding.catharsis.features.entity.models.CustomEntityModel;
 
 public interface EntityHook {
 

@@ -1,7 +1,7 @@
 package me.owdding.catharsis.mixins.entity;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import me.owdding.catharsis.features.entity.CustomEntityModel;
+import me.owdding.catharsis.features.entity.models.CustomEntityModel;
 import net.minecraft.client.renderer.entity.EnderDragonRenderer;
 import net.minecraft.client.renderer.entity.state.EnderDragonRenderState;
 //? if > 1.21.10 {
