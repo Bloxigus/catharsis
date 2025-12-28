@@ -1,28 +1,36 @@
 package me.owdding.catharsis.features.entity
 
 import me.owdding.catharsis.features.entity.models.SafeModelPart
+import me.owdding.catharsis.utils.TypedResourceManager
 import me.owdding.catharsis.utils.geometry.BedrockGeometry
 import me.owdding.ktcodecs.FieldName
 import me.owdding.ktcodecs.GenerateCodec
 import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.resources.Identifier
 
-@GenerateCodec
 data class CustomEntityModel(
     val texture: Identifier,
-    @FieldName("emissive_texture") val emissiveTexture: Identifier?,
-    val model: BedrockGeometry?
+    val emissiveTexture: Identifier?,
+    val model: ModelPart?
 ) {
-    private var cachedModel: ModelPart? = null
+    @GenerateCodec
+    data class Unbaked(
+        val texture: Identifier,
+        @FieldName("emissive_texture") val emissiveTexture: Identifier?,
+        val model: Identifier?
+    ) {
+        fun bake(resources: TypedResourceManager): CustomEntityModel {
+            val bakedModel = if (model != null) {
+                val bedrockModel = resources.getOrLoad(model, BedrockGeometry.RESOURCE_PARSER)?.getOrNull()
 
-    fun getModelPart(): ModelPart? {
-        if (model == null) return null
-        if (cachedModel != null) return cachedModel
+                SafeModelPart.convertFromBedrockModel(bedrockModel)
+            } else null
 
-        val modelPart = SafeModelPart.convertFromBedrockModel(model)
-
-        cachedModel = modelPart
-
-        return modelPart
+            return CustomEntityModel(
+                texture,
+                null,
+                bakedModel
+            )
+        }
     }
 }

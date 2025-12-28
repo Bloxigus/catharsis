@@ -5,6 +5,7 @@ import com.google.gson.JsonElement
 import com.mojang.serialization.JsonOps
 import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.generated.CatharsisCodecs
+import me.owdding.catharsis.utils.TypedResourceManager
 import me.owdding.ktmodules.Module
 import net.minecraft.resources.FileToIdConverter
 import net.minecraft.resources.Identifier
@@ -18,7 +19,7 @@ import tech.thatgravyboat.skyblockapi.helpers.McLevel
 object CustomEntityModels : SimplePreparableReloadListener<Map<Identifier, CustomEntityModel>>() {
     private val converter = FileToIdConverter.json("catharsis/entities")
     private val gson = GsonBuilder().create()
-    private val codec = CatharsisCodecs.getCodec<CustomEntityModel>()
+    private val codec = CatharsisCodecs.getCodec<CustomEntityModel.Unbaked>()
 
     private val definitions = mutableMapOf<Identifier, CustomEntityModel>()
 
@@ -26,10 +27,12 @@ object CustomEntityModels : SimplePreparableReloadListener<Map<Identifier, Custo
         resourceManager: ResourceManager,
         profiler: ProfilerFiller,
     ): Map<Identifier, CustomEntityModel> {
+        val resources = TypedResourceManager(resourceManager)
+
         return converter.listMatchingResources(resourceManager)
             .mapNotNull { (fileName, resource) ->
                 resource.openAsReader().use { bufferedReader ->
-                    val definition = codec.parse(JsonOps.INSTANCE, gson.fromJson(bufferedReader, JsonElement::class.java)).orThrow
+                    val definition = codec.parse(JsonOps.INSTANCE, gson.fromJson(bufferedReader, JsonElement::class.java)).orThrow.bake(resources)
 
                     val id = converter.fileToId(fileName)
 

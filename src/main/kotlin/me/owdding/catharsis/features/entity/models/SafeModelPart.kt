@@ -62,7 +62,7 @@ class SafeModelPart(
         @JvmStatic
         fun <T : EntityRenderState> replaceModel(model: EntityModel<T>, renderState: T): EntityModel<T> {
 
-            val newCustomEntityModel = renderState.`catharsis$getCustomEntityModel`()?.getModelPart() ?: return model
+            val newCustomEntityModel = renderState.`catharsis$getCustomEntityModel`()?.model ?: return model
 
             val modelConstructor = model.javaClass.getConstructor(ModelPart::class.java)
 
@@ -71,7 +71,9 @@ class SafeModelPart(
             return newModel
         }
 
-        fun convertFromBedrockModel(model: BedrockGeometry): ModelPart {
+        fun convertFromBedrockModel(model: BedrockGeometry?): ModelPart? {
+            if (model == null) return null
+
             val meshDefinition = MeshDefinition()
             val root = meshDefinition.root
             val knownBones = mutableMapOf<String?, PartDefinition>()
