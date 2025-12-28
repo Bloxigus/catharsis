@@ -1,6 +1,7 @@
 package me.owdding.catharsis.features.entity.models
 
 import me.owdding.catharsis.Catharsis
+import me.owdding.catharsis.utils.extensions.toVector3f
 import me.owdding.catharsis.utils.geometry.BedrockGeometry
 import net.minecraft.client.model.EntityModel
 import net.minecraft.client.model.geom.ModelPart
@@ -11,16 +12,21 @@ import net.minecraft.client.model.geom.builders.MeshDefinition
 import net.minecraft.client.model.geom.builders.PartDefinition
 import net.minecraft.client.renderer.entity.state.EntityRenderState
 import org.joml.Vector3f
+import org.joml.plus
+import java.util.function.Function
 import kotlin.jvm.optionals.getOrNull
 
 class SafeModelPart(
     cubes: List<Cube>,
     children: Map<String, ModelPart>,
-    initialPose: PartPose
+    initialPose: PartPose,
+    val name: String = "Unnamed",
+    val path: String = "root"
 ) : ModelPart(cubes, children) {
 
     init {
         this.initialPose = initialPose
+        this.loadPose(initialPose)
     }
 
     override fun getChild(name: String): ModelPart {
@@ -30,11 +36,24 @@ class SafeModelPart(
             SafeModelPart(
                 unsafeModelPart.cubes,
                 unsafeModelPart.children,
-                unsafeModelPart.initialPose
+                unsafeModelPart.initialPose,
+                this.name,
+                "$path/$name"
             )
         } else {
-            Catharsis.warn("model missing bone!")
+            Catharsis.warn("model ${this.name} missing bone $name!")
             DummyModelPart()
+        }
+    }
+
+    override fun createPartLookup(): Function<String, ModelPart?> {
+        val parentLookup = super.createPartLookup()
+        return Function { boneName: String ->
+            val parentBone = parentLookup.apply(boneName)
+            if (parentBone == null) {
+                Catharsis.warn("Bone $path in model $name is missing!")
+                DummyModelPart()
+            } else parentBone
         }
     }
 
@@ -66,18 +85,36 @@ class SafeModelPart(
 
                 val parentBone = knownBones[bone.parent] ?: continue
                 val offsetOffset = knownOffsets[bone.parent] ?: continue
-                val offset = Vector3f(offsetOffset.x - bone.pivot[0], offsetOffset.y - bone.pivot[1], offsetOffset.z - bone.pivot[2])
+                val pivot = bone.pivot.toVector3f()
+                val offset = Vector3f(
+                    offsetOffset.x - pivot.x,
+                    offsetOffset.y - pivot.y,
+                    pivot.z - offsetOffset.z
+                )
 
                 for (cube in bone.cubes) {
                     if (cube.uv?.right()?.isPresent ?: true) continue
                     val uv = cube.uv.left().getOrNull() ?: continue
+                    val size = cube.size.toVector3f()
+                    val origin = cube.origin.toVector3f()
+                    val to = origin + size
 
-                    //TODO: figure out originx originy originz
-                    cubesBuilder.texOffs(uv[0].toInt(), uv[1].toInt())
-                        .addBox(0f, 0f, 0f, cube.size[0], cube.size[1], cube.size[2], CubeDeformation(cube.inflate ?: 0f))
+                    val cubeOrigin = Vector3f(
+                        pivot.x - to.x,
+                        pivot.y - to.y,
+                        origin.z - pivot.z
+                    )
+
+                    cubesBuilder
+                        .texOffs(uv[0].toInt(), uv[1].toInt())
+                        .addBox(
+                            cubeOrigin.x, cubeOrigin.y, cubeOrigin.z,
+                            size.x, size.y, size.z,
+                            CubeDeformation(cube.inflate ?: 0f)
+                        )
                 }
 
-                knownOffsets[bone.name] = offset
+                knownOffsets[bone.name] = pivot
 
                 val child = parentBone.addOrReplaceChild(bone.name, cubesBuilder, PartPose.offset(offset.x, offset.y, offset.z))
 
@@ -89,7 +126,8 @@ class SafeModelPart(
             return SafeModelPart(
                 unsafeModelPart.cubes,
                 unsafeModelPart.children,
-                unsafeModelPart.initialPose
+                unsafeModelPart.initialPose,
+                name = model.description.identifier
             )
         }
     }
@@ -98,6 +136,12 @@ class SafeModelPart(
 class DummyModelPart : ModelPart(mutableListOf(), mutableMapOf()) {
     override fun getChild(name: String): ModelPart {
         return children.getOrPut(name) {
+            DummyModelPart()
+        }
+    }
+
+    override fun createPartLookup(): Function<String, ModelPart?> {
+        return Function {
             DummyModelPart()
         }
     }
