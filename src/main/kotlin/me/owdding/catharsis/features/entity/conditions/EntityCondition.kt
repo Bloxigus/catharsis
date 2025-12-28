@@ -28,6 +28,8 @@ object EntityConditions {
         ID_MAPPER.put(Catharsis.id("attribute"), CatharsisCodecs.getMapCodec<AttributeEntityCondition>())
         ID_MAPPER.put(Catharsis.id("island"), CatharsisCodecs.getMapCodec<IslandEntityCondition>())
         ID_MAPPER.put(Catharsis.id("equipment"), CatharsisCodecs.getMapCodec<EquipmentEntityCondition>())
+        ID_MAPPER.put(Catharsis.id("name"), CatharsisCodecs.getMapCodec<NameEntityCondition>())
+        ID_MAPPER.put(Catharsis.id("uuid"), CatharsisCodecs.getMapCodec<UuidEntityCondition>())
         ID_MAPPER.put(Catharsis.id("not_real_player"), NotRealPlayerCondition.codec())
     }
 }
