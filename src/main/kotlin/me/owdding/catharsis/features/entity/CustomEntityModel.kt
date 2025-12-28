@@ -5,6 +5,7 @@ import me.owdding.catharsis.utils.TypedResourceManager
 import me.owdding.catharsis.utils.geometry.BedrockGeometry
 import me.owdding.ktcodecs.FieldName
 import me.owdding.ktcodecs.GenerateCodec
+import me.owdding.ktcodecs.NamedCodec
 import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.resources.Identifier
 
@@ -14,6 +15,7 @@ data class CustomEntityModel(
     val model: ModelPart?
 ) {
     @GenerateCodec
+    @NamedCodec("UnbakedCustomEntityModel")
     data class Unbaked(
         val texture: Identifier,
         @FieldName("emissive_texture") val emissiveTexture: Identifier?,
@@ -28,7 +30,7 @@ data class CustomEntityModel(
 
             return CustomEntityModel(
                 texture,
-                null,
+                emissiveTexture,
                 bakedModel
             )
         }
