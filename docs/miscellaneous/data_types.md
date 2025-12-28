@@ -19,9 +19,9 @@ IDs of Data Types can be found at these locations:
 
 | Category | Conditional | Select | Range |
 |----------|-------------|--------|-------|
-| Number   | ❌          | ✔️     | ✔️    |
-| String   | ❌          | ✔️      | ❌     |
-| Boolean  | ✔️          | ✔️      | ❌     |
+| Number   | ❌           | ✔️     | ✔️    |
+| String   | ❌           | ✔️     | ❌     |
+| Boolean  | ✔️          | ✔️     | ❌     |
 
 ## Available Number Data Types
 
@@ -50,6 +50,13 @@ Data Types that return a String or Enum names are available by default.
 ## Available Boolean Data Types
 
 Data Types that return a Boolean are available by default.
+
+### Custom Boolean Data Types
+
+| Data Type           | Description                                                                                                                      |
+|---------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| `has_skin_fallback` | Hypixel doesn't share enough item data for other items, this fallbacks to using the item name to determine if a skin is applied. |
+| `has_dye_fallback`  | Hypixel doesn't share enough item data for other items, this fallbacks to using the item name to determine if a dye is applied.  |
 
 ## Unavailable Data Types
 
