@@ -1,4 +1,4 @@
-package me.owdding.catharsis.features.entity.selection
+package me.owdding.catharsis.features.entity.conditions
 
 import com.mojang.serialization.MapCodec
 import me.owdding.catharsis.Catharsis
@@ -11,7 +11,9 @@ import net.minecraft.world.entity.Entity
 
 interface EntityCondition {
     fun matches(entity: Entity): Boolean
-    fun codec(): MapCodec<out EntityCondition>
+
+    //noinspection unchecked
+    fun codec(): MapCodec<out EntityCondition> = CatharsisCodecs.getMapCodec(this::class.java) as MapCodec<out EntityCondition>
 }
 
 object EntityConditions {

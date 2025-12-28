@@ -1,4 +1,4 @@
-package me.owdding.catharsis.features.entity.selection
+package me.owdding.catharsis.features.entity.conditions
 
 import com.mojang.serialization.MapCodec
 import net.minecraft.world.entity.Entity

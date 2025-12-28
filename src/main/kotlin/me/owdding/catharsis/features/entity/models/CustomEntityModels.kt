@@ -12,6 +12,9 @@ import net.minecraft.resources.Identifier
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
+import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
+import tech.thatgravyboat.skyblockapi.api.events.entity.EntityAttributesUpdateEvent
+import tech.thatgravyboat.skyblockapi.api.events.entity.EntityEquipmentUpdateEvent
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.helpers.McLevel
 
@@ -60,9 +63,19 @@ object CustomEntityModels : SimplePreparableReloadListener<Map<Identifier, Custo
 
         if (McLevel.hasLevel) {
             for (entity in McLevel.level.entitiesForRendering()) {
-                entity.`catharsis$removeCustomModel`()
+                entity.`catharsis$resetCustomModel`()
             }
         }
+    }
+
+    @Subscription
+    private fun EntityAttributesUpdateEvent.onAttributeUpdate() {
+        this.entity.`catharsis$resetCustomModel`()
+    }
+
+    @Subscription
+    private fun EntityEquipmentUpdateEvent.onEquipmentUpdate() {
+        this.entity.`catharsis$resetCustomModel`()
     }
 
     @JvmStatic

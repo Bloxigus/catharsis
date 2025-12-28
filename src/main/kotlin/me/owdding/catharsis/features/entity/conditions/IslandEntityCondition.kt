@@ -1,7 +1,5 @@
-package me.owdding.catharsis.features.entity.selection
+package me.owdding.catharsis.features.entity.conditions
 
-import com.mojang.serialization.MapCodec
-import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.ktcodecs.Compact
 import me.owdding.ktcodecs.FieldNames
 import me.owdding.ktcodecs.GenerateCodec
@@ -14,6 +12,4 @@ data class IslandEntityCondition(
 ) : EntityCondition {
 
     override fun matches(entity: Entity) = islands.any { it.inIsland() }
-
-    override fun codec(): MapCodec<TypeEntityCondition> = CatharsisCodecs.getMapCodec()
 }

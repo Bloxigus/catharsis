@@ -1,8 +1,6 @@
-package me.owdding.catharsis.features.entity.selection
+package me.owdding.catharsis.features.entity.conditions
 
-import com.mojang.serialization.MapCodec
 import me.owdding.catharsis.Catharsis
-import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.ktcodecs.FieldName
 import me.owdding.ktcodecs.GenerateCodec
 import net.minecraft.core.registries.BuiltInRegistries
@@ -21,6 +19,4 @@ data class TypeEntityCondition(
     }
 
     override fun matches(entity: Entity) = entity.type == type
-
-    override fun codec(): MapCodec<TypeEntityCondition> = CatharsisCodecs.getMapCodec()
 }

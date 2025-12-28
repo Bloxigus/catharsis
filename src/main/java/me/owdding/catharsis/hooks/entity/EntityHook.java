@@ -4,7 +4,7 @@ import me.owdding.catharsis.features.entity.models.CustomEntityModel;
 
 public interface EntityHook {
 
-    default void catharsis$removeCustomModel() {
+    default void catharsis$resetCustomModel() {
         throw new UnsupportedOperationException();
     }
 

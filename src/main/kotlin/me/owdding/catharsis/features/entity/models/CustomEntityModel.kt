@@ -17,12 +17,18 @@ data class CustomEntityModel(
     val model: ModelPart?
 ) {
 
+    private var cachedEntityModel: EntityModel<out EntityRenderState>? = null
+
     fun <T : EntityRenderState> replaceModel(oldModel: EntityModel<T>): EntityModel<T> {
-        val newCustomEntityModel = model ?: return oldModel
+        val newCustomEntityModelPart = model ?: return oldModel
+
+        if (cachedEntityModel != null) return cachedEntityModel as EntityModel<T>
 
         val modelConstructor = oldModel.javaClass.getConstructor(ModelPart::class.java)
 
-        val newModel = modelConstructor.newInstance(newCustomEntityModel)
+        val newModel = modelConstructor.newInstance(newCustomEntityModelPart)
+
+        cachedEntityModel = newModel
 
         return newModel
     }

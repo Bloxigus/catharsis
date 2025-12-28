@@ -1,7 +1,5 @@
-package me.owdding.catharsis.features.entity.selection
+package me.owdding.catharsis.features.entity.conditions
 
-import com.mojang.serialization.MapCodec
-import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.ktcodecs.GenerateCodec
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EquipmentSlot
@@ -19,6 +17,4 @@ data class EquipmentEntityCondition(
         //TODO: implement
         return true
     }
-
-    override fun codec(): MapCodec<SkinEntityCondition> = CatharsisCodecs.getMapCodec()
 }

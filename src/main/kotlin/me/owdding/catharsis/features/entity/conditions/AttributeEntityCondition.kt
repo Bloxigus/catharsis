@@ -1,8 +1,6 @@
-package me.owdding.catharsis.features.entity.selection
+package me.owdding.catharsis.features.entity.conditions
 
-import com.mojang.serialization.MapCodec
 import me.owdding.catharsis.Catharsis
-import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.ktcodecs.Compact
 import me.owdding.ktcodecs.FieldNames
 import me.owdding.ktcodecs.GenerateCodec
@@ -34,5 +32,5 @@ data class AttributeEntityCondition(
         return values.any { it == attributeValue }
     }
 
-    override fun codec(): MapCodec<AttributeEntityCondition> = CatharsisCodecs.getMapCodec()
+//     override fun codec(): MapCodec<AttributeEntityCondition> = CatharsisCodecs.getMapCodec()
 }

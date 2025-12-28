@@ -1,6 +1,6 @@
 package me.owdding.catharsis.features.entity
 
-import me.owdding.catharsis.features.entity.selection.EntityCondition
+import me.owdding.catharsis.features.entity.conditions.EntityCondition
 import me.owdding.ktcodecs.GenerateCodec
 import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.Entity
