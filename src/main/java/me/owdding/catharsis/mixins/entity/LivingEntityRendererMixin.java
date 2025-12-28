@@ -1,31 +1,35 @@
 //~ named_identifier
 package me.owdding.catharsis.mixins.entity;
 
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.owdding.catharsis.features.entity.CustomEntityModel;
 import me.owdding.catharsis.features.entity.models.SafeModelPart;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.Model;
+//? if > 1.21.8 {
 import net.minecraft.client.renderer.SubmitNodeCollector;
+//?} else {
+/*import net.minecraft.client.renderer.MultiBufferSource;
+*///?}
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.ArmorStandRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderType;
+//? if > 1.21.10
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+//? if > 1.21.8
 import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> {
@@ -36,10 +40,17 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
     @Shadow
     protected M model;
 
+    //? if > 1.21.8 {
     @WrapMethod(
-        method = "submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V"
+       method = "submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V"
     )
     private void catharsis$swapOutModel(S renderState, PoseStack poseStack, SubmitNodeCollector nodeCollector, CameraRenderState cameraRenderState, Operation<Void> original) {
+    //?} else {
+    /*@WrapMethod(
+        method = "render(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"
+    )
+    private void catharsis$swapOutModel(S renderState, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, Operation<Void> original) {
+    *///?}
         M originalModel = this.model;
 
         var customModel = renderState.catharsis$getCustomEntityModel();
@@ -49,36 +60,57 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
             this.model = (M) SafeModelPart.replaceModel(entityModel, renderState);
         }
 
+        //? if > 1.21.8 {
         original.call(renderState, poseStack, nodeCollector, cameraRenderState);
+        //?} else {
+        /*original.call(renderState, poseStack, bufferSource, packedLight);
+        *///?}
 
         this.model = originalModel;
     }
 
-    @WrapOperation(
+    //? if > 1.21.8 {
+    @ModifyArg(
         method = "submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/rendertype/RenderType;IIILnet/minecraft/client/renderer/texture/TextureAtlasSprite;ILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V")
+        //? if > 1.21.10 {
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/rendertype/RenderType;IIILnet/minecraft/client/renderer/texture/TextureAtlasSprite;ILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V"),
+        //?} else {
+        /*at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/RenderType;IIILnet/minecraft/client/renderer/texture/TextureAtlasSprite;ILnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V"),
+        *///?}
+        index = 3
     )
-    public void catharsis$modifyEntityTexture(SubmitNodeCollector instance, Model<? super S> model, Object o, PoseStack poseStack, RenderType renderType, int i, int j, int k, TextureAtlasSprite textureAtlasSprite, int l, ModelFeatureRenderer.CrumblingOverlay crumblingOverlay, Operation<Void> original, @Local(argsOnly = true) S renderState) {
+    //?} else {
+    /*@ModifyArg(
+        method = "render(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/MultiBufferSource;getBuffer(Lnet/minecraft/client/renderer/RenderType;)Lcom/mojang/blaze3d/vertex/VertexConsumer;")
+    )
+    *///?}
+    private RenderType catharsis$modifyEntityTexture(RenderType renderType, @Local(argsOnly = true) S renderState) {
         var customModel = renderState.catharsis$getCustomEntityModel();
-        var customRenderType = renderType;
 
         if (customModel != null) {
-            customRenderType = catharsis$createEntityTextureRenderType(renderState, customModel);
+            return catharsis$createEntityTextureRenderType(renderState, customModel);
         }
 
-        original.call(instance, model, o, poseStack, customRenderType, i, j, k, textureAtlasSprite, l, crumblingOverlay);
+        return renderType;
     }
 
-    @WrapOperation(
+    //? if > 1.21.8 {
+    @WrapWithCondition(
         method = "submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V",
         at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/RenderLayer;submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/EntityRenderState;FF)V")
     )
-    public void catharsis$modifyEntityLayers(RenderLayer<S, M> instance, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int light, EntityRenderState entityRenderState, float yRot, float xRot, Operation<Void> original) {
+    private boolean catharsis$modifyEntityLayers(RenderLayer<S, M> instance, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int light, EntityRenderState entityRenderState, float yRot, float xRot) {
+    //?} else {
+    /*@WrapWithCondition(
+        method = "render(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/RenderLayer;render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/EntityRenderState;FF)V")
+    )
+    private boolean catharsis$modifyEntityLayers(RenderLayer<S, M> instance, PoseStack poseStack, MultiBufferSource multiBufferSource, int light, EntityRenderState entityRenderState, float yRot, float xRot) {
+    *///?}
         var customModel = entityRenderState.catharsis$getCustomEntityModel();
 
-        if (customModel != null) return;
-
-        original.call(instance, poseStack, submitNodeCollector, light, entityRenderState, yRot, xRot);
+        return customModel == null;
     }
 
     @Unique
@@ -90,21 +122,37 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
 
         if (isArmorStandMarker) {
             if (spectatorVisible) {
+                //? if > 1.21.10 {
                 return RenderTypes.entityTranslucent(texture, false);
+                //?} else {
+                /*return RenderType.entityTranslucent(texture, false);
+                *///?}
             }
             if (bodyVisible) {
+                //? if > 1.21.10 {
                 return RenderTypes.entityCutoutNoCull(texture, false);
+                //?} else {
+                /*return RenderType.entityCutoutNoCull(texture, false);
+                *///?}
             }
         }
 
         if (spectatorVisible) {
+            //? if > 1.21.10 {
             return RenderTypes.itemEntityTranslucentCull(texture);
+            //?} else {
+            /*return RenderType.itemEntityTranslucentCull(texture);
+            *///?}
         }
 
         if (bodyVisible) {
             return model.renderType(texture);
         }
 
+        //? if > 1.21.10 {
         return RenderTypes.outline(texture);
+        //?} else {
+        /*return RenderType.outline(texture);
+        *///?}
     }
 }
