@@ -44,8 +44,6 @@ object CustomEntityDefinitions : SimplePreparableReloadListener<List<CustomEntit
 
     @JvmStatic
     fun getFor(entity: Entity): CustomEntityDefinition? {
-        if (entity.isInvisible) return null
-
         for (definition in definitions) {
             if (definition.matches(entity)) return definition
         }
