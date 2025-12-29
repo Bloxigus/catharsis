@@ -21,6 +21,7 @@ import net.minecraft.resources.Identifier
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.tags.TagKey
 import net.minecraft.util.ExtraCodecs
+import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
 import org.joml.Quaternionf
@@ -80,11 +81,13 @@ object IncludedCodecs {
         { regex -> regex.regex().pattern },
     )
 
-    // Registries
-    // TODO this is broken because of the generic
-    //@IncludedCodec(keyable = true) val menuCodec = BuiltInRegistries.MENU.byNameCodec()
-    @IncludedCodec
+
+    @IncludedCodec(keyable = true)
+    val menuCodec: Codec<MenuType<*>> = BuiltInRegistries.MENU.byNameCodec()
+
+    @IncludedCodec(keyable = true)
     val itemCodec: Codec<Item> = BuiltInRegistries.ITEM.byNameCodec()
+
     @IncludedCodec
     val blockModelDefinitionCodec: MapCodec<BlockModelDefinition> = MapCodec.assumeMapUnsafe(BlockModelDefinition.CODEC)
 
@@ -93,6 +96,7 @@ object IncludedCodecs {
         TagKey.hashedCodec(Registries.BLOCK),
         CodecUtils.compactSet(BuiltInRegistries.BLOCK.byNameCodec()),
     )
+
     @IncludedCodec(named = "blockstate_properties")
     val blockStatePropertiesCodec: Codec<Map<String, String>> = Codec.unboundedMap(
         Codec.STRING,

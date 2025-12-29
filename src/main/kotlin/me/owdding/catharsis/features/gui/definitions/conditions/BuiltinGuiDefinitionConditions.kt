@@ -4,6 +4,7 @@ import me.owdding.catharsis.features.gui.definitions.slots.SlotCondition
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.ktcodecs.GenerateCodec
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.world.inventory.MenuType
 import tech.thatgravyboat.skyblockapi.utils.text.TextProperties.stripped
 
 @GenerateCodec
@@ -44,11 +45,10 @@ data class GuiDefinitionTitleCondition(
     }
 }
 
-// TODO see comment in IncludedCodecs
-//@GenerateCodec
-//data class GuiTypeCondition(val type: MenuType<*>): GuiCondition {
-//    override val codec = CatharsisCodecs.getMapCodec<GuiSlotCondition>()
-//    override fun matches(screen: AbstractContainerScreen<*>): Boolean {
-//        return this.type == screen.menu.type
-//    }
-//}
+@GenerateCodec
+data class GuiDefinitionTypeCondition(val type: MenuType<*>): GuiDefinitionCondition {
+    override val codec = CatharsisCodecs.getMapCodec<GuiDefinitionTypeCondition>()
+    override fun matches(screen: AbstractContainerScreen<*>): Boolean {
+        return this.type == screen.menu.type
+    }
+}
