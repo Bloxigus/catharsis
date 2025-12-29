@@ -6,6 +6,7 @@ import me.owdding.ktcodecs.GenerateCodec
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.Entity
+import tech.thatgravyboat.skyblockapi.utils.extentions.cleanName
 import java.util.UUID
 import kotlin.jvm.optionals.getOrNull
 
@@ -24,7 +25,7 @@ data class IdentityEntityCondition(
     override fun matches(entity: Entity): Boolean {
         if (type != null && entity.type != type) return false
         if (uuid != null && entity.uuid != uuid) return false
-        if (name != null && entity.plainTextName != name) return false
+        if (name != null && entity.cleanName != name) return false
 
         return true
     }
