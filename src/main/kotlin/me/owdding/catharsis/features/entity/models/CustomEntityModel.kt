@@ -22,7 +22,10 @@ data class CustomEntityModel(
     fun <T : EntityRenderState> replaceModel(oldModel: EntityModel<T>): EntityModel<T> {
         val newCustomEntityModelPart = model ?: return oldModel
 
-        if (cachedEntityModel != null) return cachedEntityModel as EntityModel<T>
+        if (cachedEntityModel != null) {
+            @Suppress("UNCHECKED_CAST")
+            return cachedEntityModel as EntityModel<T>
+        }
 
         val modelConstructor = oldModel.javaClass.getConstructor(ModelPart::class.java)
 
@@ -42,7 +45,7 @@ data class CustomEntityModel(
     ) {
         fun bake(resources: TypedResourceManager): CustomEntityModel {
             val bakedModel = if (model != null) {
-                val bedrockModel = resources.getOrLoad(model, BedrockGeometry.RESOURCE_PARSER)?.getOrNull()
+                val bedrockModel = resources.getOrLoad(model, BedrockGeometry.RESOURCE_PARSER)!!.getOrThrow()
 
                 SafeModelPart.convertFromBedrockModel(bedrockModel)
             } else null

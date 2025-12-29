@@ -16,7 +16,6 @@ public class EntityMixin implements EntityHook {
     @Unique
     private CustomEntityModel catharsis$computedReplacement = null;
 
-    //TODO: call this whenever attributes or equipment gets updated
     @Override
     public void catharsis$resetCustomModel() {
         catharsis$hasComputedModel = false;

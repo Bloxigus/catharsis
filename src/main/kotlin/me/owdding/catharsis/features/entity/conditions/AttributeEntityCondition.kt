@@ -31,6 +31,4 @@ data class AttributeEntityCondition(
 
         return values.any { it == attributeValue }
     }
-
-//     override fun codec(): MapCodec<AttributeEntityCondition> = CatharsisCodecs.getMapCodec()
 }

@@ -18,7 +18,7 @@ class SafeModelPart(
     children: Map<String, ModelPart>,
     initialPose: PartPose,
     val name: String = "Unnamed",
-    val path: String = "root"
+    val path: String = "root",
 ) : ModelPart(cubes, children) {
 
     init {
@@ -35,7 +35,7 @@ class SafeModelPart(
                 unsafeModelPart.children,
                 unsafeModelPart.initialPose,
                 this.name,
-                "$path/$name"
+                "$path/$name",
             )
         } else {
             Catharsis.warn("model ${this.name} missing bone $name!")
@@ -48,13 +48,32 @@ class SafeModelPart(
         return Function { boneName: String ->
             val parentBone = parentLookup.apply(boneName)
             if (parentBone == null) {
-                Catharsis.warn("Bone $path in model $name is missing!")
+                Catharsis.warn("Bone $boneName in model $name is missing!")
                 DummyModelPart()
             } else parentBone
         }
     }
 
     companion object {
+        private fun CubeListBuilder.addBedrockCube(pivot: Vector3f, from: Vector3f, size: Vector3f, uv: List<Float>, inflate: Float?, mirror: Boolean?) {
+            val to = from + size
+
+            val cubeOrigin = Vector3f(
+                -(pivot.x - to.x),
+                -from.y - size.y + pivot.y,
+                from.z - pivot.z,
+            )
+
+            texOffs(uv[0].toInt(), uv[1].toInt())
+            if (mirror == true) mirror()
+            addBox(
+                cubeOrigin.x, cubeOrigin.y, cubeOrigin.z,
+                size.x, size.y, size.z,
+                CubeDeformation(inflate ?: 0f),
+            )
+            if (mirror == true) mirror(false)
+        }
+
         fun convertFromBedrockModel(model: BedrockGeometry?): ModelPart? {
             if (model == null) return null
 
@@ -73,36 +92,73 @@ class SafeModelPart(
                 val offsetOffset = knownOffsets[bone.parent] ?: continue
                 val pivot = bone.pivot.toVector3f()
                 val offset = Vector3f(
-                    offsetOffset.x - pivot.x,
-                    offsetOffset.y - pivot.y,
-                    pivot.z - offsetOffset.z
+                    (pivot.x - offsetOffset.x),
+                    -(pivot.y - offsetOffset.y),
+                    pivot.z - offsetOffset.z,
                 )
+
+                val rotatedCubes = mutableListOf<BedrockCube>()
 
                 for (cube in bone.cubes) {
                     if (cube.uv?.right()?.isPresent ?: true) continue
                     val uv = cube.uv.left().getOrNull() ?: continue
+                    if (cube.rotation.any { it != 0f }) {
+                        rotatedCubes.add(cube)
+                        continue
+                    }
+
                     val size = cube.size.toVector3f()
                     val origin = cube.origin.toVector3f()
-                    val to = origin + size
-
-                    val cubeOrigin = Vector3f(
-                        pivot.x - to.x,
-                        pivot.y - to.y,
-                        origin.z - pivot.z
+                    val from = Vector3f(
+                        origin.x - size.x,
+                        origin.y,
+                        origin.z
                     )
 
-                    cubesBuilder
-                        .texOffs(uv[0].toInt(), uv[1].toInt())
-                        .addBox(
-                            cubeOrigin.x, cubeOrigin.y, cubeOrigin.z,
-                            size.x, size.y, size.z,
-                            CubeDeformation(cube.inflate ?: 0f)
-                        )
+                    cubesBuilder.addBedrockCube(pivot, from, size, uv, cube.inflate, cube.mirror)
                 }
 
                 knownOffsets[bone.name] = pivot
 
-                val child = parentBone.addOrReplaceChild(bone.name, cubesBuilder, PartPose.offset(offset.x, offset.y, offset.z))
+                val child = parentBone.addOrReplaceChild(
+                    bone.name,
+                    cubesBuilder,
+                    PartPose.offsetAndRotation(
+                        offset.x, offset.y, offset.z,
+                        Math.toRadians(bone.rotation[0].toDouble()).toFloat(),
+                        Math.toRadians(bone.rotation[1].toDouble()).toFloat(),
+                        Math.toRadians(bone.rotation[2].toDouble()).toFloat()
+                    )
+                )
+
+                for (cube in rotatedCubes) {
+                    val subCubeBuilder = CubeListBuilder.create()
+
+                    val uv = cube.uv?.left()?.getOrNull() ?: continue
+                    val size = cube.size.toVector3f()
+                    val origin = cube.origin.toVector3f()
+                    val from = Vector3f(
+                        origin.x - size.x,
+                        origin.y,
+                        origin.z
+                    )
+                    val cubePivot = cube.pivot.toVector3f()
+
+                    subCubeBuilder.addBedrockCube(cubePivot, from, size, uv, cube.inflate, cube.mirror)
+
+                    val cubePivotOffset = Vector3f(
+                        pivot.x - cubePivot.x,
+                        pivot.y - cubePivot.y,
+                        cubePivot.z - pivot.z,
+                    )
+
+                    child.addOrReplaceChild("rotate_bone", subCubeBuilder, PartPose.offsetAndRotation(
+                        cubePivotOffset.x, cubePivotOffset.y, cubePivotOffset.z,
+                        Math.toRadians(cube.rotation[0].toDouble()).toFloat(),
+                        Math.toRadians(cube.rotation[1].toDouble()).toFloat(),
+                        Math.toRadians(cube.rotation[2].toDouble()).toFloat()
+                    ))
+                }
 
                 knownBones[bone.name] = child
             }
@@ -113,7 +169,7 @@ class SafeModelPart(
                 unsafeModelPart.cubes,
                 unsafeModelPart.children,
                 unsafeModelPart.initialPose,
-                name = model.description.identifier
+                name = model.description.identifier,
             )
         }
     }

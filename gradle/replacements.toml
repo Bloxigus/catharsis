@@ -68,3 +68,9 @@ regex = "import net.minecraft.world.entity.ItemOwner(?!;)"
 to = "import net.minecraft.world.entity.LivingEntity as ItemOwner"
 reverseRegex = "import net.minecraft.world.entity.LivingEntity as ItemOwner"
 reverse = "import net.minecraft.world.entity.ItemOwner"
+
+[avatar_entity]
+type = "string"
+condition = "<=1.21.8"
+from = "import net.minecraft.client.entity.ClientAvatarEntity"
+to = "import net.minecraft.client.player.AbstractClientPlayer as ClientAvatarEntity"

@@ -26,7 +26,6 @@ repositories {
     scopedMaven("https://maven.teamresourceful.com/repository/maven-public/", "tech.thatgravyboat", "me.owdding")
     scopedMaven("https://maven.nucleoid.xyz/", "eu.pb4")
     mavenCentral()
-    mavenLocal()
 }
 
 dependencies {

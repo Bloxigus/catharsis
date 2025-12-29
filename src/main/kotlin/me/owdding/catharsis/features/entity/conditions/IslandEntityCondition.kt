@@ -11,5 +11,5 @@ data class IslandEntityCondition(
     @FieldNames("islands", "island") @Compact val islands: List<SkyBlockIsland>,
 ) : EntityCondition {
 
-    override fun matches(entity: Entity) = islands.any { it.inIsland() }
+    override fun matches(entity: Entity) = SkyBlockIsland.inAnyIsland(islands)
 }

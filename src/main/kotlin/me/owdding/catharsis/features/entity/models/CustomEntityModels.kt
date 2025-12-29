@@ -2,7 +2,6 @@ package me.owdding.catharsis.features.entity.models
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
-import com.mojang.serialization.JsonOps
 import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.catharsis.utils.TypedResourceManager
@@ -17,10 +16,13 @@ import tech.thatgravyboat.skyblockapi.api.events.entity.EntityAttributesUpdateEv
 import tech.thatgravyboat.skyblockapi.api.events.entity.EntityEquipmentUpdateEvent
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.helpers.McLevel
+import tech.thatgravyboat.skyblockapi.utils.json.Json.toDataOrThrow
 
 @Module
 object CustomEntityModels : SimplePreparableReloadListener<Map<Identifier, CustomEntityModel>>() {
-    private val converter = FileToIdConverter.json("entities")
+
+    private val logger = Catharsis.featureLogger("EntityModels")
+    private val converter = FileToIdConverter.json("catharsis/entities")
     private val gson = GsonBuilder().create()
     private val codec = CatharsisCodecs.getCodec<CustomEntityModel.Unbaked>()
 
@@ -34,20 +36,14 @@ object CustomEntityModels : SimplePreparableReloadListener<Map<Identifier, Custo
 
         return converter.listMatchingResources(resourceManager)
             .mapNotNull { (fileName, resource) ->
-                resource.openAsReader().use { bufferedReader ->
-                    val definition = codec.parse(
-                        JsonOps.INSTANCE,
-                        gson.fromJson(
-                            bufferedReader,
-                            JsonElement::class.java,
-                        ),
-                    )
-                        .orThrow
-                        .bake(resources)
+                logger.runCatching("Error loading entity model $fileName") {
+                    resource.openAsReader().use { bufferedReader ->
+                        val definition = gson.fromJson(bufferedReader, JsonElement::class.java).toDataOrThrow(codec).bake(resources)
 
-                    val id = converter.fileToId(fileName)
+                        val id = converter.fileToId(fileName)
 
-                    id to definition
+                        id to definition
+                    }
                 }
             }
             .associate { it }

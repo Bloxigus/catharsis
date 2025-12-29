@@ -1,21 +1,25 @@
 package me.owdding.catharsis.features.entity.conditions
 
 import me.owdding.ktcodecs.Compact
+import me.owdding.ktcodecs.FieldName
 import me.owdding.ktcodecs.FieldNames
 import me.owdding.ktcodecs.GenerateCodec
-//? if > 1.21.8 {
 import net.minecraft.client.entity.ClientAvatarEntity
-//?} else {
-/*import net.minecraft.client.player.AbstractClientPlayer as ClientAvatarEntity
-*///?}
 import net.minecraft.core.ClientAsset
 import net.minecraft.world.entity.Entity
 
 @GenerateCodec
-data class SkinEntityCondition(
-    @FieldNames("skin", "skins") @Compact val skins: List<String>,
+data class PlayerEntityCondition(
+    @FieldNames("skin", "skins") @Compact val skins: List<String>?,
+    @FieldName("only_npc") val onlyNpc: Boolean = false
 ) : EntityCondition {
     override fun matches(entity: Entity): Boolean {
+        if (onlyNpc) {
+            if (entity.uuid.version() == 4) return false
+        }
+
+        if (skins == null) return true
+
         if (entity !is ClientAvatarEntity) return false
 
         //? if > 1.21.8 {
@@ -25,8 +29,6 @@ data class SkinEntityCondition(
         //?} else {
         /*val skinUrl = entity.skin.textureUrl
         *///?}
-
-
 
         return skins.any { it == skinUrl }
     }
