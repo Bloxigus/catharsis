@@ -27,6 +27,6 @@ object EntityConditions {
         ID_MAPPER.put(Catharsis.id("identity"), CatharsisCodecs.getMapCodec<IdentityEntityCondition>())
         ID_MAPPER.put(Catharsis.id("attribute"), CatharsisCodecs.getMapCodec<AttributeEntityCondition>())
         ID_MAPPER.put(Catharsis.id("island"), CatharsisCodecs.getMapCodec<IslandEntityCondition>())
-        ID_MAPPER.put(Catharsis.id("equipment"), CatharsisCodecs.getMapCodec<EquipmentEntityCondition>())
+        ID_MAPPER.put(Catharsis.id("equipment"), EquipmentEntityCondition.CODEC)
     }
 }
