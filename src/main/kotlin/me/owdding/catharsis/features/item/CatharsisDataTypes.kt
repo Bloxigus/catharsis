@@ -1,11 +1,11 @@
 package me.owdding.catharsis.features.item
 
-import me.owdding.ktmodules.Module
+import me.owdding.catharsis.PreLoadModule
 import tech.thatgravyboat.skyblockapi.api.datatype.DataType
 import tech.thatgravyboat.skyblockapi.api.datatype.defaults.GenericDataTypes
 import tech.thatgravyboat.skyblockapi.utils.text.TextProperties.stripped
 
-@Module
+@PreLoadModule
 object CatharsisDataTypes {
 
     val HAS_SKIN_FALLBACK = DataType.of("has_skin_fallback") {

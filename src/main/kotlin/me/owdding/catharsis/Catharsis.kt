@@ -10,6 +10,7 @@ import me.owdding.catharsis.events.FinishRepoLoadEvent
 import me.owdding.catharsis.events.StartRepoLoadEvent
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.catharsis.generated.CatharsisModules
+import me.owdding.catharsis.generated.CatharsisPreLoadModules
 import me.owdding.catharsis.repo.CatharsisRemoteRepo
 import me.owdding.catharsis.repo.CatharsisRemoteRepo.REPO_BRANCH_PROPERTY
 import me.owdding.catharsis.utils.CatharsisDevUtils
@@ -17,6 +18,7 @@ import me.owdding.catharsis.utils.CatharsisLogger
 import me.owdding.catharsis.utils.extensions.sendWithPrefix
 import me.owdding.catharsis.utils.extensions.sendWithPrefixIf
 import me.owdding.ktcodecs.GenerateCodec
+import me.owdding.ktmodules.AutoCollect
 import me.owdding.ktmodules.Module
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.loader.api.FabricLoader
@@ -45,6 +47,10 @@ object Catharsis : ClientModInitializer, CatharsisLogger by CatharsisLogger.auto
     val self = FabricLoader.getInstance().getModContainer(MOD_ID).get()
     val buildInfo: BuildInfo by lazy {
         self.findPath("catharsis.json").get().readText().readJson<JsonObject>().toDataOrThrow(CatharsisCodecs.getCodec())
+    }
+
+    init {
+        CatharsisPreLoadModules.init { SkyBlockAPI.eventBus.register(it) }
     }
 
     const val MOD_ID = "catharsis"
@@ -115,4 +121,10 @@ object Catharsis : ClientModInitializer, CatharsisLogger by CatharsisLogger.auto
     ) {
         val isStable = ref == "stable"
     }
+
 }
+
+@AutoCollect("PreLoadModules")
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class PreLoadModule
