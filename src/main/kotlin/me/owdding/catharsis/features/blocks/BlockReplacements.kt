@@ -101,7 +101,7 @@ object BlockReplacements : PreparingModelLoadingPlugin<Map<Block, LayeredBlockRe
                         return@let Identifiers.of(it.path.substringBefore("/"), it.path.substringAfter("/"))
                     }
 
-                    logger.warn("Found simple block replacement ($id), consider migrating to new format due to possible conflicts!")
+                    logger.warn("Found simple block replacement ($id), consider migrating to the complex format due to possible conflicts!")
                     it
                 },
                 replacements,
