@@ -9,7 +9,6 @@ import me.owdding.catharsis.utils.CatharsisLogger
 import me.owdding.catharsis.utils.extensions.sendWithPrefix
 import me.owdding.catharsis.utils.types.suggestion.IterableSuggestionProvider
 import me.owdding.ktmodules.Module
-import net.minecraft.server.packs.PackResources
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener
 import net.minecraft.util.GsonHelper
@@ -21,7 +20,6 @@ import tech.thatgravyboat.skyblockapi.api.events.time.TickEvent
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.helpers.McScreen
 import tech.thatgravyboat.skyblockapi.utils.Scheduling
-import tech.thatgravyboat.skyblockapi.utils.extentions.associateByNotNull
 import tech.thatgravyboat.skyblockapi.utils.text.Text
 import tech.thatgravyboat.skyblockapi.utils.time.currentInstant
 import tech.thatgravyboat.skyblockapi.utils.time.since
@@ -68,7 +66,7 @@ object PackConfigHandler : ResourceManagerReloadListener {
                 logger.info("No existing config found")
                 return@runCatching
             }
-            val json = GsonHelper.parse(path.readText())
+            val json = GsonHelper.parse(path.readText().ifBlank { "{}" })
             for ((key, value) in json.entrySet()) {
                 configs[key] = PackConfig(key, JsonObject(), value.asJsonObject)
             }
