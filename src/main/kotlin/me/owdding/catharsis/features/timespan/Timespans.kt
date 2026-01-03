@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec
 import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.events.FinishRepoLoadEvent
 import me.owdding.catharsis.events.StartRepoLoadEvent
+import me.owdding.catharsis.features.blocks.BlockReplacements
 import me.owdding.catharsis.repo.CatharsisRemoteRepo
 import me.owdding.catharsis.utils.CatharsisLogger
 import me.owdding.catharsis.utils.CatharsisLogger.Companion.featureLogger
@@ -33,7 +34,6 @@ import kotlin.io.path.reader
 
 @Module
 object Timespans : SimplePreparableReloadListener<List<Pair<Identifier, TimespanDefinition>>>(), CatharsisLogger by Catharsis.featureLogger() {
-
 
     private val converter = FileToIdConverter.json("catharsis/timespans")
     private val gson = GsonBuilder().create()
@@ -106,21 +106,7 @@ object Timespans : SimplePreparableReloadListener<List<Pair<Identifier, Timespan
         }.any { it }
 
         if (needsRebuild) {
-            val chunks = McLevel.level.chunkSource.storage.chunks
-            val renderer = McClient.self.levelRenderer
-            for (i in 0 until chunks.length()) {
-                val chunk = McLevel.level.chunkSource.storage.chunks.get(i)
-                if (chunk == null || chunk.isEmpty) continue
-
-                for ((index, section) in chunk.sections.withIndex()) {
-                    if (section == null || section.hasOnlyAir()) continue
-                    renderer.setSectionDirty(
-                        chunk.pos.x,
-                        chunk.level.getSectionYFromSectionIndex(index),
-                        chunk.pos.z,
-                    )
-                }
-            }
+            BlockReplacements.markAllDirty()
         }
     }
 
