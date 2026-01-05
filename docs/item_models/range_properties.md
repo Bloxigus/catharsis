@@ -23,3 +23,7 @@ Returns the current skyblock day
 ### `catharsis:skyblock_hour`
 
 Returns the current skyblock hour.
+
+### `catharsis:rune_level`
+
+Returns the level of the rune.
