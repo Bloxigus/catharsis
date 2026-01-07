@@ -31,3 +31,11 @@ Returns the level of the primary enchantment.
 ### `catharsis:rune_level`
 
 Returns the level of the rune.
+
+### `catharsis:pet_candy_used`
+
+Returns the amount of pet candy used on a pet item, only works on pets in GUIs (probably).
+
+### `catharsis:pet_exp`
+
+Returns the amount of Exp a pet has, only works on pets in GUIs (probably).
