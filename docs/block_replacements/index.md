@@ -15,7 +15,14 @@ This allows you to change the look of the same block in different regions of the
 
 ## Definition
 
-Definitions are placed in a block replacement definition file located at `assets/<block namespace>/catharsis/block_replacements/<block id>.json`
+Definitions can be placed at two locations
+
+Simple:
+(not really recommended due to possible conflicts in overlay packs)
+`assets/<block namespace>/catharsis/block_replacements/<block id>.json`
+
+Complex:
+`assets/<your_name_space>/catharsis/block_replacements/<block namespace>/<block id>.json`
 
 The definition follows the following scheme
 

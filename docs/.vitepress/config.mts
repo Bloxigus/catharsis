@@ -43,9 +43,11 @@ export default defineConfig({
                 ]
             },
             {
-                text: "TODO NAME", // also move the file
+                text: "Miscellaneous", // also move the file
                 items: [
-                    {text: "Data Types", link: "/item_models/data_types"},
+                    {text: "Data Types", link: "/miscellaneous/data_types"},
+                    {text: "Timespan", link: "/miscellaneous/timespans"},
+                    {text: ".cats file format", link: "/miscellaneous/cats_file_format"},
                 ]
             },
             {

@@ -98,22 +98,23 @@ object BedrockGeometryRenderer {
         pose.rotateAround(quaternion, pivotX / 16f, pivotY / 16f, pivotZ / 16f)
 
         for (quad in cube.quads) {
-            val normals = pose.transformNormal(quad.direction.step(), Vector3f())
-
             for (vertex in quad.vertices) {
+                val x = vertex.position.x / 16f
+                val y = vertex.position.y / 16f
+                val z = vertex.position.z / 16f
 
                 if (DEBUG) {
                     consumer
-                        .addVertex(pose, vertex.position.x / 16f, vertex.position.y / 16f, vertex.position.z / 16f)
+                        .addVertex(pose, x, y, z)
                         .setColor(quad.direction.color())
                 } else {
                     consumer
-                        .addVertex(pose, vertex.position.x / 16f, vertex.position.y / 16f, vertex.position.z / 16f)
+                        .addVertex(pose, x, y, z)
                         .setColor(color)
                         .setUv(vertex.uv.x, vertex.uv.y)
                         .setOverlay(overlay)
                         .setLight(light)
-                        .setNormal(pose, normals.x(), normals.y(), normals.z())
+                        .setNormal(pose, -x, y, -z)
                 }
             }
         }

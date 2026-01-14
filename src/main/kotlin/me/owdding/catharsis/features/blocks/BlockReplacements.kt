@@ -9,6 +9,8 @@ import com.mojang.serialization.Codec
 import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.features.blocks.replacements.LayeredBlockReplacements
 import me.owdding.catharsis.generated.CatharsisCodecs
+import me.owdding.catharsis.utils.CatharsisLogger
+import me.owdding.catharsis.utils.CatharsisLogger.Companion.featureLogger
 import me.owdding.catharsis.utils.extensions.mapBothNotNull
 import me.owdding.catharsis.utils.types.fabric.PreparingModelLoadingPlugin
 import me.owdding.ktmodules.Module
@@ -20,8 +22,11 @@ import net.minecraft.resources.Identifier
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
+import tech.thatgravyboat.skyblockapi.api.area.dungeon.DungeonFloor
 import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
+import tech.thatgravyboat.skyblockapi.api.events.dungeon.DungeonEnterEvent
 import tech.thatgravyboat.skyblockapi.api.events.level.BlockChangeEvent
+import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.helpers.McLevel
 import tech.thatgravyboat.skyblockapi.platform.Identifiers
 import tech.thatgravyboat.skyblockapi.utils.extentions.filterValuesNotNull
@@ -33,12 +38,12 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.toJavaDuration
 
 @Module
-object BlockReplacements : PreparingModelLoadingPlugin<Map<Block, LayeredBlockReplacements>> {
+object BlockReplacements : PreparingModelLoadingPlugin<Map<Block, LayeredBlockReplacements>>, CatharsisLogger by Catharsis.featureLogger() {
     init {
         register()
     }
 
-    private val logger = Catharsis.featureLogger("BlockReplacements")
+    private val logger: CatharsisLogger = this
     private val blockReplacementConverter = FileToIdConverter.json("catharsis/block_replacements")
     private val blockStateConverter = FileToIdConverter.json("catharsis/virtual_block_states")
     private val gson = GsonBuilder().create()
@@ -50,6 +55,7 @@ object BlockReplacements : PreparingModelLoadingPlugin<Map<Block, LayeredBlockRe
 
     val blocksCache: Cache<BlockPos, BlockState> = CacheBuilder.newBuilder().maximumSize(1000).expireAfterWrite(5.minutes.toJavaDuration()).build<BlockPos, BlockState>()
     private val blockToListen: MutableSet<Block> = mutableSetOf()
+    private val usedDungeonFloors = mutableSetOf<DungeonFloor>()
 
     @JvmStatic
     fun getSound(state: BlockState, pos: BlockPos): BlockSoundDefinition = map[state.block]?.select(state, pos) ?: BlockSoundDefinition.DEFAULT
@@ -99,7 +105,7 @@ object BlockReplacements : PreparingModelLoadingPlugin<Map<Block, LayeredBlockRe
                         return@let Identifiers.of(it.path.substringBefore("/"), it.path.substringAfter("/"))
                     }
 
-                    logger.warn("Found old block replacement ($id), consider migrating to new format")
+                    logger.warn("Found simple block replacement ($id), consider migrating to the complex format due to possible conflicts!")
                     it
                 },
                 replacements,
@@ -151,6 +157,35 @@ object BlockReplacements : PreparingModelLoadingPlugin<Map<Block, LayeredBlockRe
             }
 
             original
+        }
+    }
+
+    fun markAllDirty() {
+        val chunks = McLevel.level.chunkSource.storage.chunks
+        val renderer = McClient.self.levelRenderer
+        for (i in 0 until chunks.length()) {
+            val chunk = McLevel.level.chunkSource.storage.chunks.get(i)
+            if (chunk == null || chunk.isEmpty) continue
+
+            for ((index, section) in chunk.sections.withIndex()) {
+                if (section == null || section.hasOnlyAir()) continue
+                renderer.setSectionDirty(
+                    chunk.pos.x,
+                    chunk.level.getSectionYFromSectionIndex(index),
+                    chunk.pos.z,
+                )
+            }
+        }
+    }
+
+    fun addDungeonFloor(floor: DungeonFloor) {
+        usedDungeonFloors.add(floor)
+    }
+
+    @Subscription
+    fun onFloorUpdate(event: DungeonEnterEvent) {
+        if (this.usedDungeonFloors.contains(event.floor)) {
+            this.markAllDirty()
         }
     }
 }

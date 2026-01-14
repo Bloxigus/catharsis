@@ -34,7 +34,7 @@ Check against a specific boolean data type.
 <TreeView>
 <span>additional fields:</span>
 
-- <TypeIcon type="string"/> **data_type**: defines the data type to use. [all supported types](data_types)
+- <TypeIcon type="string"/> **data_type**: defines the data type to use. [all supported types](../miscellaneous/data_types)
 </TreeView>
 
 #### **Has Data Type** (`catharsis:has_data_type`)
@@ -44,7 +44,7 @@ Returns `true` if the item has a specified data type.
 <TreeView>
 <span>additional fields:</span>
 
-- <TypeIcon type="string"/> **data_type**: defines the data type to use. [all supported types](data_types)
+- <TypeIcon type="string"/> **data_type**: defines the data type to use. [all supported types](../miscellaneous/data_types)
 </TreeView>
 
 #### **Has Gemstones** (`catharsis:has_gemstones`)

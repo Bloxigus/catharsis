@@ -13,6 +13,7 @@ import net.minecraft.client.color.item.ItemTintSource
 import net.minecraft.client.color.item.ItemTintSources
 import net.minecraft.client.renderer.block.model.BlockModelDefinition
 import net.minecraft.core.Holder
+import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
@@ -23,6 +24,7 @@ import net.minecraft.tags.TagKey
 import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.ai.attributes.Attribute
+import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
 import org.joml.Quaternionf
@@ -42,7 +44,7 @@ object IncludedCodecs {
         (keyable = true)
     val resourceLocationCodec: Codec<Identifier> = Identifier.CODEC
 
-    @IncludedCodec(named = "catharsis_location", keyable = true)
+    @IncludedCodec(named = "catharsis_identifier", keyable = true)
     val catharsisIdentifier: Codec<Identifier> = Codec.STRING.xmap(
         { Utils.resourceLocationWithDifferentFallbackNamespace(it, Identifier.NAMESPACE_SEPARATOR, Catharsis.MOD_ID) },
         { it.toString() },
@@ -82,11 +84,13 @@ object IncludedCodecs {
         { regex -> regex.regex().pattern },
     )
 
-    // Registries
-    // TODO this is broken because of the generic
-    //@IncludedCodec(keyable = true) val menuCodec = BuiltInRegistries.MENU.byNameCodec()
-    @IncludedCodec
+
+    @IncludedCodec(keyable = true)
+    val menuCodec: Codec<MenuType<*>> = BuiltInRegistries.MENU.byNameCodec()
+
+    @IncludedCodec(keyable = true)
     val itemCodec: Codec<Item> = BuiltInRegistries.ITEM.byNameCodec()
+
     @IncludedCodec
     val blockModelDefinitionCodec: MapCodec<BlockModelDefinition> = MapCodec.assumeMapUnsafe(BlockModelDefinition.CODEC)
 
@@ -95,6 +99,7 @@ object IncludedCodecs {
         TagKey.hashedCodec(Registries.BLOCK),
         CodecUtils.compactSet(BuiltInRegistries.BLOCK.byNameCodec()),
     )
+
     @IncludedCodec(named = "blockstate_properties")
     val blockStatePropertiesCodec: Codec<Map<String, String>> = Codec.unboundedMap(
         Codec.STRING,
@@ -129,4 +134,7 @@ object IncludedCodecs {
 
     @IncludedCodec
     val entityType: Codec<EntityType<*>> = BuiltInRegistries.ENTITY_TYPE.byNameCodec()
+    
+    @IncludedCodec
+    val dataComponentCodec: Codec<DataComponentType<*>> = BuiltInRegistries.DATA_COMPONENT_TYPE.byNameCodec()
 }

@@ -127,3 +127,25 @@ Checks if the player in on a certain island.
 - <TypeIcon type="string"/> **island**: A skyblock island.
     - <Island/>
 </TreeView>
+
+### Timespan (`timespan`)
+
+Checks if a certain [timespan](../miscellaneous/timespans) is true.
+
+<TreeView>
+<span><TypeIcon type="object"/> Root <b>timespan</b> object</span>
+
+- <TypeIcon type="string"/> **type**: `timespan`
+- <TypeIcon type="string"/> **timespan**: The identifier of the timespan to check.
+</TreeView>
+
+### Dungeon Floor (`dungeon_floor`)
+
+Checks if the player is in a certain dungeon floor.
+
+<TreeView>
+<span><TypeIcon type="object"/> Root <b>dungeon_floor</b> object</span>
+
+- <TypeIcon type="string"/> **type**: `dungeon_floor`
+- <TypeIcon type="string"/> **floor**: One of the <a href="https://github.com/SkyblockAPI/SkyblockAPI/blob/4.0/src/main/kotlin/tech/thatgravyboat/skyblockapi/api/area/dungeon/DungeonFloor.kt">enum values</a>
+</TreeView>
