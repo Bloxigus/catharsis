@@ -4,11 +4,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import me.owdding.catharsis.features.entity.models.CustomEntityModel;
 import net.minecraft.client.renderer.entity.EnderDragonRenderer;
 import net.minecraft.client.renderer.entity.state.EnderDragonRenderState;
-//? if > 1.21.10 {
-/*import net.minecraft.client.renderer.RenderTypes;
-*///?} else {
 import net.minecraft.client.renderer.RenderType;
-//?}
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
