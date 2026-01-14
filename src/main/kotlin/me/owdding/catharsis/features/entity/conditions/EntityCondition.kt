@@ -12,8 +12,7 @@ import net.minecraft.world.entity.Entity
 interface EntityCondition {
     fun matches(entity: Entity): Boolean
 
-    //noinspection unchecked
-    fun codec(): MapCodec<out EntityCondition> = CatharsisCodecs.getMapCodec(this::class.java) as MapCodec<out EntityCondition>
+    fun codec(): MapCodec<out EntityCondition>
 }
 
 object EntityConditions {
@@ -27,6 +26,6 @@ object EntityConditions {
         ID_MAPPER.put(Catharsis.id("identity"), CatharsisCodecs.getMapCodec<IdentityEntityCondition>())
         ID_MAPPER.put(Catharsis.id("attribute"), CatharsisCodecs.getMapCodec<AttributeEntityCondition>())
         ID_MAPPER.put(Catharsis.id("island"), CatharsisCodecs.getMapCodec<IslandEntityCondition>())
-        ID_MAPPER.put(Catharsis.id("equipment"), EquipmentEntityCondition.CODEC)
+        ID_MAPPER.put(Catharsis.id("equipment"), CatharsisCodecs.getMapCodec<EquipmentEntityCondition>())
     }
 }

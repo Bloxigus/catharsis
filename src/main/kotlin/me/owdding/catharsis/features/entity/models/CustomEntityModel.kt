@@ -2,6 +2,7 @@ package me.owdding.catharsis.features.entity.models
 
 import me.owdding.catharsis.utils.geometry.SafeModelPart
 import me.owdding.catharsis.utils.TypedResourceManager
+import me.owdding.catharsis.utils.extensions.unsafeCast
 import me.owdding.catharsis.utils.geometry.BedrockGeometry
 import me.owdding.ktcodecs.FieldName
 import me.owdding.ktcodecs.GenerateCodec
@@ -23,8 +24,7 @@ data class CustomEntityModel(
         val newCustomEntityModelPart = model ?: return oldModel
 
         if (cachedEntityModel != null) {
-            @Suppress("UNCHECKED_CAST")
-            return cachedEntityModel as EntityModel<T>
+            return (cachedEntityModel as EntityModel<*>).unsafeCast()
         }
 
         val modelConstructor = oldModel.javaClass.getConstructor(ModelPart::class.java)

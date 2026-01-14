@@ -12,6 +12,7 @@ import me.owdding.ktcodecs.IncludedCodec
 import net.minecraft.client.color.item.ItemTintSource
 import net.minecraft.client.color.item.ItemTintSources
 import net.minecraft.client.renderer.block.model.BlockModelDefinition
+import net.minecraft.core.Holder
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
@@ -20,6 +21,8 @@ import net.minecraft.resources.Identifier
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.tags.TagKey
 import net.minecraft.util.ExtraCodecs
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.ai.attributes.Attribute
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
 import org.joml.Quaternionf
@@ -120,4 +123,10 @@ object IncludedCodecs {
 
     @IncludedCodec
     val instant: Codec<Instant> = Codec.LONG.xmap(Instant::fromEpochMilliseconds, Instant::toEpochMilliseconds)
+
+    @IncludedCodec(keyable = true)
+    val attribute: Codec<Holder<Attribute>> = BuiltInRegistries.ATTRIBUTE.holderByNameCodec()
+
+    @IncludedCodec
+    val entityType: Codec<EntityType<*>> = BuiltInRegistries.ENTITY_TYPE.byNameCodec()
 }
