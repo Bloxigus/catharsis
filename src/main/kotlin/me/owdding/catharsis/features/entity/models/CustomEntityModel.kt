@@ -24,7 +24,7 @@ data class CustomEntityModel(
         val newCustomEntityModelPart = model ?: return oldModel
 
         if (cachedEntityModel != null) {
-            return (cachedEntityModel as EntityModel<*>).unsafeCast()
+            return cachedEntityModel.unsafeCast()
         }
 
         val modelConstructor = oldModel.javaClass.getConstructor(ModelPart::class.java)
