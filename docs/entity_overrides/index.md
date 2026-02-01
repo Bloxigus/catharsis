@@ -1,10 +1,6 @@
 ---
 title: Entity Overrides
 lang: en-US
-next:
-    text: a
-prev:
-    text: o
 ---
 
 # Entity Overrides
@@ -17,17 +13,15 @@ that loosk a bit liek this
 
 ```json
 {
-    "conditions": [
-        {
-            "type": "condition_type",
-            ...
-        }
-    ],
-    "replacement": "{your_name_space}:{entity_replacement_name}.json"
+    "target": {
+        "type": "...",
+        ...
+    },
+    "type": "minecraft:..."
 }
 ```
 
-and another file in `{your_name_here}:catharsis/entities/{entity_replacement_name}.json`
+and another file in `{your_name_here}:catharsis/entities/{entity_name}.json`
 
 that looks like this
 
@@ -46,16 +40,20 @@ and put a `.png` fiel where the texture path leads to and a bedrock entity geome
 
 there are a lot of condition types
 
-### `"type": "player"`
+### `"type": "all" OR "any"`
+lets you use multiple conditions in combination with each other
+`"all"` matches every condition in the list, `"any"` matches if any condition is matched 
+keys:
+`"conditions"`: a list of conditions
+
+### `"type": "npc_skin" OR "player_skin"`
 lets you access state about a player entity
 keys:
 `"skin"`: a reference to a skin url, if the entity matches this skin _exactly_ it is used
-`"only_npc"`: the entity matches only if it isnt a real player (useful for npcs)
 
 ### `"type": "identity"`
 lets you access state about regular entities
 keys:
-`"type"`: matches the entity's type (eg: `minecraft:zombie` for zombies)
 `"uuid"`: matches the entity's uuid. skyblock mostly uses random uuids
 `"name"`: matches the entity's name
 

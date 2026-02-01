@@ -34,7 +34,7 @@ public class EntityMixin implements EntityHook {
         CustomEntityModel customModel = null;
 
         if (customEntity != null) {
-            customModel = CustomEntityModels.getModel(customEntity.getReplacement());
+            customModel = CustomEntityModels.getModel(customEntity);
         }
 
 

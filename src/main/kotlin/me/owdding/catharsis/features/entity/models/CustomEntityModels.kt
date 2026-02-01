@@ -80,6 +80,6 @@ object CustomEntityModels : SimplePreparableReloadListener<Map<Identifier, Custo
     }
 
     init {
-        McClient.registerClientReloadListener(Catharsis.id("custom_entity_textures"), this)
+        McClient.registerClientReloadListener(Catharsis.id("entity_replacements"), this)
     }
 }

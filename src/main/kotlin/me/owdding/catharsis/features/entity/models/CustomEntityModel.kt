@@ -23,6 +23,7 @@ data class CustomEntityModel(
     fun <T : EntityRenderState> replaceModel(oldModel: EntityModel<T>): EntityModel<T> {
         val newCustomEntityModelPart = model ?: return oldModel
 
+        val cachedEntityModel = cachedEntityModel
         if (cachedEntityModel != null) {
             return cachedEntityModel.unsafeCast()
         }
@@ -31,7 +32,7 @@ data class CustomEntityModel(
 
         val newModel = modelConstructor.newInstance(newCustomEntityModelPart)
 
-        cachedEntityModel = newModel
+        this.cachedEntityModel = newModel
 
         return newModel
     }

@@ -22,7 +22,8 @@ object EntityConditions {
     val CODEC: MapCodec<EntityCondition> = ID_MAPPER.codec(IncludedCodecs.catharsisIdentifier).dispatchMap(EntityCondition::codec) { it }
 
     init {
-        ID_MAPPER.put(Catharsis.id("player"), CatharsisCodecs.getMapCodec<PlayerEntityCondition>())
+        ID_MAPPER.put(Catharsis.id("npc_skin"), CatharsisCodecs.getMapCodec<PlayerEntityConditions.NpcSkin>())
+        ID_MAPPER.put(Catharsis.id("player_skin"), CatharsisCodecs.getMapCodec<PlayerEntityConditions.PlayerSkin>())
         ID_MAPPER.put(Catharsis.id("identity"), CatharsisCodecs.getMapCodec<IdentityEntityCondition>())
         ID_MAPPER.put(Catharsis.id("attribute"), CatharsisCodecs.getMapCodec<AttributeEntityCondition>())
         ID_MAPPER.put(Catharsis.id("island"), CatharsisCodecs.getMapCodec<IslandEntityCondition>())

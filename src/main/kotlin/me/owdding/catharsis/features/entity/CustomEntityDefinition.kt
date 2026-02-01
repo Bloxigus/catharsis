@@ -2,21 +2,18 @@ package me.owdding.catharsis.features.entity
 
 import me.owdding.catharsis.features.entity.conditions.EntityCondition
 import me.owdding.ktcodecs.GenerateCodec
-import net.minecraft.resources.Identifier
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EntityType
 
 
 @GenerateCodec
 data class CustomEntityDefinition(
-    val conditions: List<EntityCondition>,
-    val replacement: Identifier
+    val target: EntityCondition,
+    val type: EntityType<*>
 ) {
     fun matches(entity: Entity): Boolean {
-        if (conditions.isEmpty()) return false
+        if (entity.type != type) return false
 
-        for (condition in conditions) {
-            if (!condition.matches(entity)) return false
-        }
-        return true
+        return target.matches(entity)
     }
 }

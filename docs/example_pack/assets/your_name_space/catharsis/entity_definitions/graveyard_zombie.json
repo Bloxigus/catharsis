@@ -1,14 +1,13 @@
 {
-  "conditions": [
-    {
-      "type": "identity",
-      "entity_type": "minecraft:zombie"
-    },
-    {
-      "type": "attribute",
-      "attribute": "minecraft:max_health",
-      "value": 100
-    }
-  ],
-  "replacement": "your_name_space:graveyard_zombie"
+  "target": {
+    "type": "all",
+    "conditions": [
+      {
+        "type": "attribute",
+        "attribute": "minecraft:max_health",
+        "value": 100
+      }
+    ]
+  },
+  "type": "minecraft:zombie"
 }
