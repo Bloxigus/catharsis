@@ -1,10 +1,12 @@
 package me.owdding.catharsis.features.gui.definitions.slots
 
+import com.mojang.datafixers.util.Either
 import com.mojang.serialization.MapCodec
 import me.owdding.catharsis.features.gui.matchers.TextMatcher
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.catharsis.utils.types.IntPredicate
 import me.owdding.ktcodecs.Compact
+import me.owdding.ktcodecs.FieldNames
 import me.owdding.ktcodecs.GenerateCodec
 import me.owdding.ktcodecs.Inline
 import net.minecraft.core.component.DataComponentType
@@ -15,7 +17,10 @@ import tech.thatgravyboat.skyblockapi.api.datatype.DataTypes
 import tech.thatgravyboat.skyblockapi.api.datatype.getData
 import tech.thatgravyboat.skyblockapi.api.location.SkyBlockIsland
 import tech.thatgravyboat.skyblockapi.utils.extentions.cleanName
+import tech.thatgravyboat.skyblockapi.utils.extentions.getRawLore
 import tech.thatgravyboat.skyblockapi.utils.extentions.getTexture
+import kotlin.math.max
+import kotlin.math.min
 
 @GenerateCodec
 data class SlotAllCondition(
@@ -63,6 +68,34 @@ data class SlotNameCondition(
 ) : SlotCondition {
     override val codec = CatharsisCodecs.getMapCodec<SlotNameCondition>()
     override fun matches(slot: Int, stack: ItemStack): Boolean = this.matcher.matches(stack.cleanName)
+}
+
+@GenerateCodec
+data class SlotLoreCondition(
+    @Inline val matcher: TextMatcher,
+    @FieldNames("line", "lines") val line: Either<Int, LineRange> = Either.right(LineRange()),
+) : SlotCondition {
+
+    val from: Int get() = this.line.map({ it }, { it.from })
+    val to: Int get() = this.line.map({ it }, { it.to })
+
+    override val codec = CatharsisCodecs.getMapCodec<SlotLoreCondition>()
+
+    override fun matches(slot: Int, stack: ItemStack): Boolean {
+        val lines = stack.getRawLore().takeUnless(List<*>::isEmpty) ?: return false
+
+        val start = min((lines.size + this.from) % lines.size, (lines.size + this.to) % lines.size)
+        val end = max((lines.size + this.from) % lines.size, (lines.size + this.to) % lines.size)
+
+        return when {
+            start < 0 || end >= lines.size -> false
+            start == end -> this.matcher.matches(lines[start])
+            else -> this.matcher.matches(lines.subList(start, end + 1).joinToString("\n"))
+        }
+    }
+
+    @GenerateCodec
+    data class LineRange(val from: Int = 0, val to: Int = -1)
 }
 
 @GenerateCodec
