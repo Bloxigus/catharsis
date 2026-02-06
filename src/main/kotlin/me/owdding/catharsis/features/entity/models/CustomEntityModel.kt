@@ -1,5 +1,6 @@
 package me.owdding.catharsis.features.entity.models
 
+import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.utils.geometry.SafeModelPart
 import me.owdding.catharsis.utils.TypedResourceManager
 import me.owdding.catharsis.utils.extensions.unsafeCast
@@ -9,6 +10,7 @@ import me.owdding.ktcodecs.GenerateCodec
 import me.owdding.ktcodecs.NamedCodec
 import net.minecraft.client.model.EntityModel
 import net.minecraft.client.model.geom.ModelPart
+import net.minecraft.client.model.player.PlayerModel
 import net.minecraft.client.renderer.entity.state.EntityRenderState
 import net.minecraft.resources.Identifier
 
@@ -28,13 +30,29 @@ data class CustomEntityModel(
             return cachedEntityModel.unsafeCast()
         }
 
-        val modelConstructor = oldModel.javaClass.getConstructor(ModelPart::class.java)
+        if (oldModel is PlayerModel) {
+            val newPlayerModel = PlayerModel(newCustomEntityModelPart, oldModel.slim)
 
-        val newModel = modelConstructor.newInstance(newCustomEntityModelPart)
+            this.cachedEntityModel = newPlayerModel
+            return newPlayerModel.unsafeCast()
+        }
 
-        this.cachedEntityModel = newModel
+        try {
+            val modelConstructor = oldModel.javaClass.getConstructor(ModelPart::class.java)
 
-        return newModel
+            val newModel = modelConstructor.newInstance(newCustomEntityModelPart)
+
+            this.cachedEntityModel = newModel
+
+            return newModel
+        } catch (_: NoSuchMethodException) {
+            Catharsis.error("Failed to replace a model: Failed to construct ${oldModel.javaClass.name}")
+
+            // If the constructor doesn't exist on one call it is unlikely to exist in the future
+            this.cachedEntityModel = oldModel
+
+            return oldModel
+        }
     }
 
     @GenerateCodec
