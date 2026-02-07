@@ -2,6 +2,7 @@ package me.owdding.catharsis.features.gui.definitions.slots
 
 import com.mojang.datafixers.util.Either
 import com.mojang.serialization.MapCodec
+import it.unimi.dsi.fastutil.ints.IntArraySet
 import me.owdding.catharsis.features.gui.matchers.TextMatcher
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.catharsis.utils.types.IntPredicate
@@ -26,6 +27,8 @@ import kotlin.math.min
 data class SlotAllCondition(
     val conditions: List<SlotCondition>,
 ) : SlotCondition {
+    constructor(vararg conditions: SlotCondition) : this(listOf(*conditions))
+
     override val codec = CatharsisCodecs.getMapCodec<SlotAllCondition>()
     override fun matches(slot: Int, stack: ItemStack): Boolean = this.conditions.all { it.matches(slot, stack) }
 }
@@ -42,6 +45,8 @@ data class SlotAnyCondition(
 data class SlotIndexCondition(
     val slot: IntPredicate,
 ) : SlotCondition {
+    constructor(index: Int) : this(IntPredicate.Set(IntArraySet(setOf(index))))
+
     override val codec = CatharsisCodecs.getMapCodec<SlotIndexCondition>()
     override fun matches(slot: Int, stack: ItemStack): Boolean = slot == -1 || slot in this.slot
 }

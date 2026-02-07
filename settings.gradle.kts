@@ -37,5 +37,12 @@ dependencyResolutionManagement {
     }
 }
 
-include("repo")
-project(":repo").buildFileName = "../repo.gradle.kts"
+fun includeProject(name: String, fileName: String = "$name.gradle.kts") {
+    include(name)
+    project(":$name").apply {
+        buildFileName = "../$fileName"
+    }
+}
+
+includeProject("repo")
+includeProject("scripts")
