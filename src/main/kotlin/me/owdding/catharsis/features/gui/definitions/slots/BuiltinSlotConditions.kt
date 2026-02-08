@@ -37,6 +37,8 @@ data class SlotAllCondition(
 data class SlotAnyCondition(
     val conditions: List<SlotCondition>,
 ) : SlotCondition {
+    constructor(vararg conditions: SlotCondition) : this(listOf(*conditions))
+
     override val codec = CatharsisCodecs.getMapCodec<SlotAnyCondition>()
     override fun matches(slot: Int, stack: ItemStack): Boolean = this.conditions.any { it.matches(slot, stack) }
 }

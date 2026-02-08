@@ -3670,8 +3670,17 @@
             "type": "catharsis:item"
           },
           {
-            "name": "Garden Level \\d+",
-            "type": "catharsis:name"
+            "conditions": [
+              {
+                "name": "Garden Level \\d+",
+                "type": "catharsis:name"
+              },
+              {
+                "name": "Garden Level [XIV]+",
+                "type": "catharsis:name"
+              }
+            ],
+            "type": "catharsis:any"
           }
         ],
         "type": "catharsis:all"

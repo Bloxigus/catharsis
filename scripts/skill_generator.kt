@@ -2,6 +2,7 @@ import me.owdding.catharsis.features.gui.definitions.GuiDefinition
 import me.owdding.catharsis.features.gui.definitions.conditions.GuiDefinitionTitleCondition
 import me.owdding.catharsis.features.gui.definitions.slots.GuiSlotDefinition
 import me.owdding.catharsis.features.gui.definitions.slots.SlotAllCondition
+import me.owdding.catharsis.features.gui.definitions.slots.SlotAnyCondition
 import me.owdding.catharsis.features.gui.definitions.slots.SlotIndexCondition
 import me.owdding.catharsis.features.gui.definitions.slots.SlotItemCondition
 import me.owdding.catharsis.features.gui.definitions.slots.SlotNameCondition
@@ -105,14 +106,14 @@ fun combat(): List<GuiSlotDefinition> = listOf(
         id = Identifiers.of("skyblock_gui", "skills/combat/bestiary"),
         target = SlotAllCondition(
             SlotIndexCondition(39),
-            SlotNameCondition(EqualsTextMatcher("Bestiary"))
+            SlotNameCondition(EqualsTextMatcher("Bestiary")),
         ),
     ),
     GuiSlotDefinition(
         id = Identifiers.of("skyblock_gui", "skills/combat/slayer"),
         target = SlotAllCondition(
             SlotIndexCondition(41),
-            SlotNameCondition(EqualsTextMatcher("Slayer"))
+            SlotNameCondition(EqualsTextMatcher("Slayer")),
         ),
     ),
 )
@@ -123,7 +124,10 @@ fun farming(): List<GuiSlotDefinition> = listOf(
         target = SlotAllCondition(
             SlotIndexCondition(39),
             SlotItemCondition(setOf(Items.SUNFLOWER)),
-            SlotNameCondition(RegexTextMatcher("Garden Level \\d+"))
+            SlotAnyCondition(
+                SlotNameCondition(RegexTextMatcher("Garden Level \\d+")),
+                SlotNameCondition(RegexTextMatcher("Garden Level [XIV]+"))
+            ),
         ),
     ),
     GuiSlotDefinition(
@@ -148,7 +152,7 @@ fun fishing(): List<GuiSlotDefinition> = listOf(
         target = SlotAllCondition(
             SlotIndexCondition(39),
             SlotItemCondition(setOf(Items.BOOK)),
-            SlotNameCondition(EqualsTextMatcher("Bait Guide"))
+            SlotNameCondition(EqualsTextMatcher("Bait Guide")),
         ),
     ),
     GuiSlotDefinition(
@@ -156,7 +160,7 @@ fun fishing(): List<GuiSlotDefinition> = listOf(
         target = SlotAllCondition(
             SlotIndexCondition(40),
             SlotItemCondition(setOf(Items.BOOK)),
-            SlotNameCondition(EqualsTextMatcher("Sea Creature Guide"))
+            SlotNameCondition(EqualsTextMatcher("Sea Creature Guide")),
         ),
     ),
     GuiSlotDefinition(
@@ -164,7 +168,7 @@ fun fishing(): List<GuiSlotDefinition> = listOf(
         target = SlotAllCondition(
             SlotIndexCondition(41),
             SlotItemCondition(setOf(Items.BOOK)),
-            SlotNameCondition(EqualsTextMatcher("Rod Part Guide"))
+            SlotNameCondition(EqualsTextMatcher("Rod Part Guide")),
         ),
     ),
 )
@@ -175,7 +179,7 @@ fun mining(): List<GuiSlotDefinition> = listOf(
         target = SlotAllCondition(
             SlotIndexCondition(39),
             SlotItemCondition(setOf(Items.PLAYER_HEAD)),
-            SlotNameCondition(EqualsTextMatcher("Heart of the Mountain"))
+            SlotNameCondition(EqualsTextMatcher("Heart of the Mountain")),
         ),
     ),
     GuiSlotDefinition(
@@ -183,7 +187,7 @@ fun mining(): List<GuiSlotDefinition> = listOf(
         target = SlotAllCondition(
             SlotIndexCondition(41),
             SlotItemCondition(setOf(Items.BOOK)),
-            SlotNameCondition(EqualsTextMatcher("Handy Block Guide"))
+            SlotNameCondition(EqualsTextMatcher("Handy Block Guide")),
         ),
     ),
     GuiSlotDefinition(
@@ -191,7 +195,7 @@ fun mining(): List<GuiSlotDefinition> = listOf(
         target = SlotAllCondition(
             SlotIndexCondition(51),
             SlotItemCondition(setOf(Items.PLAYER_HEAD)),
-            SlotNameCondition(EqualsTextMatcher("Rock Pet Milestone"))
+            SlotNameCondition(EqualsTextMatcher("Rock Pet Milestone")),
         ),
     ),
 )
@@ -202,9 +206,9 @@ fun foraging(): List<GuiSlotDefinition> = listOf(
         target = SlotAllCondition(
             SlotIndexCondition(40),
             SlotItemCondition(setOf(Items.PLAYER_HEAD)),
-            SlotNameCondition(EqualsTextMatcher("Heart of the Forest"))
+            SlotNameCondition(EqualsTextMatcher("Heart of the Forest")),
         ),
-    )
+    ),
 )
 
 
@@ -214,9 +218,9 @@ fun enchanting(): List<GuiSlotDefinition> = listOf(
         target = SlotAllCondition(
             SlotIndexCondition(40),
             SlotItemCondition(setOf(Items.BOOK)),
-            SlotNameCondition(EqualsTextMatcher("Enchantments Guide"))
+            SlotNameCondition(EqualsTextMatcher("Enchantments Guide")),
         ),
-    )
+    ),
 )
 
 fun runecrafting(): List<GuiSlotDefinition> = listOf(
@@ -225,9 +229,9 @@ fun runecrafting(): List<GuiSlotDefinition> = listOf(
         target = SlotAllCondition(
             SlotIndexCondition(45),
             SlotItemCondition(setOf(Items.DIAMOND)),
-            SlotNameCondition(EqualsTextMatcher("Runecrafting: XP Multiplier"))
+            SlotNameCondition(EqualsTextMatcher("Runecrafting: XP Multiplier")),
         ),
-    )
+    ),
 )
 
 fun hunting(): List<GuiSlotDefinition> = listOf(
@@ -236,7 +240,7 @@ fun hunting(): List<GuiSlotDefinition> = listOf(
         target = SlotAllCondition(
             SlotIndexCondition(39),
             SlotItemCondition(setOf(Items.CHEST)),
-            SlotNameCondition(EqualsTextMatcher("Hunting Box"))
+            SlotNameCondition(EqualsTextMatcher("Hunting Box")),
         ),
     ),
     GuiSlotDefinition(
@@ -244,9 +248,9 @@ fun hunting(): List<GuiSlotDefinition> = listOf(
         target = SlotAllCondition(
             SlotIndexCondition(41),
             SlotItemCondition(setOf(Items.LEAD)),
-            SlotNameCondition(EqualsTextMatcher("Attribute Menu"))
+            SlotNameCondition(EqualsTextMatcher("Attribute Menu")),
         ),
-    )
+    ),
 )
 
 fun catacombs(): List<GuiSlotDefinition> = listOf(
@@ -255,7 +259,7 @@ fun catacombs(): List<GuiSlotDefinition> = listOf(
         target = SlotAllCondition(
             SlotIndexCondition(45),
             SlotItemCondition(setOf(Items.OAK_SIGN)),
-            SlotNameCondition(EqualsTextMatcher("Catacombs Profile"))
+            SlotNameCondition(EqualsTextMatcher("Catacombs Profile")),
         ),
     ),
     GuiSlotDefinition(
@@ -263,7 +267,7 @@ fun catacombs(): List<GuiSlotDefinition> = listOf(
         target = SlotAllCondition(
             SlotIndexCondition(40),
             SlotItemCondition(setOf(Items.PLAYER_HEAD)),
-            SlotNameCondition(EqualsTextMatcher("Catacombs RNG Meters"))
+            SlotNameCondition(EqualsTextMatcher("Catacombs RNG Meters")),
         ),
     ),
 )
@@ -288,7 +292,7 @@ fun skills() {
         icon = "Catacombs",
         pathName = "dungeoneering/catacombs/catacombs",
         extra = "dungeoneering/",
-        extraSlots = ::catacombs
+        extraSlots = ::catacombs,
     )
 
     createSkill("Runecrafting", 25, Items.END_PORTAL_FRAME, extraSlots = ::runecrafting)
