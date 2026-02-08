@@ -1,7 +1,9 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URLEncoder
 import kotlin.collections.emptyList
+import kotlin.text.replace
 
 plugins {
     idea
@@ -35,8 +37,8 @@ repositories {
     scopedMaven("https://maven.nucleoid.xyz/", "eu.pb4")
     scopedMaven("https://maven.fabricmc.net/", "net.fabricmc")
     maven("https://libraries.minecraft.net")
-    maven("file://${rootProject.projectDir.absolutePath}/.gradle/loom-cache/minecraftMaven")
-    maven("file://${rootProject.projectDir.absolutePath}/.gradle/loom-cache/remapped_mods")
+    maven(file(rootProject.projectDir.resolve(".gradle/loom-cache/minecraftMaven")))
+    maven(file(rootProject.projectDir.resolve(".gradle/loom-cache/remapped_mods")))
     mavenCentral()
     mavenLocal()
 }
