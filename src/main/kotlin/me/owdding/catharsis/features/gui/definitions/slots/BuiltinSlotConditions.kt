@@ -44,6 +44,14 @@ data class SlotAnyCondition(
 }
 
 @GenerateCodec
+data class SlotNotCondition(
+    val condition: SlotCondition,
+) : SlotCondition {
+    override val codec = CatharsisCodecs.getMapCodec<SlotNotCondition>()
+    override fun matches(slot: Int, stack: ItemStack): Boolean = !this.condition.matches(slot, stack)
+}
+
+@GenerateCodec
 data class SlotIndexCondition(
     val slot: IntPredicate,
 ) : SlotCondition {
@@ -65,6 +73,8 @@ data class SlotSkyBlockIdCondition(
 data class SlotItemCondition(
     @Compact val items: Set<Item>,
 ) : SlotCondition {
+    constructor(vararg item: Item) : this(setOf(*item))
+
     override val codec = CatharsisCodecs.getMapCodec<SlotItemCondition>()
     override fun matches(slot: Int, stack: ItemStack): Boolean = stack.item in this.items
 }

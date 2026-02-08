@@ -20,4 +20,5 @@ fun main() {
     bootstrap()
     skills()
     collections()
+    warps()
 }
