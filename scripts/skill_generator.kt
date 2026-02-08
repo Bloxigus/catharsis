@@ -269,7 +269,7 @@ fun catacombs(): List<GuiSlotDefinition> = listOf(
 )
 
 fun skills() {
-    createSkill("Combat", 60, Items.DIAMOND_SWORD, extraSlots = ::combat)
+    createSkill("Combat", 60, Items.DIAMOND_HELMET, extraSlots = ::combat)
     createSkill("Farming", 60, Items.HAY_BLOCK, extraSlots = ::farming)
     createSkill("Fishing", 50, Items.PRISMARINE, extraSlots = ::fishing)
     createSkill("Mining", 60, Items.IRON_BLOCK, extraSlots = ::mining)
