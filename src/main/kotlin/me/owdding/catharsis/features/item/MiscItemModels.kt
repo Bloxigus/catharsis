@@ -1,43 +1,43 @@
 package me.owdding.catharsis.features.item
 
-import com.google.gson.JsonObject
 import me.owdding.catharsis.events.FinishRepoLoadEvent
 import me.owdding.catharsis.events.StartRepoLoadEvent
+import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.catharsis.repo.CatharsisRemoteRepo
+import me.owdding.ktcodecs.Compact
+import me.owdding.ktcodecs.GenerateCodec
 import me.owdding.ktmodules.Module
 import net.minecraft.core.component.DataComponents
 import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
-import tech.thatgravyboat.skyblockapi.utils.extentions.asString
+import tech.thatgravyboat.skyblockapi.utils.json.Json.toData
 
 @Module
 object MiscItemModels {
 
-    private val skinToModel: MutableMap<String, Identifier> = mutableMapOf()
+    private var cache: MiscItems? = null
 
     @JvmStatic
     fun getModel(stack: ItemStack): Identifier? {
         val properties = stack.get(DataComponents.PROFILE)?.partialProfile()?.properties() ?: return null
         val textures = properties.get("textures").firstOrNull() ?: return null
         val skin = textures.value() ?: return null
-        return skinToModel[skin]
+        return cache?.textures?.entries?.find { skin in it.value }?.key
     }
 
     @Subscription
     private fun StartRepoLoadEvent.start() {
-        skinToModel.clear()
+        cache = null
     }
 
     @Subscription
     private fun FinishRepoLoadEvent.finish() {
-        val json = CatharsisRemoteRepo.getFileContentAsJson("misc_items.json") as? JsonObject ?: return
-        for (entry in json.entrySet()) {
-            val skin = entry.key
-            val model = entry.value.asString() ?: continue
-            val identifier = Identifier.tryParse(model) ?: continue
-
-            skinToModel[skin] = identifier
-        }
+        cache = CatharsisRemoteRepo.getFileContentAsJson("misc_items.json")?.toData(CatharsisCodecs.getCodec<MiscItems>()) ?: return
     }
+
+    @GenerateCodec
+    data class MiscItems(
+        val textures: Map<Identifier, @Compact List<String>>,
+    )
 }
