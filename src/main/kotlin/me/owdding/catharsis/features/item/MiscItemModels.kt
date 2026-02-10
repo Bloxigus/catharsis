@@ -1,28 +1,42 @@
 package me.owdding.catharsis.features.item
 
+import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.events.FinishRepoLoadEvent
 import me.owdding.catharsis.events.StartRepoLoadEvent
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.catharsis.repo.CatharsisRemoteRepo
+import me.owdding.catharsis.utils.CatharsisLogger
+import me.owdding.catharsis.utils.CatharsisLogger.Companion.featureLogger
+import me.owdding.catharsis.utils.extensions.readWithCodec
 import me.owdding.ktcodecs.Compact
 import me.owdding.ktcodecs.GenerateCodec
+import me.owdding.ktcodecs.Inline
 import me.owdding.ktmodules.Module
-import net.minecraft.core.component.DataComponents
+import net.minecraft.resources.FileToIdConverter
 import net.minecraft.resources.Identifier
+import net.minecraft.server.packs.resources.ResourceManager
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener
+import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.item.ItemStack
 import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
+import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.utils.extentions.getTexture
 import tech.thatgravyboat.skyblockapi.utils.json.Json.toData
 
 @Module
-object MiscItemModels {
+object MiscItemModels : SimplePreparableReloadListener<List<MiscItemModels.MiscItems>>(), CatharsisLogger by Catharsis.featureLogger() {
+
+    init {
+        McClient.registerClientReloadListener(Catharsis.id("misc_items"), this)
+    }
 
     private var cache: MiscItems? = null
+    private var extra: MutableList<MiscItems> = mutableListOf()
 
     @JvmStatic
     fun getModel(stack: ItemStack): Identifier? {
         val skin = stack.getTexture() ?: return null
-        return cache?.textures?.entries?.find { skin in it.value }?.key
+        return cache?.reverseMap[skin] ?: extra.firstNotNullOfOrNull { it.reverseMap[skin] }
     }
 
     @Subscription
@@ -35,8 +49,32 @@ object MiscItemModels {
         cache = CatharsisRemoteRepo.getFileContentAsJson("misc_items.json")?.toData(CatharsisCodecs.getCodec<MiscItems>()) ?: return
     }
 
+    override fun prepare(
+        resourceManager: ResourceManager,
+        profiler: ProfilerFiller,
+    ): List<MiscItems> {
+        return resourceManager.listResourceStacks("misc_items.json") {
+            it.path == "misc_items.json"
+        }[Catharsis.id("misc_items.json")]?.map {
+            it.readWithCodec(CatharsisCodecs.MiscItemsCodec.codec())
+        } ?: emptyList()
+    }
+
+    override fun apply(
+        value: List<MiscItems>,
+        resourceManager: ResourceManager,
+        profiler: ProfilerFiller,
+    ) {
+        this.extra.clear()
+        this.extra.addAll(value)
+    }
+
     @GenerateCodec
     data class MiscItems(
-        val textures: Map<Identifier, @Compact List<String>>,
-    )
+        val textures: MutableMap<Identifier, @Compact List<String>>,
+    ) {
+        val reverseMap = buildMap {
+            textures.entries.forEach { (key, value) -> putAll(value.associateWith { key }) }
+        }
+    }
 }
