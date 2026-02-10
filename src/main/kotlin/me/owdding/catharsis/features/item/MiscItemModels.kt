@@ -11,6 +11,7 @@ import net.minecraft.core.component.DataComponents
 import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
+import tech.thatgravyboat.skyblockapi.utils.extentions.getTexture
 import tech.thatgravyboat.skyblockapi.utils.json.Json.toData
 
 @Module
@@ -20,9 +21,7 @@ object MiscItemModels {
 
     @JvmStatic
     fun getModel(stack: ItemStack): Identifier? {
-        val properties = stack.get(DataComponents.PROFILE)?.partialProfile()?.properties() ?: return null
-        val textures = properties.get("textures").firstOrNull() ?: return null
-        val skin = textures.value() ?: return null
+        val skin = stack.getTexture() ?: return null
         return cache?.textures?.entries?.find { skin in it.value }?.key
     }
 
