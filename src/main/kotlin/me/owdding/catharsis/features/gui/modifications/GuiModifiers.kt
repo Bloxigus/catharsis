@@ -76,7 +76,8 @@ object GuiModifiers : SimplePreparableReloadListener<List<GuiModifier>>() {
                         slots[identifier] = SlotModifier(
                             hidden = existing.hidden || modifier.hidden,
                             highlightable = existing.highlightable && modifier.highlightable,
-                            position = modifier.position ?: existing.position
+                            position = modifier.position ?: existing.position,
+                            clickable = modifier.clickable && existing.clickable
                         )
                     } else {
                         slots[identifier] = modifier

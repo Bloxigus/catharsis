@@ -8,4 +8,5 @@ data class SlotModifier(
     val hidden: Boolean = false,
     val highlightable: Boolean = true,
     val position: Vector2i?,
+    val clickable: Boolean = true,
 )
