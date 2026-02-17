@@ -1,7 +1,8 @@
 package me.owdding.catharsis.mixins.gui;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.sugar.Local;
 import me.owdding.catharsis.features.gui.definitions.GuiDefinitions;
 import me.owdding.catharsis.features.gui.modifications.GuiModifiers;
@@ -10,12 +11,11 @@ import net.minecraft.Optionull;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,6 +27,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class AbstractContainerScreenSlotsMixin<T extends AbstractContainerMenu> extends Screen {
 
     @Shadow @Final protected T menu;
+
+    @Shadow
+    private @Nullable Slot clickedSlot;
 
     protected AbstractContainerScreenSlotsMixin(Component title) {
         super(title);
@@ -58,14 +61,14 @@ public abstract class AbstractContainerScreenSlotsMixin<T extends AbstractContai
         return true;
     }
 
-    @WrapWithCondition(
-        method = "slotClicked",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handleInventoryMouseClick(IIILnet/minecraft/world/inventory/ClickType;Lnet/minecraft/world/entity/player/Player;)V")
+    @WrapMethod(
+        method = "slotClicked"
     )
-    private boolean catharsis$onSlotClick(MultiPlayerGameMode instance, int containerId, int slotId, int mouseButton, ClickType clickType, Player player, @Local(argsOnly = true) Slot slot) {
+    private void catharsis$onSlotClick(Slot slot, int slotId, int mouseButton, ClickType type, Operation<Void> original) {
         var modifier = GuiModifiers.getActiveModifier();
         var id = GuiDefinitions.getSlot(slot.index);
         var slotModifier = modifier != null && id != null ? modifier.getSlots().get(id) : null;
-        return slotModifier == null || slotModifier.getClickable();
+
+        if (slotModifier == null || slotModifier.getClickable()) original.call(slot, slotId, mouseButton, type);
     }
 }
