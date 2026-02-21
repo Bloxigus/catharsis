@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import tech.thatgravyboat.skyblockapi.api.item.VisualItemAccessorKt;
 import tech.thatgravyboat.skyblockapi.helpers.McPlayer;
 
 @Mixin(ItemModelResolver.class)
@@ -35,7 +36,7 @@ public class ItemModelResolverMixin {
         @Local(argsOnly = true) ItemStack stack,
         @Local(argsOnly = true) ItemStackRenderState state
     ) {
-        if (manager == null || state == null) return original;
+        if (manager == null || state == null || VisualItemAccessorKt.getVisualItem(stack) != null) return original;
         if (!state.catharsis$canFallthrough()) return original;
 
         var isCarried = McPlayer.INSTANCE.getSelf() instanceof LocalPlayer player && player.containerMenu.getCarried() == stack;
