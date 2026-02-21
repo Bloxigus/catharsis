@@ -1,8 +1,10 @@
+//~ named_identifier
 package me.owdding.catharsis.mixins.items;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import me.owdding.catharsis.features.gui.definitions.GuiDefinitions;
+import me.owdding.catharsis.features.imc.ImcHandler;
 import me.owdding.catharsis.features.item.MiscItemModels;
 import me.owdding.catharsis.hooks.items.AbstractContainerScreenHook;
 import me.owdding.catharsis.utils.ItemUtils;
@@ -10,6 +12,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -43,7 +46,18 @@ public class ItemModelResolverMixin {
         var slot = AbstractContainerScreenHook.SLOT.get();
         var guiId = isCarried ? GuiDefinitions.getSlot(stack) : (slot != null ? GuiDefinitions.getSlot(slot.index) : null);
         var itemId = ItemUtils.INSTANCE.getCustomLocation(stack);
-        var model = guiId != null ? guiId : itemId != null ? itemId : MiscItemModels.getModel(stack);
+        var extraId = ImcHandler.getCatharsisId(stack);
+
+        final Identifier model;
+        if (guiId != null) {
+            model = guiId;
+        } else if (extraId != null) {
+            model = extraId;
+        } else if (itemId != null) {
+            model = itemId;
+        }  else {
+            model = MiscItemModels.getModel(stack);
+        }
 
         return model == null || !manager.catharsis$hasCustomModel(model) ? original : model;
     }
