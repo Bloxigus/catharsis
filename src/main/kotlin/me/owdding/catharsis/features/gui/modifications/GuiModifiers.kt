@@ -22,9 +22,9 @@ import tech.thatgravyboat.skyblockapi.utils.json.Json.toDataOrThrow
 object GuiModifiers : SimplePreparableReloadListener<List<GuiModifier>>() {
 
     private val logger = Catharsis.featureLogger("GuiModifiers")
-    private val converter = FileToIdConverter.json("catharsis/gui_modifiers")
+    val converter: FileToIdConverter = FileToIdConverter.json("catharsis/gui_modifiers")
     private val gson = GsonBuilder().create()
-    private val codec = CatharsisCodecs.getCodec<GuiModifier>()
+    val codec = CatharsisCodecs.getCodec<GuiModifier>()
 
     private val definitionModifiers: MutableMap<Identifier, MutableList<GuiModifier>> = mutableMapOf()
 

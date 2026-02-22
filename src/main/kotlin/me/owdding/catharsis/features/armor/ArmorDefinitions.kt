@@ -20,9 +20,9 @@ import tech.thatgravyboat.skyblockapi.helpers.McClient
 object ArmorDefinitions : SimplePreparableReloadListener<Map<Identifier, ArmorDefinition>>() {
 
     private val logger = Catharsis.featureLogger("ArmorDefinitions")
-    private val converter = FileToIdConverter.json("catharsis/armors")
+    val converter: FileToIdConverter = FileToIdConverter.json("catharsis/armors")
     private val gson = GsonBuilder().create()
-    private val codec = CatharsisCodecs.getCodec<ArmorDefinition.Unbaked>()
+    val codec = CatharsisCodecs.getCodec<ArmorDefinition.Unbaked>()
 
     private val definitions: MutableMap<Identifier, ArmorDefinition> = mutableMapOf()
 

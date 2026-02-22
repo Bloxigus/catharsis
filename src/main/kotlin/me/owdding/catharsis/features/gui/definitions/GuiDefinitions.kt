@@ -36,7 +36,7 @@ import kotlin.io.path.readText
 @Module
 object GuiDefinitions : SimplePreparableReloadListener<Map<Identifier, GuiDefinition>>(), CatharsisLogger by Catharsis.featureLogger() {
 
-    private val uiDefinitionConverter = FileToIdConverter.json("catharsis/guis")
+    val uiDefinitionConverter: FileToIdConverter = FileToIdConverter.json("catharsis/guis")
 
     private val packDefinitions = mutableListOf<DefinitionEntry>()
     private val repoDefinitions = mutableListOf<DefinitionEntry>()
