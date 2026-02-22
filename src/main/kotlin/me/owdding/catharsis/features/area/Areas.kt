@@ -142,6 +142,6 @@ object Areas : SimplePreparableReloadListener<List<Pair<Identifier, AreaDefiniti
     fun getLoadedAreas(): Map<Identifier, AreaDefinition> = areas
 
     init {
-        McClient.registerClientReloadListener(Catharsis.id("areas"), this)
+        Catharsis.registerClientReloadListener(Catharsis.id("areas"), this)
     }
 }

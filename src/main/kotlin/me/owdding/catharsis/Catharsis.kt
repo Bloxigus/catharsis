@@ -9,6 +9,7 @@ import me.owdding.catharsis.events.BootstrapSelectPropertiesEvent
 import me.owdding.catharsis.events.FinishRepoLoadEvent
 import me.owdding.catharsis.events.StartRepoLoadEvent
 import me.owdding.catharsis.features.imc.ImcHandler.withCatharsisId
+import me.owdding.catharsis.features.text.targets.ItemTextReplacements
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.catharsis.generated.CatharsisModules
 import me.owdding.catharsis.generated.CatharsisPreLoadModules
@@ -28,6 +29,7 @@ import net.minecraft.client.renderer.item.properties.conditional.ConditionalItem
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperties
 import net.minecraft.client.renderer.item.properties.select.SelectItemModelProperties
 import net.minecraft.resources.Identifier
+import net.minecraft.server.packs.resources.PreparableReloadListener
 import net.minecraft.world.item.ItemStack
 import org.intellij.lang.annotations.Pattern
 import tech.thatgravyboat.skyblockapi.api.SkyBlockAPI
@@ -132,6 +134,10 @@ object Catharsis : ClientModInitializer, CatharsisLogger by CatharsisLogger.auto
     fun id(@Pattern("[a-z_0-9\\/.-]+") path: String): Identifier = Identifiers.of(MOD_ID, path)
     fun mc(@Pattern("[a-z_0-9\\/.-]+") path: String): Identifier = Identifiers.of(path)
     fun sbapi(@Pattern("[a-z_0-9\\/.-]+") path: String): Identifier = Identifiers.of(SkyBlockAPI.MOD_ID, path)
+    fun registerClientReloadListener(id: Identifier, replacements: PreparableReloadListener) {
+        if (System.getProperties().containsKey("catharsis.skip-listeners")) return
+        McClient.registerClientReloadListener(id, replacements)
+    }
 
     @GenerateCodec
     data class BuildInfo(

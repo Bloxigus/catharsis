@@ -100,6 +100,6 @@ object GuiModifiers : SimplePreparableReloadListener<List<GuiModifier>>() {
     }
 
     init {
-        McClient.registerClientReloadListener(Catharsis.id("gui_modifiers"), this)
+        Catharsis.registerClientReloadListener(Catharsis.id("gui_modifiers"), this)
     }
 }

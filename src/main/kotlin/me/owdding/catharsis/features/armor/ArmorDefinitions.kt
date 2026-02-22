@@ -59,6 +59,6 @@ object ArmorDefinitions : SimplePreparableReloadListener<Map<Identifier, ArmorDe
     }
 
     init {
-        McClient.registerClientReloadListener(Catharsis.id("armor_definitions"), this)
+        Catharsis.registerClientReloadListener(Catharsis.id("armor_definitions"), this)
     }
 }

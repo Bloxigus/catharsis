@@ -146,7 +146,7 @@ object GuiDefinitions : SimplePreparableReloadListener<Map<Identifier, GuiDefini
     }
 
     init {
-        McClient.registerClientReloadListener(Catharsis.id("gui_definitions"), this)
+        Catharsis.registerClientReloadListener(Catharsis.id("gui_definitions"), this)
     }
 
     private data class DefinitionEntry(val id: Identifier, val definition: GuiDefinition) {
