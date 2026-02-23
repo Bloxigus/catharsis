@@ -40,7 +40,7 @@ object GuiDefinitions : SimplePreparableReloadListener<Map<Identifier, GuiDefini
 
     private val packDefinitions = mutableListOf<DefinitionEntry>()
     private val repoDefinitions = mutableListOf<DefinitionEntry>()
-    private val definitions = Iterables.concat(repoDefinitions, packDefinitions)
+    private val definitions get() = Iterables.concat(repoDefinitions, packDefinitions).sortedByDescending { it.priority }
 
     private var selected = listOf<DefinitionEntry>()
     private var slots = Int2ObjectArrayMap<GuiSlotDefinition>()
