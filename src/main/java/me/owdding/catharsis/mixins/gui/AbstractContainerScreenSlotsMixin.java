@@ -59,10 +59,13 @@ public abstract class AbstractContainerScreenSlotsMixin<T extends AbstractContai
 
     @WrapMethod(method = "slotClicked")
     private void catharsis$onSlotClick(Slot slot, int slotId, int mouseButton, ClickType type, Operation<Void> original) {
-        var modifier = GuiModifiers.getActiveModifier();
-        var id = GuiDefinitions.getSlot(slot.index);
-        var slotModifier = modifier != null && id != null ? modifier.getSlots().get(id) : null;
+        if (slot != null) {
+            var modifier = GuiModifiers.getActiveModifier();
+            var id = GuiDefinitions.getSlot(slot.index);
+            var slotModifier = modifier != null && id != null ? modifier.getSlots().get(id) : null;
 
-        if (slotModifier == null || slotModifier.getClickable()) original.call(slot, slotId, mouseButton, type);
+            if (slotModifier != null && !slotModifier.getClickable()) return;
+        }
+        original.call(slot, slotId, mouseButton, type);
     }
 }
