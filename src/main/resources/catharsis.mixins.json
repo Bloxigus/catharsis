@@ -14,6 +14,7 @@
         "gui.AbstractContainerScreenSlotsMixin",
         "gui.SlotMixin",
         "items.AbstractContainerScreenMixin",
+        "items.GuiGraphicsMixin",
         "items.ItemModelResolverMixin",
         "items.ItemStackRenderStateMixin",
         "items.ModelManagerMixin",
