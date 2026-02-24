@@ -1,6 +1,5 @@
 package me.owdding.catharsis.features.gui.definitions
 
-import com.google.common.collect.Iterables
 import com.mojang.serialization.JsonOps
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap
 import me.owdding.catharsis.Catharsis
@@ -40,7 +39,7 @@ object GuiDefinitions : SimplePreparableReloadListener<Map<Identifier, GuiDefini
 
     private val packDefinitions = mutableListOf<DefinitionEntry>()
     private val repoDefinitions = mutableListOf<DefinitionEntry>()
-    private val definitions get() = Iterables.concat(repoDefinitions, packDefinitions).sortedByDescending { it.priority }
+    private val definitions = mutableListOf<DefinitionEntry>()
 
     private var selected = listOf<DefinitionEntry>()
     private var slots = Int2ObjectArrayMap<GuiSlotDefinition>()
@@ -95,12 +94,13 @@ object GuiDefinitions : SimplePreparableReloadListener<Map<Identifier, GuiDefini
         data.entries.forEach { (id, definition) ->
             this.packDefinitions.add(DefinitionEntry(id, definition))
         }
-        this.packDefinitions.sortBy(DefinitionEntry::priority)
+        sortDefinitions()
     }
 
     @Subscription
     private fun StartRepoLoadEvent.start() {
         repoDefinitions.clear()
+        sortDefinitions()
     }
 
     @Subscription
@@ -115,7 +115,7 @@ object GuiDefinitions : SimplePreparableReloadListener<Map<Identifier, GuiDefini
                 repoDefinitions.add(DefinitionEntry(Catharsis.id(name.removeSuffix(".json")), definition.get()))
             }
         }
-        repoDefinitions.sortByDescending(DefinitionEntry::priority)
+        sortDefinitions()
     }
 
     @Subscription
@@ -138,6 +138,13 @@ object GuiDefinitions : SimplePreparableReloadListener<Map<Identifier, GuiDefini
 
     @JvmStatic
     fun getSlot(slot: Int): Identifier? = this.slots[slot]?.id
+
+    private fun sortDefinitions() = McClient.runOrNextTick {
+        this.definitions.clear()
+        this.definitions.addAll(this.packDefinitions)
+        this.definitions.addAll(this.repoDefinitions)
+        this.definitions.sortByDescending { it.priority }
+    }
 
     private fun Iterable<DefinitionEntry>.findSlotDefinition(slot: Int, stack: ItemStack): GuiSlotDefinition? {
         return this.firstNotNullOfOrNull {
