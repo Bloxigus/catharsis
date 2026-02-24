@@ -21,6 +21,7 @@
         "items.ItemModelResolverMixin",
         "items.ItemStackRenderStateMixin",
         "items.ModelManagerMixin",
+        "items.ItemStackMixin",
         "pack.FolderPackDetectorMixin",
         "pack.PackDetectorMixin",
         "pack.PackMixin",

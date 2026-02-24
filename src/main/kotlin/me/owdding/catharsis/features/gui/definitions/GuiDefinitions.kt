@@ -28,6 +28,7 @@ import tech.thatgravyboat.skyblockapi.api.events.screen.ContainerCloseEvent
 import tech.thatgravyboat.skyblockapi.api.events.screen.ContainerInitializedEvent
 import tech.thatgravyboat.skyblockapi.api.events.screen.ScreenInitializedEvent
 import tech.thatgravyboat.skyblockapi.helpers.McClient
+import tech.thatgravyboat.skyblockapi.helpers.McScreen
 import tech.thatgravyboat.skyblockapi.utils.json.Json.readJson
 import kotlin.io.path.readText
 
@@ -35,14 +36,26 @@ import kotlin.io.path.readText
 @Module
 object GuiDefinitions : SimplePreparableReloadListener<Map<Identifier, GuiDefinition>>(), CatharsisLogger by Catharsis.featureLogger() {
 
-    private val uiDefinitionConverter = FileToIdConverter.json("catharsis/guis")
+    val uiDefinitionConverter: FileToIdConverter = FileToIdConverter.json("catharsis/guis")
 
     private val packDefinitions = mutableListOf<DefinitionEntry>()
     private val repoDefinitions = mutableListOf<DefinitionEntry>()
-    private val definitions = Iterables.concat(repoDefinitions, packDefinitions)
+    private val definitions get() = Iterables.concat(repoDefinitions, packDefinitions).sortedByDescending { it.priority }
 
     private var selected = listOf<DefinitionEntry>()
     private var slots = Int2ObjectArrayMap<GuiSlotDefinition>()
+
+    private var needsUpdate = false
+
+    private fun enqueueUpdate() {
+        if (!needsUpdate) {
+            McClient.runNextTick {
+                McScreen.asMenu?.let(this::update)
+                needsUpdate = false
+            }
+        }
+        needsUpdate = true
+    }
 
     private fun update(screen: AbstractContainerScreen<*>?) {
         selected = screen?.let { definitions.filter { it.matches(screen) } } ?: emptyList()
@@ -106,16 +119,16 @@ object GuiDefinitions : SimplePreparableReloadListener<Map<Identifier, GuiDefini
     }
 
     @Subscription
-    fun onScreenOpen(event: ScreenInitializedEvent) = update(event.screen as? AbstractContainerScreen<*>)
+    fun onScreenOpen(event: ScreenInitializedEvent) = enqueueUpdate()
 
     @Subscription
-    fun onInitialized(event: ContainerInitializedEvent) = update(event.screen)
+    fun onInitialized(event: ContainerInitializedEvent) = enqueueUpdate()
 
     @Subscription
-    fun onSlotChange(event: SlotChangedEvent) = update(event.screen)
+    fun onSlotChange(event: SlotChangedEvent) = enqueueUpdate()
 
     @Subscription
-    fun onClose(event: ContainerCloseEvent) = update(null)
+    fun onClose(event: ContainerCloseEvent) = enqueueUpdate()
 
     @JvmStatic
     fun getGuis(): List<Identifier> = selected.map { it.id }
@@ -133,7 +146,7 @@ object GuiDefinitions : SimplePreparableReloadListener<Map<Identifier, GuiDefini
     }
 
     init {
-        McClient.registerClientReloadListener(Catharsis.id("gui_definitions"), this)
+        Catharsis.registerClientReloadListener(Catharsis.id("gui_definitions"), this)
     }
 
     private data class DefinitionEntry(val id: Identifier, val definition: GuiDefinition) {
