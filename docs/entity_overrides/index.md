@@ -3,13 +3,11 @@ title: Entity Overrides
 lang: en-US
 ---
 
-# Entity Overrides
+# How to override Entity Overrides
 
-catharsis has a way to change entities!!!!
+Provide a json at `{your_name_space}:catharsis/entity_definitions/{entity_name}.json`
 
-simply provide a file in `{your_name_space}:catharsis/entity_definitions/{entity_name}.json`
-
-that loosk a bit liek this
+with the following format:
 
 ```json
 {
@@ -21,9 +19,9 @@ that loosk a bit liek this
 }
 ```
 
-and another file in `{your_name_here}:catharsis/entities/{entity_name}.json`
+and another json at `{your_name_here}:catharsis/entities/{entity_name}.json`
 
-that looks like this
+with the following format:
 
 ```json
 {
@@ -32,16 +30,16 @@ that looks like this
 }
 ```
 
-and put a `.png` fiel where the texture path leads to and a bedrock entity geometry (`.geo.json`) where that one points to. also if you name the bones right the model will use the main entity's animations!!!! the mod will log if a bone is named wrongly so dont worry about naming things right straight away.
-
+and put a texture where the texture path leads to and a bedrock entity geometry (`.geo.json`) where that one points to. 
+If you use vanillas names for the bones, the model will use their animation. If something has the wrong name, the mod send a log about that.
 
 
 ## Condition Types
 
-there are a lot of condition types
+Multiple different definitions.
 
 ### `"type": "all" OR "any"`
-lets you use multiple conditions in combination with each other
+Use multiple conditions in combination with each other
 `"all"` matches every condition in the list, `"any"` matches if any condition is matched 
 keys:
 `"conditions"`: a list of conditions
