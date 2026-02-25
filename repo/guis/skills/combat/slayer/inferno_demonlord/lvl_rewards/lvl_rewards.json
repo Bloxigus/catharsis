@@ -1,0 +1,700 @@
+{
+  "target": {
+    "type": "title",
+    "title": "Blaze Slayer LVL Rewards"
+  },
+  "layout": [
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_1/icon/locked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 1"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -2,
+            "name": "Reward is secret!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_1/icon/unlocking",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 1"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Level not reached!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_1/icon/claimable",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 1"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to claim rewards!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_1/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 1"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Rewards claimed!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_2/icon/locked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 2"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -2,
+            "name": "Reward is secret!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_2/icon/unlocking",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 2"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Level not reached!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_2/icon/claimable",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 2"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to claim rewards!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_2/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 2"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Rewards claimed!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_3/icon/locked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 3"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -2,
+            "name": "Reward is secret!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_3/icon/unlocking",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 3"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Level not reached!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_3/icon/claimable",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 3"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to claim rewards!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_3/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 3"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Rewards claimed!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_4/icon/locked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 4"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -2,
+            "name": "Reward is secret!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_4/icon/unlocking",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 4"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Level not reached!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_4/icon/claimable",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 4"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to claim rewards!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_4/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 4"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Rewards claimed!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_5/icon/locked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 5"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -2,
+            "name": "Reward is secret!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_5/icon/unlocking",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 5"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Level not reached!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_5/icon/claimable",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 5"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to claim rewards!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_5/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 5"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Rewards claimed!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_6/icon/locked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 6"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -2,
+            "name": "Reward is secret!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_6/icon/unlocking",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 6"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Level not reached!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_6/icon/claimable",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 6"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to claim rewards!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_6/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 6"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Rewards claimed!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_7/icon/locked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 7"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -2,
+            "name": "Reward is secret!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_7/icon/unlocking",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 7"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Level not reached!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_7/icon/claimable",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 7"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to claim rewards!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_7/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 7"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Rewards claimed!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_5/icon/locked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 5"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -2,
+            "name": "Reward is secret!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_8/icon/unlocking",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 8"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Level not reached!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_8/icon/claimable",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 8"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to claim rewards!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_8/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 8"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Rewards claimed!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_9/icon/locked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 9"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -2,
+            "name": "Reward is secret!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_9/icon/unlocking",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 9"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Level not reached!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_9/icon/claimable",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 9"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to claim rewards!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/lvl_9/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Blaze Slayer LVL 9"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Rewards claimed!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/boss_leveling_rewards/icon/more_to_come",
+      "target": {
+        "type": "name",
+        "mode": "equals",
+        "name": "More to come!"
+      }
+    }
+  ]
+}

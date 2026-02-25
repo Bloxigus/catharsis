@@ -1,0 +1,282 @@
+{
+  "target": {
+    "type": "title",
+    "title": "Catacombs RNG Meter"
+  },
+  "layout": [
+    {
+      "id": "skyblock_gui:rng_meter/icon/catacombs",
+      "target": {
+        "type": "name",
+        "mode": "equals",
+        "name": "Catacombs RNG Meters"
+      }
+    },
+    {
+      "id": "skyblock_gui:rng_meter/catacombs/icon/f1",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "RNG Meter"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": 0,
+            "name": "Catacombs (F1)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:rng_meter/catacombs/icon/f2",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "RNG Meter"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": 0,
+            "name": "Catacombs (F2)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:rng_meter/catacombs/icon/f3",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "RNG Meter"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": 0,
+            "name": "Catacombs (F3)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:rng_meter/catacombs/icon/f4",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "RNG Meter"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": 0,
+            "name": "Catacombs (F4)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:rng_meter/catacombs/icon/f5",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "RNG Meter"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": 0,
+            "name": "Catacombs (F5)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:rng_meter/catacombs/icon/f6",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "RNG Meter"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": 0,
+            "name": "Catacombs (F6)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:rng_meter/catacombs/icon/f7",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "RNG Meter"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": 0,
+            "name": "Catacombs (F7)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:rng_meter/catacombs/icon/m1",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "RNG Meter"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": 0,
+            "name": "Catacombs (M1)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:rng_meter/catacombs/icon/m2",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "RNG Meter"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": 0,
+            "name": "Catacombs (M2)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:rng_meter/catacombs/icon/m3",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "RNG Meter"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": 0,
+            "name": "Catacombs (M3)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:rng_meter/catacombs/icon/m4",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "RNG Meter"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": 0,
+            "name": "Catacombs (M4)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:rng_meter/catacombs/icon/m5",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "RNG Meter"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": 0,
+            "name": "Catacombs (M5)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:rng_meter/catacombs/icon/m6",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "RNG Meter"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": 0,
+            "name": "Catacombs (M6)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:rng_meter/catacombs/icon/m7",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "RNG Meter"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": 0,
+            "name": "Catacombs (M7)"
+          }
+        ]
+      }
+    }
+  ]
+}

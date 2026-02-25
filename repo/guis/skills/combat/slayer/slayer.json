@@ -1,0 +1,350 @@
+{
+  "target": {
+    "type": "title",
+    "title": "Slayer"
+  },
+  "layout": [
+    {
+      "id": "skyblock_gui:skills/combat/slayer/revenant_horror/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Revenant Horror"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to view boss!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/revenant_horror/icon/rift",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Revenant Horror"
+          },
+          {
+            "type": "item",
+            "items": "nether_wart"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/tarantula_broodfather/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Tarantula Broodfather"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to view boss!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/tarantula_broodfather/icon/rift",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Tarantula Broodfather"
+          },
+          {
+            "type": "item",
+            "items": "nether_wart"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/sven_packmaster/icon/locked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Sven Packmaster"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Slay Tarantula Broodfather II!"
+          }
+        ]
+      }
+    },
+
+    {
+      "id": "skyblock_gui:skills/combat/slayer/sven_packmaster/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Sven Packmaster"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to view boss!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/sven_packmaster/icon/rift",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Sven Packmaster"
+          },
+          {
+            "type": "item",
+            "items": "nether_wart"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/voidgloom_seraph/icon/locked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Voidgloom Seraph"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Slay Sven Packmaster IV!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/voidgloom_seraph/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Voidgloom Seraph"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to view boss!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/voidgloom_seraph/icon/rift",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Voidgloom Seraph"
+          },
+          {
+            "type": "item",
+            "items": "nether_wart"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/riftstalker_bloodfiend/icon/overworld",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Riftstalker Bloodfiend"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Only inside The Rift!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/riftstalker_bloodfiend/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Riftstalker Bloodfiend"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to view boss!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/icon/locked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Inferno Demonlord"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Slay Voidgloom Seraph III!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/icon/unlocked",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Inferno Demonlord"
+          },
+          {
+            "type": "lore",
+            "mode": "equals",
+            "line": -1,
+            "name": "Click to view boss!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/inferno_demonlord/icon/rift",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "☠ Inferno Demonlord"
+          },
+          {
+            "type": "item",
+            "items": "nether_wart"
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/icon/unreleased",
+      "target": {
+        "type": "name",
+        "mode": "equals",
+        "name": "Not released yet!"
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/auto_slayer/icon/disabled",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Auto-Slayer"
+          },
+          {
+            "type": "item",
+            "items": ["minecraft:gray_dye"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/auto_slayer/icon/enabled",
+      "target": {
+        "type": "all",
+        "conditions": [
+          {
+            "type": "name",
+            "mode": "equals",
+            "name": "Auto-Slayer"
+          },
+          {
+            "type": "item",
+            "items": ["minecraft:lime_dye"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/icon/slayer_leaderboards",
+      "target": {
+        "type": "name",
+        "mode": "equals",
+        "name": "Slayer Leaderboards"
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/icon/global_combat_wisdom_buff",
+      "target": {
+        "type": "name",
+        "mode": "equals",
+        "name": "Global Combat Wisdom Buff"
+      }
+    },
+    {
+      "id": "skyblock_gui:skills/combat/slayer/icon/slayer_bonus_rewards",
+      "target": {
+        "type": "name",
+        "mode": "equals",
+        "name": "Slayer Bonus Rewards"
+      }
+    }
+  ]
+}
