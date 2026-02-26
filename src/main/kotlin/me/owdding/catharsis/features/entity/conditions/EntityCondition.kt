@@ -10,16 +10,21 @@ import net.minecraft.util.ExtraCodecs
 import net.minecraft.world.entity.Entity
 
 interface EntityCondition {
-    fun matches(entity: Entity): Boolean
 
-    fun codec(): MapCodec<out EntityCondition>
+    val codec: MapCodec<out EntityCondition>
+    val cost: Int get() = 0
+
+    fun matches(entity: Entity): Boolean
+    fun optimize(): EntityCondition = this
 }
 
 object EntityConditions {
     val ID_MAPPER = ExtraCodecs.LateBoundIdMapper<Identifier, MapCodec<out EntityCondition>>()
 
     @IncludedCodec
-    val CODEC: MapCodec<EntityCondition> = ID_MAPPER.codec(IncludedCodecs.catharsisIdentifier).dispatchMap(EntityCondition::codec) { it }
+    val CODEC: MapCodec<EntityCondition> = ID_MAPPER.codec(IncludedCodecs.catharsisIdentifier)
+        .dispatchMap(EntityCondition::codec) { it }
+        .xmap(EntityCondition::optimize) { it }
 
     init {
         ID_MAPPER.put(Catharsis.id("npc_skin"), CatharsisCodecs.getMapCodec<PlayerEntityConditions.NpcSkin>())

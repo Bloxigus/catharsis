@@ -1,5 +1,6 @@
 package me.owdding.catharsis.features.entity.conditions
 
+import com.mojang.serialization.MapCodec
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.ktcodecs.Compact
 import me.owdding.ktcodecs.FieldNames
@@ -12,7 +13,7 @@ data class IslandEntityCondition(
     @FieldNames("islands", "island") @Compact val islands: List<SkyBlockIsland>,
 ) : EntityCondition {
 
-    override fun matches(entity: Entity) = SkyBlockIsland.inAnyIsland(islands)
+    override val codec: MapCodec<out EntityCondition> = CatharsisCodecs.getMapCodec<IslandEntityCondition>()
 
-    override fun codec() = CatharsisCodecs.getMapCodec<IslandEntityCondition>()
+    override fun matches(entity: Entity) = SkyBlockIsland.inAnyIsland(islands)
 }

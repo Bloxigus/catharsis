@@ -1,5 +1,6 @@
 package me.owdding.catharsis.features.entity.conditions
 
+import com.mojang.serialization.MapCodec
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.ktcodecs.GenerateCodec
 import net.minecraft.client.multiplayer.ClientLevel
@@ -14,6 +15,10 @@ data class EquipmentEntityCondition(
     val slot: EquipmentSlot,
     val property: ConditionalItemModelProperty,
 ) : EntityCondition {
+
+    override val codec: MapCodec<out EntityCondition> = CatharsisCodecs.getMapCodec<EquipmentEntityCondition>()
+    override val cost: Int = 10
+
     override fun matches(entity: Entity): Boolean {
         if (entity !is LivingEntity) return false
 
@@ -27,6 +32,4 @@ data class EquipmentEntityCondition(
             ItemDisplayContext.NONE,
         )
     }
-
-    override fun codec() = CatharsisCodecs.getMapCodec<EquipmentEntityCondition>()
 }
