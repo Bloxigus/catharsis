@@ -37,22 +37,18 @@ data class CustomEntityModel(
             return newPlayerModel.unsafeCast()
         }
 
-        try {
-            val modelConstructor = oldModel.javaClass.getConstructor(ModelPart::class.java)
-
-            val newModel = modelConstructor.newInstance(newCustomEntityModelPart)
-
-            this.cachedEntityModel = newModel
-
-            return newModel
-        } catch (_: NoSuchMethodException) {
-            Catharsis.error("Failed to replace a model: Failed to construct ${oldModel.javaClass.name}")
+        val newModel = runCatching {
+            oldModel.javaClass.getConstructor(ModelPart::class.java).newInstance(newCustomEntityModelPart)
+        }.getOrElse {
+            Catharsis.error("Failed to replace a model: Failed to construct ${oldModel.javaClass.name}", it)
 
             // If the constructor doesn't exist on one call it is unlikely to exist in the future
-            this.cachedEntityModel = oldModel
-
-            return oldModel
+            oldModel
         }
+
+        this.cachedEntityModel = newModel
+
+        return newModel
     }
 
     @GenerateCodec
