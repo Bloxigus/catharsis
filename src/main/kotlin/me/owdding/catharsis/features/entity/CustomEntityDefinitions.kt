@@ -11,6 +11,7 @@ import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EntityType
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.utils.json.Json.toDataOrThrow
 
@@ -22,7 +23,7 @@ object CustomEntityDefinitions : SimplePreparableReloadListener<Map<Identifier, 
     private val gson = GsonBuilder().create()
     private val codec = CatharsisCodecs.getCodec<CustomEntityDefinition>()
 
-    private val definitions = mutableMapOf<Identifier, CustomEntityDefinition>()
+    private val definitions = mutableMapOf<EntityType<*>, MutableMap<Identifier, CustomEntityDefinition>>()
 
     override fun prepare(
         resourceManager: ResourceManager,
@@ -48,16 +49,15 @@ object CustomEntityDefinitions : SimplePreparableReloadListener<Map<Identifier, 
         profiler: ProfilerFiller,
     ) {
         this.definitions.clear()
-        this.definitions.putAll(definitions)
+        for ((id, definition) in definitions.entries) {
+            this.definitions.computeIfAbsent(definition.type) { mutableMapOf() }[id] = definition
+        }
     }
 
     @JvmStatic
     fun getFor(entity: Entity): Identifier? {
-        for ((identifier, definition) in definitions) {
-            if (definition.matches(entity)) return identifier
-        }
-
-        return null
+        val type = entity.type ?: return null
+        return definitions[type]?.entries?.firstOrNull { it.value.matches(entity) }?.key
     }
 
     init {
