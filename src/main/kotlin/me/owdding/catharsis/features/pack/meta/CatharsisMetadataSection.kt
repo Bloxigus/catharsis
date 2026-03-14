@@ -1,7 +1,6 @@
 package me.owdding.catharsis.features.pack.meta
 
 import me.owdding.catharsis.Catharsis
-import me.owdding.catharsis.features.pack.config.PackConfigHandler
 import me.owdding.catharsis.features.pack.config.PackConfigOption
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.ktcodecs.FieldName
@@ -77,11 +76,6 @@ data class CatharsisMetadataSection(
 
     init {
         this.updateUrl?.let(PackUpdateChecker::requestUpdateInfo)
-        val default = PackConfigHandler.getConfig(this.id).default
-        default.asMap().clear()
-        for (option in this.config) {
-            option.addToDefault(default)
-        }
     }
 
     companion object {

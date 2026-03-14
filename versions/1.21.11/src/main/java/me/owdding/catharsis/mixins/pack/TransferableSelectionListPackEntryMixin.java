@@ -3,6 +3,7 @@ package me.owdding.catharsis.mixins.pack;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.InputConstants;
 import kotlin.Pair;
+import me.owdding.catharsis.features.pack.config.PackConfigOption;
 import me.owdding.catharsis.features.pack.config.PackConfigScreen;
 import me.owdding.catharsis.features.pack.meta.CatharsisMetadataSection;
 import me.owdding.catharsis.hooks.pack.PackEntryHook;
@@ -87,8 +88,8 @@ public abstract class TransferableSelectionListPackEntryMixin extends ObjectSele
         var self = (TransferableSelectionList.PackEntry)(Object)this;
         var selected = this.parent.getSelected() == self;
         if (selected || isHovering) {
-            var meta = catharsis$getMeta();
-            if (meta == null || meta.getConfig().isEmpty()) return;
+            var config = catharsis$getConfig();
+            if (config == null || config.isEmpty()) return;
             int x = this.right - 11;
             int y = this.top;
             boolean buttonHovered = mouseX >= x && mouseX <= x + 11 && mouseY >= y && mouseY <= y + 11;
@@ -102,21 +103,29 @@ public abstract class TransferableSelectionListPackEntryMixin extends ObjectSele
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     private void onMouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean isDoubleClick, CallbackInfoReturnable<Boolean> cir) {
+        var config = catharsis$getConfig();
         var meta = catharsis$getMeta();
-        if (meta == null) return;
+        if (config == null || meta == null) return;
         if (event.x() < this.right - 11 || event.x() > this.right) return;
         if (event.y() < this.top || event.y() > this.top + 11) return;
-        if (event.input() == InputConstants.MOUSE_BUTTON_LEFT && !meta.getConfig().isEmpty()) {
-            this.minecraft.setScreen(new PackConfigScreen(this.minecraft.screen, meta.getId(), meta.getConfig()));
+        if (event.input() == InputConstants.MOUSE_BUTTON_LEFT && !config.isEmpty()) {
+            this.minecraft.setScreen(new PackConfigScreen(this.minecraft.screen, meta.getId(), config));
             cir.setReturnValue(true);
         }
     }
-
 
     @Unique
     private CatharsisMetadataSection catharsis$getMeta() {
         if (this.pack instanceof PackEntryHook hook) {
             return hook.catharsis$getMetadata();
+        }
+        return null;
+    }
+
+    @Unique
+    private List<PackConfigOption> catharsis$getConfig() {
+        if (this.pack instanceof PackEntryHook hook) {
+            return hook.catharsis$getConfig();
         }
         return null;
     }

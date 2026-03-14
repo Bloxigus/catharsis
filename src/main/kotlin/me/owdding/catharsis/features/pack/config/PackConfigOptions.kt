@@ -5,13 +5,16 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
+import com.mojang.serialization.JsonOps
 import com.mojang.serialization.MapCodec
 import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.ktcodecs.GenerateCodec
 import me.owdding.ktcodecs.IncludedCodec
 import net.minecraft.network.chat.Component
+import net.minecraft.server.packs.PackResources
 import net.minecraft.util.ExtraCodecs
+import net.minecraft.util.GsonHelper
 import tech.thatgravyboat.skyblockapi.utils.text.CommonText
 
 sealed interface PackConfigOption {
@@ -126,6 +129,20 @@ sealed interface PackConfigOption {
             ID_MAPPER.put("boolean", CatharsisCodecs.getMapCodec<Bool>())
             ID_MAPPER.put("dropdown", Dropdown.CODEC)
             ID_MAPPER.put("tab", Tab.CODEC)
+        }
+
+        @JvmStatic
+        fun fromResource(resources: PackResources): List<PackConfigOption>? {
+            return Catharsis.runCatching("Loading pack config options from resources") {
+                resources.getRootResource("config.catharsis.json")?.get()?.use { stream ->
+                    stream.reader().use { reader ->
+                        CODEC.codec().listOf().parse(JsonOps.INSTANCE, GsonHelper.parseArray(reader))
+                            .ifError { Catharsis.error("Failed to parse config for pack: $it") }
+                            .result()
+                            .orElse(null)
+                    }
+                }
+            }
         }
     }
 }

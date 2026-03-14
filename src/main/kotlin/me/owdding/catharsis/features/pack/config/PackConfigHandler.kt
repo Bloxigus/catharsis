@@ -42,7 +42,7 @@ data class PackConfig(
         return current.get(id) ?: default.get(id)
     }
 
-    fun options(): List<PackConfigOption>? = PackConfigHandler.catharsisPacks[packId]?.config?.takeUnless { it.isEmpty() }
+    fun options(): List<PackConfigOption>? = PackConfigHandler.catharsisPackOptions[packId]?.takeUnless(List<PackConfigOption>::isEmpty)
 }
 
 @Module
@@ -55,7 +55,7 @@ object PackConfigHandler : ResourceManagerReloadListener {
     private val configs = mutableMapOf<String, PackConfig>()
     private var saveRequestedAt = Instant.DISTANT_PAST
 
-    var catharsisPacks: Map<String, CatharsisMetadataSection> = emptyMap()
+    var catharsisPackOptions: Map<String, List<PackConfigOption>?> = emptyMap()
         private set
 
     init {
@@ -83,6 +83,15 @@ object PackConfigHandler : ResourceManagerReloadListener {
         this.saveRequestedAt = currentInstant()
     }
 
+    @JvmStatic
+    fun updateDefaults(id: String, options: List<PackConfigOption>) {
+        val config = getConfig(id).default
+        config.asMap().clear()
+        for (option in options) {
+            option.addToDefault(config)
+        }
+    }
+
     @Subscription(TickEvent::class)
     @TimePassed("10s")
     fun onTick() {
@@ -103,7 +112,7 @@ object PackConfigHandler : ResourceManagerReloadListener {
     @Subscription
     fun onCommand(event: RegisterCommandsEvent) {
         event.register("catharsis config") {
-            thenCallback("id", StringArgumentType.string(), IterableSuggestionProvider(catharsisPacks.keys)) {
+            thenCallback("id", StringArgumentType.string(), IterableSuggestionProvider(catharsisPackOptions.keys)) {
                 val id = argument<String>("id")
                 val options = getConfig(id).options() ?: run {
                     Text.of("No config found for $id").sendWithPrefix()
@@ -115,8 +124,12 @@ object PackConfigHandler : ResourceManagerReloadListener {
     }
 
     override fun onResourceManagerReload(resourceManager: ResourceManager) {
-        catharsisPacks = resourceManager.listPacks().toList().mapNotNull { pack ->
-            pack.getMetadataSection(CatharsisMetadataSection.TYPE)?.let { it.id to it }
+        catharsisPackOptions = resourceManager.listPacks().toList().mapNotNull { pack ->
+            val meta = pack.getMetadataSection(CatharsisMetadataSection.TYPE) ?: return@mapNotNull null
+            val options = PackConfigOption.fromResource(pack)
+            val config = options?.takeUnless(List<PackConfigOption>::isEmpty) ?: meta.config
+            updateDefaults(meta.id, config)
+            meta.id to config
         }.toMap()
     }
 }
