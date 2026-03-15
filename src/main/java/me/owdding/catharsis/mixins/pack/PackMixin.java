@@ -40,16 +40,16 @@ public class PackMixin implements PackMetadataHook {
         var catharsisMetadata = type == PackType.CLIENT_RESOURCES ? catharsis$parseMetadata(resources, info) : null;
         var catharsisConfig = catharsis$parseConfig(resources, info);
 
+        if (catharsisMetadata != null) {
+            var config = catharsisConfig != null ? catharsisConfig : catharsisMetadata.getConfig();
+            PackConfigHandler.updateDefaults(catharsisMetadata.getId(), config);
+        }
+
         var metadata = original.call(info, resources, format, type);
 
         if (metadata != null) {
             metadata.catharsis$setMetadata(catharsisMetadata);
             metadata.catharsis$setConfig(catharsisConfig);
-
-            if (catharsisMetadata != null) {
-                var config = catharsisConfig != null ? catharsisConfig : catharsisMetadata.getConfig();
-                PackConfigHandler.updateDefaults(catharsisMetadata.getId(), config);
-            }
 
             if (catharsisConfig != null && catharsisMetadata != null && !catharsisMetadata.getConfig().isEmpty()) {
                 Catharsis.INSTANCE.warn("Pack %s has both a catharsis metadata config section and a config.catharsis.json file, only config.catharsis.json will be used".formatted(info.id()));
