@@ -90,12 +90,7 @@ object ItemUtils {
             return itemId
         }
 
-        val baseId = getHypixelLocation(stack)
-        if (baseId != null && predicate.test(baseId)) {
-            return baseId
-        }
-
-        return null
+        return getHypixelLocation(stack)
     }
 
     private fun SkyBlockId.cleanOrNull() = this.cleanId.lowercase().takeUnless { it == UNKNOWN }
