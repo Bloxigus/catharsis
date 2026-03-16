@@ -11,5 +11,6 @@ object ItemModels {
     fun onItemModelBootstrap(event: BootstrapItemModelsEvent) {
         event.register(RedirectedItemModel.Unbaked.ID, RedirectedItemModel.Unbaked.CODEC)
         event.register(FallThroughItemModel.Unbaked.ID, FallThroughItemModel.Unbaked.CODEC)
+        event.register(GlintItemModel.Unbaked.ID, GlintItemModel.Unbaked.CODEC)
     }
 }
