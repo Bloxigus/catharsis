@@ -1,8 +1,11 @@
+//~ named_identifier
 package me.owdding.catharsis.mixins.pack;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import kotlin.Pair;
+import me.owdding.catharsis.features.pack.config.PackConfigOption;
 import me.owdding.catharsis.features.pack.config.PackConfigScreen;
 import me.owdding.catharsis.features.pack.meta.CatharsisMetadataSection;
 import me.owdding.catharsis.hooks.pack.PackEntryHook;
@@ -14,7 +17,9 @@ import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.packs.PackSelectionModel;
 import net.minecraft.client.gui.screens.packs.TransferableSelectionList;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,8 +36,9 @@ import java.util.Optional;
 @Mixin(TransferableSelectionList.PackEntry.class)
 public abstract class TransferableSelectionListPackEntryMixin extends ObjectSelectionList.Entry {
 
-    @Unique
-    private static final int SIZE = 15;
+    @Unique private static final int SIZE = 14;
+    @Unique private static final Identifier COG_ICON = Identifier.fromNamespaceAndPath("catharsis", "cog");
+    @Unique private static final Identifier COG_HIGHLIGHTED_ICON = Identifier.fromNamespaceAndPath("catharsis", "cog_highlighted");
 
     @Shadow
     @Final
@@ -99,40 +105,33 @@ public abstract class TransferableSelectionListPackEntryMixin extends ObjectSele
         @Local(ordinal = 1, argsOnly = true) int mouseY,
         @Local(ordinal = 0, argsOnly = true) boolean isHovering
     ) {
-        var self = (TransferableSelectionList.PackEntry) (Object) this;
-        var selected = this.parent.getSelected() == self;
-        var meta = catharsis$getMeta();
-        if (meta == null || meta.getConfig().isEmpty()) {
-            return;
-        }
+        var config = catharsis$getConfig();
+        if (config == null || config.isEmpty()) return;
+
         int x = this.right - SIZE;
         int y = this.top;
         boolean buttonHovered = mouseX >= x && mouseX <= x + SIZE && mouseY >= y && mouseY <= y + SIZE;
-        graphics.fill(x, y, x + SIZE, y + SIZE, selected ? 0xff000000 : 0x88555555);
-        graphics.pose().pushMatrix();
-        graphics.pose().translate(x, y);
-        graphics.pose().scale(SIZE / 11f);
-        graphics.drawString(this.minecraft.font, "⚙", 2, 1, (isHovering ? (buttonHovered ? 0xffffffff : 0xffababab) : 0xff999999), false);
-        graphics.pose().popMatrix();
+        var icon = isHovering && buttonHovered ? COG_HIGHLIGHTED_ICON : COG_ICON;
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, icon, x + 1, y + 1, SIZE - 2, SIZE - 2);
+
         if (buttonHovered) {
-            graphics.requestCursor(com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND);
+            graphics.requestCursor(CursorTypes.POINTING_HAND);
         }
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
     private void onMouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean isDoubleClick, CallbackInfoReturnable<Boolean> cir) {
+        var config = catharsis$getConfig();
         var meta = catharsis$getMeta();
-        if (meta == null) {
-            return;
-        }
+        if (config == null || meta == null) return;
         if (event.x() < this.right - SIZE || event.x() > this.right) {
             return;
         }
         if (event.y() < this.top || event.y() > this.top + SIZE) {
             return;
         }
-        if (event.input() == InputConstants.MOUSE_BUTTON_LEFT && !meta.getConfig().isEmpty()) {
-            this.minecraft.setScreen(new PackConfigScreen(this.minecraft.screen, meta.getId(), meta.getConfig()));
+        if (event.input() == InputConstants.MOUSE_BUTTON_LEFT && !config.isEmpty()) {
+            this.minecraft.setScreen(new PackConfigScreen(this.minecraft.screen, meta.getId(), config));
             cir.setReturnValue(true);
         }
     }
@@ -142,6 +141,14 @@ public abstract class TransferableSelectionListPackEntryMixin extends ObjectSele
     private CatharsisMetadataSection catharsis$getMeta() {
         if (this.pack instanceof PackEntryHook hook) {
             return hook.catharsis$getMetadata();
+        }
+        return null;
+    }
+
+    @Unique
+    private List<PackConfigOption> catharsis$getConfig() {
+        if (this.pack instanceof PackEntryHook hook) {
+            return hook.catharsis$getConfig();
         }
         return null;
     }
