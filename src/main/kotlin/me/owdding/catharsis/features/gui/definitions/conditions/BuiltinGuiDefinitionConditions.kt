@@ -65,12 +65,12 @@ data class GuiDefinitionTitleCondition(val title: Regex) : GuiDefinitionConditio
 }
 
 @GenerateCodec
-data class GuiDefinitionTypeCondition(val type: MenuType<*>) : GuiDefinitionCondition {
+data class GuiDefinitionTypeCondition(val menu: MenuType<*>) : GuiDefinitionCondition {
 
     override val codec = CatharsisCodecs.getMapCodec<GuiDefinitionTypeCondition>()
 
     override fun matches(screen: AbstractContainerScreen<*>): Boolean {
-        return this.type == screen.menu.type
+        return this.menu == screen.menu.type
     }
 }
 
