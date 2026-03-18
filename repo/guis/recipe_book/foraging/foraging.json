@@ -5,7 +5,7 @@
   },
   "layout": [
     {
-      "id": "skyblock_gui:recipe_book/Foraging/icon",
+      "id": "skyblock_gui:recipe_book/foraging/icon",
       "target": {
         "type": "name",
         "mode": "equals",
