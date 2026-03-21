@@ -36,9 +36,12 @@ import java.util.Optional;
 @Mixin(TransferableSelectionList.PackEntry.class)
 public abstract class TransferableSelectionListPackEntryMixin extends ObjectSelectionList.Entry {
 
-    @Unique private static final int SIZE = 14;
-    @Unique private static final Identifier COG_ICON = Identifier.fromNamespaceAndPath("catharsis", "cog");
-    @Unique private static final Identifier COG_HIGHLIGHTED_ICON = Identifier.fromNamespaceAndPath("catharsis", "cog_highlighted");
+    @Unique
+    private static final int SIZE = 14;
+    @Unique
+    private static final Identifier COG_ICON = Identifier.fromNamespaceAndPath("catharsis", "cog");
+    @Unique
+    private static final Identifier COG_HIGHLIGHTED_ICON = Identifier.fromNamespaceAndPath("catharsis", "cog_highlighted");
 
     @Shadow
     @Final
@@ -46,9 +49,6 @@ public abstract class TransferableSelectionListPackEntryMixin extends ObjectSele
     @Shadow
     @Final
     private PackSelectionModel.Entry pack;
-    @Shadow
-    @Final
-    private TransferableSelectionList parent;
     @Shadow
     @Final
     private StringWidget nameWidget;
@@ -116,6 +116,7 @@ public abstract class TransferableSelectionListPackEntryMixin extends ObjectSele
 
         if (buttonHovered) {
             graphics.requestCursor(CursorTypes.POINTING_HAND);
+            graphics.setTooltipForNextFrame(this.minecraft.font, Component.literal("Configure Pack"), mouseX, mouseY);
         }
     }
 

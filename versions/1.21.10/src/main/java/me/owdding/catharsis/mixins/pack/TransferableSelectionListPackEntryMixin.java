@@ -38,25 +38,39 @@ import java.util.Optional;
 @Mixin(TransferableSelectionList.PackEntry.class)
 public abstract class TransferableSelectionListPackEntryMixin extends ObjectSelectionList.Entry {
 
-    @Unique private static final int SIZE = 14;
-    @Unique private static final ResourceLocation COG_ICON = ResourceLocation.fromNamespaceAndPath("catharsis", "cog");
-    @Unique private static final ResourceLocation COG_HIGHLIGHTED_ICON = ResourceLocation.fromNamespaceAndPath("catharsis", "cog_highlighted");
+    @Unique
+    private static final int SIZE = 14;
+    @Unique
+    private static final ResourceLocation COG_ICON = ResourceLocation.fromNamespaceAndPath("catharsis", "cog");
+    @Unique
+    private static final ResourceLocation COG_HIGHLIGHTED_ICON = ResourceLocation.fromNamespaceAndPath("catharsis", "cog_highlighted");
 
-    @Shadow @Final protected Minecraft minecraft;
-    @Shadow @Final private PackSelectionModel.Entry pack;
-    @Shadow private static MultiLineLabel cacheDescription(Minecraft minecraft, Component text) {
+    @Shadow
+    @Final
+    protected Minecraft minecraft;
+    @Shadow
+    @Final
+    private PackSelectionModel.Entry pack;
+
+    @Shadow
+    private static MultiLineLabel cacheDescription(Minecraft minecraft, Component text) {
         return null;
     }
-    @Shadow private static FormattedCharSequence cacheName(Minecraft minecraft, Component name) {
+
+    @Shadow
+    private static FormattedCharSequence cacheName(Minecraft minecraft, Component name) {
         return null;
     }
-    @Shadow @Final private TransferableSelectionList parent;
 
-    @Unique private MultiLineLabel catharsis$incompatibleModDescriptionDisplayCache;
-    @Unique private FormattedCharSequence catharsis$incompatibleModNameDisplayCache;
+    @Unique
+    private MultiLineLabel catharsis$incompatibleModDescriptionDisplayCache;
+    @Unique
+    private FormattedCharSequence catharsis$incompatibleModNameDisplayCache;
 
-    @Unique private int right = 0;
-    @Unique private int top = 0;
+    @Unique
+    private int right = 0;
+    @Unique
+    private int top = 0;
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void init(CallbackInfo ci, @Local(argsOnly = true) Minecraft minecraft) {
@@ -121,6 +135,7 @@ public abstract class TransferableSelectionListPackEntryMixin extends ObjectSele
 
         if (buttonHovered) {
             graphics.requestCursor(CursorTypes.POINTING_HAND);
+            graphics.setTooltipForNextFrame(this.minecraft.font, Component.literal("Configure Pack"), mouseX, mouseY);
         }
     }
 
