@@ -24,7 +24,8 @@ object PackedPacksCompat : PackedPacksInitializer {
             val meta = event.packContext().pack().`catharsis$getMetadata`()
 
             if (config == null || meta == null) return@register
-            event.addTopRight(
+            event.anchorTopRight(
+                2, 2,
                 ImageButton(0, 0, BUTTON_SIZE, BUTTON_SIZE, buttonSprites) { _ ->
                     if (!config.isEmpty()) {
                         Minecraft.getInstance().setScreen(PackConfigScreen(event.screenContext().screen(), meta.id, config))
