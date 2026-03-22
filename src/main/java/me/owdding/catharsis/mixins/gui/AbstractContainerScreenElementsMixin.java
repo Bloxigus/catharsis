@@ -3,8 +3,8 @@ package me.owdding.catharsis.mixins.gui;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import me.owdding.catharsis.features.gui.modifications.GuiModifiers;
 import me.owdding.catharsis.features.gui.modifications.elements.GuiElementRenderLayer;
+import me.owdding.catharsis.hooks.gui.CatharsisScreenBounds;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 //? >= 1.21.9
 import net.minecraft.client.input.MouseButtonEvent;
@@ -27,11 +27,11 @@ public abstract class AbstractContainerScreenElementsMixin<T extends AbstractCon
     @Shadow protected int imageWidth;
     @Shadow protected int imageHeight;
 
-    @Unique private ScreenRectangle catharsis$bounds;
+    @Unique private CatharsisScreenBounds catharsis$bounds;
 
     @Inject(method = "init", at = @At("TAIL"))
     private void catharsis$onInit(CallbackInfo ci) {
-        this.catharsis$bounds = new ScreenRectangle(this.leftPos, this.topPos, this.imageWidth, this.imageHeight);
+        this.catharsis$bounds = new CatharsisScreenBounds(this.leftPos, this.topPos, this.imageWidth, this.imageHeight);
     }
 
     @WrapWithCondition(method = "renderBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderBg(Lnet/minecraft/client/gui/GuiGraphics;FII)V"))
@@ -50,14 +50,26 @@ public abstract class AbstractContainerScreenElementsMixin<T extends AbstractCon
     private void catharsis$renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         var modifier = GuiModifiers.getActiveModifier();
         if (modifier == null || this.catharsis$bounds == null) return;
-        modifier.renderElements(GuiElementRenderLayer.BACKGROUND, guiGraphics, mouseX, mouseY, partialTick, this.catharsis$bounds);
+        modifier.renderElements(
+            GuiElementRenderLayer.BACKGROUND,
+            guiGraphics,
+            mouseX, mouseY,
+            partialTick,
+            this.catharsis$bounds.updateOrGet(this.leftPos, this.topPos, this.imageWidth, this.imageHeight)
+        );
     }
 
     @Inject(method = "renderContents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V", shift = At.Shift.AFTER))
     private void catharsis$renderForeground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         var modifier = GuiModifiers.getActiveModifier();
         if (modifier == null || this.catharsis$bounds == null) return;
-        modifier.renderElements(GuiElementRenderLayer.FOREGROUND, guiGraphics, mouseX, mouseY, partialTick, this.catharsis$bounds);
+        modifier.renderElements(
+            GuiElementRenderLayer.FOREGROUND,
+            guiGraphics,
+            mouseX, mouseY,
+            partialTick,
+            this.catharsis$bounds.updateOrGet(this.leftPos, this.topPos, this.imageWidth, this.imageHeight)
+        );
     }
 
 
@@ -66,28 +78,44 @@ public abstract class AbstractContainerScreenElementsMixin<T extends AbstractCon
     private void catharsis$onMouseClicked(MouseButtonEvent event, boolean isDoubleClick, CallbackInfoReturnable<Boolean> cir) {
         var modifier = GuiModifiers.getActiveModifier();
         if (modifier == null || this.catharsis$bounds == null) return;
-        modifier.handleInteraction(event.x(), event.y(), event.button(), true, this.catharsis$bounds);
+        modifier.handleInteraction(
+            event.x(), event.y(),
+            event.button(), true,
+            this.catharsis$bounds.updateOrGet(this.leftPos, this.topPos, this.imageWidth, this.imageHeight)
+        );
     }
 
     @Inject(method = "mouseReleased", at = @At("HEAD"))
     private void catharsis$onMouseReleased(MouseButtonEvent event, CallbackInfoReturnable<Boolean> cir) {
         var modifier = GuiModifiers.getActiveModifier();
         if (modifier == null || this.catharsis$bounds == null) return;
-        modifier.handleInteraction(event.x(), event.y(), event.button(), false, this.catharsis$bounds);
+        modifier.handleInteraction(
+            event.x(), event.y(),
+            event.button(), false,
+            this.catharsis$bounds.updateOrGet(this.leftPos, this.topPos, this.imageWidth, this.imageHeight)
+        );
     }
     //?} else {
     /*@Inject(method = "mouseClicked", at = @At("HEAD"))
     private void catharsis$onMouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
         var modifier = GuiModifiers.getActiveModifier();
         if (modifier == null || this.catharsis$bounds == null) return;
-        modifier.handleInteraction(mouseX, mouseY, button, true, this.catharsis$bounds);
+        modifier.handleInteraction(
+            mouseX, mouseY,
+            button, true,
+            this.catharsis$bounds.updateOrGet(this.leftPos, this.topPos, this.imageWidth, this.imageHeight)
+        );
     }
 
     @Inject(method = "mouseReleased", at = @At("HEAD"))
     private void catharsis$onMouseReleased(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
         var modifier = GuiModifiers.getActiveModifier();
         if (modifier == null || this.catharsis$bounds == null) return;
-        modifier.handleInteraction(mouseX, mouseY, button, false, this.catharsis$bounds);
+        modifier.handleInteraction(
+            mouseX, mouseY,
+            button, false,
+            this.catharsis$bounds.updateOrGet(this.leftPos, this.topPos, this.imageWidth, this.imageHeight)
+        );
     }
     *///?}
 }
