@@ -2,12 +2,7 @@ package me.owdding.catharsis
 
 import com.google.gson.JsonObject
 import com.mojang.brigadier.arguments.StringArgumentType
-import me.owdding.catharsis.events.BootstrapConditionalPropertiesEvent
-import me.owdding.catharsis.events.BootstrapItemModelsEvent
-import me.owdding.catharsis.events.BootstrapNumericPropertiesEvent
-import me.owdding.catharsis.events.BootstrapSelectPropertiesEvent
-import me.owdding.catharsis.events.FinishRepoLoadEvent
-import me.owdding.catharsis.events.StartRepoLoadEvent
+import me.owdding.catharsis.events.*
 import me.owdding.catharsis.features.imc.ImcHandler
 import me.owdding.catharsis.generated.CatharsisCodecs
 import me.owdding.catharsis.generated.CatharsisModules
@@ -52,7 +47,7 @@ object Catharsis : ClientModInitializer, CatharsisLogger by CatharsisLogger.auto
     }
 
     init {
-        if (FabricLoader.getInstance().isModLoaded("catharsis")) {
+        if (FabricLoader.getInstance().isModLoaded(MOD_ID)) {
             CatharsisPreLoadModules.init { SkyBlockAPI.eventBus.register(it) }
         }
     }
