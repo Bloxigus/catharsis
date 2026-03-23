@@ -71,6 +71,18 @@ Match against a gui with a specific slot condition.
 
 </TreeView>
 
+#### **MenuType** (`catharsis:type`)
+
+Match against a specific menu type.
+Menu Type names are located [here](https://github.com/misode/mcmeta/blob/registries/menu/data.json), including `inventory` for the player's inventory.
+
+<TreeView>
+<span><TypeIcon type="object"/> Root <b>menu</b> gui definition target object</span>
+- <TypeIcon type="string"/> **type**: `catharsis:type`
+- <TypeIcon type="string"/> **menu**: The menu type to match against.
+
+</TreeView>
+
 #### **All/And** (`catharsis:all`)
 
 Check if a list of conditions are true, useful for chaining conditions.
