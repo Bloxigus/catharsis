@@ -3,6 +3,7 @@ package me.owdding.catharsis.features.gui.definitions.conditions
 import me.owdding.catharsis.features.gui.definitions.slots.SlotCondition
 import me.owdding.catharsis.features.gui.matchers.RegexTextMatcher
 import me.owdding.catharsis.generated.CatharsisCodecs
+import me.owdding.catharsis.hooks.gui.AbstractContainerMenuHook
 import me.owdding.ktcodecs.GenerateCodec
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.world.inventory.MenuType
@@ -70,7 +71,7 @@ data class GuiDefinitionTypeCondition(val menu: MenuType<*>) : GuiDefinitionCond
     override val codec = CatharsisCodecs.getMapCodec<GuiDefinitionTypeCondition>()
 
     override fun matches(screen: AbstractContainerScreen<*>): Boolean {
-        return this.menu == screen.menu.type
+        return this.menu == (screen.menu as? AbstractContainerMenuHook)?.`catharsis$getMenuTypeOrNull`()
     }
 }
 
