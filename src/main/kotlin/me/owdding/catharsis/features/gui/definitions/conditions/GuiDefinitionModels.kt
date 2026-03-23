@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.hooks.gui.AbstractContainerMenuHook
+import me.owdding.ktcodecs.IncludedCodec
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.core.registries.BuiltInRegistries
@@ -46,6 +47,7 @@ sealed interface GuiMenuType {
 
     companion object {
 
+        @IncludedCodec
         val CODEC: Codec<GuiMenuType> = Codec.either(BuiltInRegistries.MENU.byNameCodec(), Custom.CODEC).xmap(
             { it.map(::Minecraft) { type -> type } },
             { if (it is Minecraft) Either.left(it.type) else Either.right(it as Custom) },
