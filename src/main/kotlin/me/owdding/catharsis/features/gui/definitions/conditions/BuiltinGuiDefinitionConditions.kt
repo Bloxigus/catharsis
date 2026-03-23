@@ -25,6 +25,18 @@ data class GuiDefinitionAllCondition(
 }
 
 @GenerateCodec
+data class GuiDefinitionNotCondition(
+    val condition: GuiDefinitionCondition,
+) : GuiDefinitionCondition {
+
+    override val codec = CatharsisCodecs.getMapCodec<GuiDefinitionNotCondition>()
+    override val cost: Int = this.condition.cost + 1
+
+    override fun optimize(): GuiDefinitionCondition = GuiDefinitionNotCondition(this.condition.optimize())
+    override fun matches(screen: AbstractContainerScreen<*>): Boolean = !this.condition.matches(screen)
+}
+
+@GenerateCodec
 data class GuiDefinitionAnyCondition(
     val conditions: List<GuiDefinitionCondition>,
 ) : GuiDefinitionCondition {

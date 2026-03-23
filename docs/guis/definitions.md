@@ -92,3 +92,15 @@ Check if any in list of conditions are true, useful for chaining conditions.
 - <TypeIcon type="string"/> **type**: `catharsis:any`
 - <TypeIcon type="array"/> **conditions**: a list of conditions to check through.
 </TreeView>
+
+#### **Not** (`catharsis:not`)
+
+Check if a condition is false, useful for chaining conditions.
+
+<TreeView>
+<span><TypeIcon type="object"/> Root <b>any</b> gui definition target object</span>
+
+- <TypeIcon type="string"/> **type**: `catharsis:not`
+- <TypeIcon type="object"/> **condition**: a condition to check against.
+
+</TreeView>
