@@ -3,10 +3,8 @@ package me.owdding.catharsis.features.gui.definitions.conditions
 import me.owdding.catharsis.features.gui.definitions.slots.SlotCondition
 import me.owdding.catharsis.features.gui.matchers.RegexTextMatcher
 import me.owdding.catharsis.generated.CatharsisCodecs
-import me.owdding.catharsis.hooks.gui.AbstractContainerMenuHook
 import me.owdding.ktcodecs.GenerateCodec
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
-import net.minecraft.world.inventory.MenuType
 import tech.thatgravyboat.skyblockapi.api.location.SkyBlockIsland
 import tech.thatgravyboat.skyblockapi.utils.text.TextProperties.stripped
 
@@ -66,12 +64,12 @@ data class GuiDefinitionTitleCondition(val title: Regex) : GuiDefinitionConditio
 }
 
 @GenerateCodec
-data class GuiDefinitionTypeCondition(val menu: MenuType<*>) : GuiDefinitionCondition {
+data class GuiDefinitionTypeCondition(val menu: GuiMenuType) : GuiDefinitionCondition {
 
     override val codec = CatharsisCodecs.getMapCodec<GuiDefinitionTypeCondition>()
 
     override fun matches(screen: AbstractContainerScreen<*>): Boolean {
-        return this.menu == (screen.menu as? AbstractContainerMenuHook)?.`catharsis$getMenuTypeOrNull`()
+        return this.menu.matches(screen)
     }
 }
 
