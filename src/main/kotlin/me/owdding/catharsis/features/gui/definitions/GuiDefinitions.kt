@@ -29,6 +29,7 @@ import tech.thatgravyboat.skyblockapi.api.events.screen.ScreenInitializedEvent
 import tech.thatgravyboat.skyblockapi.helpers.McClient
 import tech.thatgravyboat.skyblockapi.helpers.McScreen
 import tech.thatgravyboat.skyblockapi.utils.json.Json.readJson
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.io.path.readText
 
 
@@ -44,16 +45,15 @@ object GuiDefinitions : SimplePreparableReloadListener<Map<Identifier, GuiDefini
     private var selected = listOf<DefinitionEntry>()
     private var slots = Int2ObjectArrayMap<GuiSlotDefinition>()
 
-    private var needsUpdate = false
+    private val updating = AtomicBoolean(false)
 
     private fun enqueueUpdate() {
-        if (!needsUpdate) {
+        if (updating.compareAndSet(false, true)) {
             McClient.runNextTick {
                 McScreen.asMenu?.let(this::update)
-                needsUpdate = false
+                updating.set(false)
             }
         }
-        needsUpdate = true
     }
 
     private fun update(screen: AbstractContainerScreen<*>?) {
