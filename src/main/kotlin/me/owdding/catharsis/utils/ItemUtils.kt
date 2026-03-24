@@ -7,6 +7,7 @@ import me.owdding.ktmodules.Module
 import net.minecraft.resources.Identifier
 import net.minecraft.world.item.ItemStack
 import tech.thatgravyboat.skyblockapi.api.datatype.DataTypes
+import tech.thatgravyboat.skyblockapi.api.datatype.getDataTypes
 import tech.thatgravyboat.skyblockapi.api.events.base.Subscription
 import tech.thatgravyboat.skyblockapi.api.events.misc.RegisterCommandsEvent
 import tech.thatgravyboat.skyblockapi.api.remote.api.RepoAttributeAPI
@@ -17,15 +18,18 @@ import tech.thatgravyboat.skyblockapi.helpers.McPlayer
 import tech.thatgravyboat.skyblockapi.utils.extentions.get
 import tech.thatgravyboat.skyblockapi.utils.text.Text
 import tech.thatgravyboat.skyblockapi.utils.text.TextBuilder.append
+import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.clipboard
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.color
 import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.onClick
 import java.util.function.Predicate
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 @Module
 object ItemUtils {
 
     @Subscription
-    private fun RegisterCommandsEvent.getMainHand() {
+    private fun RegisterCommandsEvent.registerCommands() {
         registerWithCallback("catharsis dev hand_id") {
             val item = McPlayer.heldItem
 
@@ -52,6 +56,20 @@ object ItemUtils {
                         }
                     }.sendWithPrefix("catharsis-held-item-id-$id")
                 }
+            }
+        }
+
+        registerWithCallback("catharsis dev hand_data_types") {
+            val item = McPlayer.heldItem
+
+            if (item.isEmpty) {
+                Text.of("Not holding any item!").sendWithPrefix("catharsis-held-item-id-error")
+            } else {
+                val dataTypes = item.getDataTypes()
+                val dataTypeString = dataTypes.map { (k, v) -> "${k.id}: ${v.toString()}" }.joinToString("\n")
+                Text.of("Item has ${dataTypes.size} data type${"s".takeUnless { dataTypes.size == 1 }.orEmpty()}") {
+                    clipboard = dataTypeString
+                }.sendWithPrefix()
             }
         }
     }

@@ -27,6 +27,7 @@ import net.minecraft.world.item.ItemStack
 import tech.thatgravyboat.skyblockapi.api.datatype.DataType
 import tech.thatgravyboat.skyblockapi.api.datatype.DataTypes
 import tech.thatgravyboat.skyblockapi.api.datatype.getDataTypes
+import tech.thatgravyboat.skyblockapi.api.remote.api.SkyBlockId
 import tech.thatgravyboat.skyblockapi.impl.DataTypesRegistry
 import tech.thatgravyboat.skyblockapi.utils.extentions.get
 import java.util.function.Function
@@ -41,10 +42,10 @@ object DataTypeProperties {
 
     val ID = Catharsis.id("data_type")
 
-    private val conditionalTypes: ExtraCodecs.LateBoundIdMapper<String, DataType<Boolean>> = ExtraCodecs.LateBoundIdMapper()
-    private val numericalTypes: ExtraCodecs.LateBoundIdMapper<String, NumbericalDataTypeEntry<*, *>> = ExtraCodecs.LateBoundIdMapper()
-    private val types: ExtraCodecs.LateBoundIdMapper<String, DataTypeEntry<*, *>> = ExtraCodecs.LateBoundIdMapper()
-    private val allTypes: ExtraCodecs.LateBoundIdMapper<String, DataType<*>> = ExtraCodecs.LateBoundIdMapper()
+    val conditionalTypes: ExtraCodecs.LateBoundIdMapper<String, DataType<Boolean>> = ExtraCodecs.LateBoundIdMapper()
+    val numericalTypes: ExtraCodecs.LateBoundIdMapper<String, NumbericalDataTypeEntry<*, *>> = ExtraCodecs.LateBoundIdMapper()
+    val stringTypes: ExtraCodecs.LateBoundIdMapper<String, DataTypeEntry<*, *>> = ExtraCodecs.LateBoundIdMapper()
+    val allTypes: ExtraCodecs.LateBoundIdMapper<String, DataType<*>> = ExtraCodecs.LateBoundIdMapper()
 
     init {
         @Suppress("CAST_NEVER_SUCCEEDS")
@@ -56,6 +57,10 @@ object DataTypeProperties {
         dataTypes.filterType<Short>().forEach(::register)
         dataTypes.filterType<Double>().forEach(::register)
         dataTypes.filterType<Float>().forEach(::register)
+
+        dataTypes.filterType<SkyBlockId>().forEach {
+            register(it, Codec.STRING) { id -> id.skyblockId }
+        }
 
         register(DataTypes.RARITY)
         register(DataTypes.HOOK, Codec.STRING, Pair<*, String>::second)
@@ -72,9 +77,7 @@ object DataTypeProperties {
     private inline fun <reified T : Any> List<DataType<*>>.filterType(): List<DataType<T>> {
         val type = typeOf<T>().javaType
         @Suppress("UNCHECKED_CAST")
-        return filter {
-            it.type?.javaType == type
-        }.unsafeCast<List<DataType<T>>>()
+        return filter { it.type?.javaType == type }.unsafeCast<List<DataType<T>>>()
     }
 
     @JvmName("registerEnum")
@@ -107,7 +110,7 @@ object DataTypeProperties {
 
     private inline fun <reified Type> register(location: String, type: DataType<Type>, codec: Codec<Type>) = register(location, type, codec, Function.identity())
     private inline fun <reified Type, reified CompareType> register(location: String, type: DataType<Type>, codec: Codec<CompareType>, converter: Function<Type, CompareType>) {
-        types[location] = DataTypeEntry(type, codec, converter)
+        stringTypes[location] = DataTypeEntry(type, codec, converter)
         if (CompareType::class.isNumber || CompareType::class.isEnum) {
             numericalTypes[location] = NumbericalDataTypeEntry(
                 type,
@@ -155,21 +158,21 @@ object DataTypeProperties {
 
             private fun <Type, CompareType : Any> createType(): SelectItemModelProperty.Type<SelectDataTypeItemProperty<Type, CompareType>, CompareType> {
                 val type = SelectItemModelProperty.Type<SelectDataTypeItemProperty<Type, CompareType>, CompareType>(
-                    types.codec(Codec.STRING).dispatchMap(
+                    stringTypes.codec(Codec.STRING).dispatchMap(
                         "data_type",
                         { case -> (case.property as SelectDataTypeItemProperty).entry },
                         { entry -> createItemCodec(entry.unsafeCast()) },
                     ),
                 )
                 type.hook.`catharsis$setArmorSwitchCodec`(
-                    types.codec(Codec.STRING).dispatchMap(
+                    stringTypes.codec(Codec.STRING).dispatchMap(
                         "data_type",
                         { case -> (case.property as SelectDataTypeItemProperty).entry },
                         { entry -> createArmorCodec(entry.unsafeCast()) },
                     ),
                 )
                 type.hook.`catharsis$setTooltipSwitchCodec`(
-                    types.codec(Codec.STRING).dispatchMap(
+                    stringTypes.codec(Codec.STRING).dispatchMap(
                         "data_type",
                         { case -> (case.property as SelectDataTypeItemProperty).entry },
                         { entry -> createTooltipCodec(entry.unsafeCast()) },
