@@ -57,8 +57,8 @@ object CustomEntityModels : SimplePreparableReloadListener<Map<Identifier, Custo
         this.definitions.clear()
         this.definitions.putAll(definitions)
 
-        if (McLevel.hasLevel) {
-            for (entity in McLevel.level.entitiesForRendering()) {
+        McLevel.selfOrNull?.let {
+            for (entity in it.entitiesForRendering()) {
                 entity.`catharsis$resetCustomModel`()
             }
         }
