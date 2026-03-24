@@ -35,7 +35,7 @@ import kotlin.reflect.javaType
 import kotlin.reflect.typeOf
 
 data class DataTypeEntry<Type, CompareType>(val type: DataType<Type>, val codec: Codec<CompareType>, val converter: Function<Type, CompareType>)
-data class NumbericalDataTypeEntry<Type, CompareType : Number>(val type: DataType<Type>, val converter: Function<Type, CompareType>)
+data class NumbericalDataTypeEntry<Type, CompareType : Number>(val type: DataType<Type>, val converter: Function<Type, CompareType>, val codec: Codec<CompareType>)
 
 @Module
 object DataTypeProperties {
@@ -118,7 +118,8 @@ object DataTypeProperties {
                     Function { value: Type ->
                         (converter.apply(value) as Enum<*>).ordinal
                     }
-                } else converter.unsafeCast()
+                } else converter.unsafeCast(),
+                Codec.FLOAT.xmap({it as Number}, { it.toFloat() })
             )
         }
         if (CompareType::class == Boolean::class) {
