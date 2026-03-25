@@ -68,8 +68,9 @@ object DataTypeProperties {
         register(DataTypes.SINKER, Codec.STRING, Pair<*, String>::second)
         register(DataTypes.FUEL, Codec.INT, Pair<Int, *>::first)
         register(DataTypes.SNOWBALLS, Codec.INT, Pair<Int, *>::first)
-        register(DataTypes.UUID, CodecUtils.UUID_CODEC)
         register(DataTypes.DUNGEONBREAKER_CHARGES, Codec.INT, Pair<Int, *>::first)
+        register(DataTypes.WATER_LEVEL, Codec.INT, Pair<Int, *>::first)
+        register(DataTypes.UUID, CodecUtils.UUID_CODEC)
         dataTypes.forEach { allTypes[it.id] = it }
     }
 

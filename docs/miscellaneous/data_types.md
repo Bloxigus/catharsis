@@ -36,6 +36,7 @@ Data Types that return any form of number (so Integer, Double, Float, Long, Shor
 | `snowballs`               | Returns the current snowballs in the snowball shooter. |
 | `dungeon_breaker_charges` | Returns the current charges.                           |
 | `fuel`                    | Returns the current drill fuel.                        |
+| `water_level`             | Returns the current water level.                       |
 
 ## Available String Data Types
 
