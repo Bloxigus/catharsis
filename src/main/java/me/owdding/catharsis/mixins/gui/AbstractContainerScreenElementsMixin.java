@@ -1,6 +1,8 @@
 package me.owdding.catharsis.mixins.gui;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import me.owdding.catharsis.features.gui.modifications.GuiModifiers;
 import me.owdding.catharsis.features.gui.modifications.elements.GuiElementRenderLayer;
 import me.owdding.catharsis.hooks.gui.CatharsisScreenBounds;
@@ -34,25 +36,23 @@ public abstract class AbstractContainerScreenElementsMixin<T extends AbstractCon
         this.catharsis$bounds = new CatharsisScreenBounds(this.leftPos, this.topPos, this.imageWidth, this.imageHeight);
     }
 
-    @WrapWithCondition(method = "renderBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderBg(Lnet/minecraft/client/gui/GuiGraphics;FII)V"))
-    private boolean catharsis$shouldRenderBackground(AbstractContainerScreen<?> screen, GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        var modifier = GuiModifiers.getActiveModifier();
-        return modifier == null || !modifier.getOverrideBackground();
-    }
-
     @WrapWithCondition(method = "renderContents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderLabels(Lnet/minecraft/client/gui/GuiGraphics;II)V"))
     private boolean catharsis$shouldRenderLabels(AbstractContainerScreen<?> instance, GuiGraphics guiGraphics, int mouseX, int mouseY) {
         var modifier = GuiModifiers.getActiveModifier();
         return modifier == null || !modifier.getOverrideLabels();
     }
 
-    @Inject(method = "renderBackground", at = @At("TAIL"))
-    private void catharsis$renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    @WrapOperation(method = "renderBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderBg(Lnet/minecraft/client/gui/GuiGraphics;FII)V"))
+    private void catharsis$renderBackground(AbstractContainerScreen<?> instance, GuiGraphics graphics, float partialTick, int mouseX, int mouseY, Operation<Void> original) {
         var modifier = GuiModifiers.getActiveModifier();
         if (modifier == null || this.catharsis$bounds == null) return;
+        if (!modifier.getOverrideBackground()) {
+            original.call(instance, graphics, partialTick, mouseX, mouseY);
+        }
+
         modifier.renderElements(
             GuiElementRenderLayer.BACKGROUND,
-            guiGraphics,
+            graphics,
             mouseX, mouseY,
             partialTick,
             this.catharsis$bounds.updateOrGet(this.leftPos, this.topPos, this.imageWidth, this.imageHeight)
