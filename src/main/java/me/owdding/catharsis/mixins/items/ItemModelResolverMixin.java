@@ -38,8 +38,27 @@ public class ItemModelResolverMixin {
         @Local(argsOnly = true) ItemStack stack,
         @Local(argsOnly = true) ItemStackRenderState state
     ) {
-        if (manager == null || state == null) return original;
+        if (state == null) return original;
         if (!state.catharsis$canFallthrough()) return original;
+
+        return catharsis$getCustomModel(original, stack);
+    }
+
+    @ModifyExpressionValue(
+        //? if >= 1.21.11 {
+        method = {"shouldPlaySwapAnimation", "swapAnimationScale"},
+        //?} else {
+        /*method = "shouldPlaySwapAnimation",
+        *///?}
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;get(Lnet/minecraft/core/component/DataComponentType;)Ljava/lang/Object;")
+    )
+    private Object catharsis$modifyDataComponentType(Object original, @Local(argsOnly = true) ItemStack stack) {
+        return catharsis$getCustomModel(original, stack);
+    }
+
+    @Unique
+    private Object catharsis$getCustomModel(Object original, ItemStack stack) {
+        if (manager == null) return original;
         if (ImcHandler.isDisabled(stack)) return original;
 
         var isCarried = McPlayer.INSTANCE.getSelf() instanceof LocalPlayer player && player.containerMenu.getCarried() == stack;
