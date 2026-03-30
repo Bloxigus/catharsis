@@ -7,13 +7,13 @@ lang: en-US
 
 This page lists all available data types.
 
-All Data Types can be found [here](https://github.com/SkyblockAPI/SkyblockAPI/blob/4.0/src/common/main/kotlin/tech/thatgravyboat/skyblockapi/api/datatype/DataTypes.kt).
+All Data Types can be found [here](https://github.com/SkyblockAPI/SkyblockAPI/blob/4.0/src/main/kotlin/tech/thatgravyboat/skyblockapi/api/datatype/DataTypes.kt).
 
 IDs of Data Types can be found at these locations:
-[GenericDataTypes](https://github.com/SkyblockAPI/SkyblockAPI/blob/4.0/src/common/main/kotlin/tech/thatgravyboat/skyblockapi/api/datatype/defaults/GenericDataTypes.kt),
-[LoreDataTypes](https://github.com/SkyblockAPI/SkyblockAPI/blob/4.0/src/common/main/kotlin/tech/thatgravyboat/skyblockapi/api/datatype/defaults/LoreDataTypes.kt),
-[MiningDataTypes](https://github.com/SkyblockAPI/SkyblockAPI/blob/4.0/src/common/main/kotlin/tech/thatgravyboat/skyblockapi/api/datatype/defaults/MiningDataTypes.kt),
-[PersonalAccessoryDataTypes](https://github.com/SkyblockAPI/SkyblockAPI/blob/4.0/src/common/main/kotlin/tech/thatgravyboat/skyblockapi/api/datatype/defaults/PersonalAccessoryDataTypes.kt).
+[GenericDataTypes](https://github.com/SkyblockAPI/SkyblockAPI/blob/4.0/src/main/kotlin/tech/thatgravyboat/skyblockapi/api/datatype/defaults/GenericDataTypes.kt),
+[LoreDataTypes](https://github.com/SkyblockAPI/SkyblockAPI/blob/4.0/src/main/kotlin/tech/thatgravyboat/skyblockapi/api/datatype/defaults/LoreDataTypes.kt),
+[MiningDataTypes](https://github.com/SkyblockAPI/SkyblockAPI/blob/4.0/src/main/kotlin/tech/thatgravyboat/skyblockapi/api/datatype/defaults/MiningDataTypes.kt),
+[PersonalAccessoryDataTypes](https://github.com/SkyblockAPI/SkyblockAPI/blob/4.0/src/main/kotlin/tech/thatgravyboat/skyblockapi/api/datatype/defaults/PersonalAccessoryDataTypes.kt).
 
 You can use `/catharsis dev hand_data_types` to view all data types of the item in your hand.
 
