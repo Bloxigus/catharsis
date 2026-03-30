@@ -45,18 +45,20 @@ public abstract class AbstractContainerScreenElementsMixin<T extends AbstractCon
     @WrapOperation(method = "renderBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderBg(Lnet/minecraft/client/gui/GuiGraphics;FII)V"))
     private void catharsis$renderBackground(AbstractContainerScreen<?> instance, GuiGraphics graphics, float partialTick, int mouseX, int mouseY, Operation<Void> original) {
         var modifier = GuiModifiers.getActiveModifier();
-        if (modifier == null || this.catharsis$bounds == null) return;
-        if (!modifier.getOverrideBackground()) {
+        var hasModifier = modifier != null && this.catharsis$bounds != null;
+        if (!hasModifier || !modifier.getOverrideBackground()) {
             original.call(instance, graphics, partialTick, mouseX, mouseY);
         }
 
-        modifier.renderElements(
-            GuiElementRenderLayer.BACKGROUND,
-            graphics,
-            mouseX, mouseY,
-            partialTick,
-            this.catharsis$bounds.updateOrGet(this.leftPos, this.topPos, this.imageWidth, this.imageHeight)
-        );
+        if (hasModifier) {
+            modifier.renderElements(
+                GuiElementRenderLayer.BACKGROUND,
+                graphics,
+                mouseX, mouseY,
+                partialTick,
+                this.catharsis$bounds.updateOrGet(this.leftPos, this.topPos, this.imageWidth, this.imageHeight)
+            );
+        }
     }
 
     @Inject(method = "renderContents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V", shift = At.Shift.AFTER))
