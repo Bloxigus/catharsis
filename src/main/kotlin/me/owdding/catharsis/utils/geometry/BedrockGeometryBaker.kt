@@ -93,7 +93,7 @@ object BedrockGeometryBaker {
     }
 
     private fun bakeUv(face: UvFace, index: Int, description: BedrockGeometryDescription): Vector2f {
-        return when (index % 4) {
+        return when ((index + face.uvRotation / 90) % 4) {
             0 -> Vector2f(face.uv[0], face.uv[1])
             1 -> Vector2f(face.uv[0] + face.uvSize[0], face.uv[1])
             2 -> Vector2f(face.uv[0] + face.uvSize[0], face.uv[1] + face.uvSize[1])
