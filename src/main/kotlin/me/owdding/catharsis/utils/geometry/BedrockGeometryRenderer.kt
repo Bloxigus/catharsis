@@ -117,7 +117,7 @@ object BedrockGeometryRenderer {
                         .setUv(vertex.uv.x, vertex.uv.y)
                         .setOverlay(overlay)
                         .setLight(light)
-                        .setNormal(pose, 1f, 0f, 0f)
+                        .setNormal(pose, quad.normalX, quad.normalY, quad.normalZ)
                 }
             }
         }

@@ -12,7 +12,12 @@ data class BakedBedrockVertex(
 data class BakedBedrockQuad(
     val vertices: List<BakedBedrockVertex>,
     val direction: Direction,
-)
+) {
+
+    val normalX: Float = direction.stepX.toFloat()
+    val normalY: Float = direction.stepY.toFloat()
+    val normalZ: Float = direction.stepZ.toFloat()
+}
 
 data class BakedBedrockCube(
     val pivot: Vector3f,
