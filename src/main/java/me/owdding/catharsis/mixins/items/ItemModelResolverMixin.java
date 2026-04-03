@@ -66,15 +66,7 @@ public class ItemModelResolverMixin {
         var guiId = isCarried ? GuiDefinitions.getSlot(stack) : (slot != null ? GuiDefinitions.getSlot(slot.index) : null);
         var itemId = ItemUtils.resolveModelId(manager::catharsis$hasCustomModel, stack);
 
-        final Identifier model;
-        if (guiId != null) {
-            model = guiId;
-        } else if (itemId != null) {
-            model = itemId;
-        } else {
-            model = MiscItemModels.getModel(stack);
-        }
-
+        final Identifier model = guiId != null ? guiId : itemId;
         return model == null || !manager.catharsis$hasCustomModel(model) ? original : model;
     }
 }

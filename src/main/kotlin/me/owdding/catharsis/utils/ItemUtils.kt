@@ -2,6 +2,7 @@ package me.owdding.catharsis.utils
 
 import com.mojang.serialization.Codec
 import me.owdding.catharsis.features.imc.ImcHandler.getCatharsisId
+import me.owdding.catharsis.features.item.MiscItemModels
 import me.owdding.catharsis.features.properties.DataTypeEntry
 import me.owdding.catharsis.features.properties.DataTypeProperties
 import me.owdding.catharsis.features.properties.NumbericalDataTypeEntry
@@ -200,7 +201,12 @@ object ItemUtils {
             return itemId
         }
 
-        return getHypixelLocation(stack)
+        val hypixelId = getHypixelLocation(stack)
+        if (hypixelId != null) {
+            return hypixelId
+        }
+
+        return MiscItemModels.getModel(stack)
     }
 
     private fun SkyBlockId.cleanOrNull() = this.cleanId.lowercase().takeUnless { it == UNKNOWN }
