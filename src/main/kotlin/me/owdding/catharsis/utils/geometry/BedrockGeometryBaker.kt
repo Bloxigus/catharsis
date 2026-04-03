@@ -84,7 +84,7 @@ object BedrockGeometryBaker {
         val direction = if (!mirror && direction.axis == Direction.Axis.X) direction.opposite else direction
 
         val uvOffset = if (direction.axisDirection == Direction.AxisDirection.POSITIVE) 1 else 0
-        val uvs = uvs[direction]!!
+        val uvs = requireNotNull(uvs[direction]) { "UVs for direction $direction are missing." }
         val v1 = BakedBedrockVertex(p1, bakeUv(uvs, 0 + uvOffset, description))
         val v2 = BakedBedrockVertex(p2, bakeUv(uvs, 1 - uvOffset, description))
         val v3 = BakedBedrockVertex(p3, bakeUv(uvs, 2 + uvOffset, description))
