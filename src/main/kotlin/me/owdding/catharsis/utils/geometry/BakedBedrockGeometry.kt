@@ -3,6 +3,7 @@ package me.owdding.catharsis.utils.geometry
 import net.minecraft.core.Direction
 import org.joml.Vector2f
 import org.joml.Vector3f
+import kotlin.math.abs
 
 data class BakedBedrockVertex(
     val position: Vector3f,
@@ -14,9 +15,9 @@ data class BakedBedrockQuad(
     val direction: Direction,
 ) {
 
-    val normalX: Float = direction.stepX.toFloat()
-    val normalY: Float = direction.stepY.toFloat()
-    val normalZ: Float = direction.stepZ.toFloat()
+    val normalX: Float = abs(direction.stepX.toFloat())
+    val normalY: Float = abs(direction.stepY.toFloat())
+    val normalZ: Float = abs(direction.stepZ.toFloat())
 }
 
 data class BakedBedrockCube(
