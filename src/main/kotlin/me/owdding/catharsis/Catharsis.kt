@@ -13,6 +13,7 @@ import me.owdding.catharsis.utils.CatharsisDevUtils
 import me.owdding.catharsis.utils.CatharsisLogger
 import me.owdding.catharsis.utils.extensions.sendWithPrefix
 import me.owdding.catharsis.utils.extensions.sendWithPrefixIf
+import me.owdding.catharsis.utils.types.colors.CatharsisColors
 import me.owdding.ktcodecs.GenerateCodec
 import me.owdding.ktmodules.AutoCollect
 import me.owdding.ktmodules.Module
@@ -35,6 +36,8 @@ import tech.thatgravyboat.skyblockapi.platform.Identifiers
 import tech.thatgravyboat.skyblockapi.utils.json.Json.readJson
 import tech.thatgravyboat.skyblockapi.utils.json.Json.toDataOrThrow
 import tech.thatgravyboat.skyblockapi.utils.text.Text
+import tech.thatgravyboat.skyblockapi.utils.text.TextBuilder.append
+import tech.thatgravyboat.skyblockapi.utils.text.TextStyle.color
 import java.util.concurrent.CompletableFuture
 import kotlin.io.path.readText
 import kotlin.time.Instant
@@ -90,21 +93,31 @@ object Catharsis : ClientModInitializer, CatharsisLogger by CatharsisLogger.auto
 
     @Subscription
     fun registerCommand(context: RegisterCommandsEvent) {
-        context.register("catharsis repo") {
-            thenCallback("reload") {
-                CatharsisRemoteRepo.uninitialize()
-                loadRepo(true)
+        context.register("catharsis") {
+            callback {
+                Text.of("Trying to access the config? Run \'") {
+                    color = CatharsisColors.skyblue
+                    append("/catharsis config <>", CatharsisColors.slateblue)
+                    append("' instead.")
+                }.sendWithPrefix()
             }
-            thenCallback("branch branch", StringArgumentType.greedyString()) {
-                val branch = argument<String>("branch")
-                CatharsisDevUtils.properties[REPO_BRANCH_PROPERTY] = branch
-                CatharsisDevUtils.saveProperties()
-                Text.of("Set repo branch to $branch").sendWithPrefix()
-            }
-            thenCallback("branch reset") {
-                CatharsisDevUtils.properties.remove(REPO_BRANCH_PROPERTY)
-                CatharsisDevUtils.saveProperties()
-                Text.of("Reset repo branch!").sendWithPrefix()
+
+            thenCallback("repo") {
+                thenCallback("reload") {
+                    CatharsisRemoteRepo.uninitialize()
+                    loadRepo(true)
+                }
+                thenCallback("branch branch", StringArgumentType.greedyString()) {
+                    val branch = argument<String>("branch")
+                    CatharsisDevUtils.properties[REPO_BRANCH_PROPERTY] = branch
+                    CatharsisDevUtils.saveProperties()
+                    Text.of("Set repo branch to $branch").sendWithPrefix()
+                }
+                thenCallback("branch reset") {
+                    CatharsisDevUtils.properties.remove(REPO_BRANCH_PROPERTY)
+                    CatharsisDevUtils.saveProperties()
+                    Text.of("Reset repo branch!").sendWithPrefix()
+                }
             }
         }
     }
