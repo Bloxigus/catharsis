@@ -15,9 +15,7 @@
           },
           {
             "type": "item",
-            "items": [
-              "minecraft:black_stained_glass_pane"
-            ]
+            "items": "minecraft:black_stained_glass_pane"
           }
         ]
       }
