@@ -7,6 +7,7 @@ import me.owdding.catharsis.Catharsis
 import me.owdding.catharsis.hooks.gui.AbstractContainerMenuHook
 import me.owdding.ktcodecs.IncludedCodec
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.client.gui.screens.inventory.ContainerScreen
 import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.Identifier
@@ -28,6 +29,7 @@ sealed interface GuiMenuType {
         private val predicate: (AbstractContainerScreen<*>) -> Boolean,
     ) : GuiMenuType {
         INVENTORY(Catharsis.id("inventory"), { it is InventoryScreen }),
+        GENERIC(Catharsis.id("generic"), { it is ContainerScreen }),
         ;
 
         override fun matches(screen: AbstractContainerScreen<*>): Boolean {

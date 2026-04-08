@@ -74,7 +74,7 @@ Match against a gui with a specific slot condition.
 #### **MenuType** (`catharsis:type`)
 
 Match against a specific menu type.
-Menu Type names are located [here](https://github.com/misode/mcmeta/blob/registries/menu/data.json), including `inventory` for the player's inventory.
+Menu Type names are located [here](https://github.com/misode/mcmeta/blob/registries/menu/data.json), including `inventory` for the player's inventory and `generic` for all chest container sizes.
 
 <TreeView>
 <span><TypeIcon type="object"/> Root <b>menu</b> gui definition target object</span>
