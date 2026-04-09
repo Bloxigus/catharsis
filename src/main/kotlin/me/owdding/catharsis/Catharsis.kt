@@ -19,6 +19,7 @@ import me.owdding.ktmodules.AutoCollect
 import me.owdding.ktmodules.Module
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.client.color.item.ItemTintSources
 import net.minecraft.client.renderer.item.ItemModels
 import net.minecraft.client.renderer.item.properties.conditional.ConditionalItemModelProperties
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperties
@@ -64,6 +65,7 @@ object Catharsis : ClientModInitializer, CatharsisLogger by CatharsisLogger.auto
         BootstrapNumericPropertiesEvent(RangeSelectItemModelProperties.ID_MAPPER::put).post(SkyBlockAPI.eventBus)
         BootstrapSelectPropertiesEvent(SelectItemModelProperties.ID_MAPPER::put).post(SkyBlockAPI.eventBus)
         BootstrapItemModelsEvent(ItemModels.ID_MAPPER::put).post(SkyBlockAPI.eventBus)
+        BootstrapItemTintSourceEvent(ItemTintSources.ID_MAPPER::put).post(SkyBlockAPI.eventBus)
 
         loadRepo()
         ImcHandler.setup()
