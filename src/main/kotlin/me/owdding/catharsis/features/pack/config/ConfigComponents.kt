@@ -7,7 +7,6 @@ import me.owdding.catharsis.utils.HsbState
 import me.owdding.catharsis.utils.ui.BaseButtonWidget
 import me.owdding.catharsis.utils.ui.Overlay
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.components.AbstractButton
 import net.minecraft.client.gui.components.tabs.Tab
 import net.minecraft.client.gui.components.tabs.TabManager
 import net.minecraft.client.gui.components.tabs.TabNavigationBar
@@ -60,7 +59,7 @@ class MinSizedTabNavigation(private var _width: Int, manager: TabManager, tabs: 
 private const val COLOR_PADDING = 7
 private const val COLOR_SPACING = 3
 
-class ColorPickerButton(width: Int, height: Int, color: Int, val opaque: Boolean = true, val onChange: (Int) -> Unit) : AbstractButton(0, 0, width, height, Component.empty()) {
+class ColorPickerButton(width: Int, height: Int, color: Int, val opaque: Boolean = true, val onChange: (Int) -> Unit) : BaseButtonWidget(0, 0, width, height) {
 
     val state: HsbState = HsbState(color) {
         this.onChange(it)
@@ -71,7 +70,7 @@ class ColorPickerButton(width: Int, height: Int, color: Int, val opaque: Boolean
     }
 
     override fun renderContents(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTicks: Float) {
-        this.renderDefaultSprite(graphics)
+        graphics.drawSprite(SPRITES.get(this.active, this.isHoveredOrFocused), this.x, this.y, this.width, this.height)
 
         val padding = (this.height - 10) / 2
 
@@ -198,8 +197,10 @@ class SelectButton<T>(width: Int, height: Int) : BaseButtonWidget(0, 0, width, h
     }
 
     override fun renderContents(graphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTicks: Float) {
-        this.renderDefaultSprite(graphics)
-        this.renderDefaultLabel(graphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE))
+        val text = this.getMessage()
+
+        graphics.drawSprite(SPRITES.get(this.active, this.isHoveredOrFocused), this.x, this.y, this.width, this.height)
+        graphics.drawString(text, this.x + (this.width - text.width) / 2, this.y + (this.height - 8) / 2, shadow = true)
     }
 
     private data class Entry<T>(
@@ -211,8 +212,8 @@ class SelectButton<T>(width: Int, height: Int) : BaseButtonWidget(0, 0, width, h
 
     private class SelectOverlay<T>(private val button: SelectButton<T>) : Overlay() {
 
-        private val x = button.x
-        private val y = button.y + button.height
+        private val x get() = button.x
+        private val y get() = button.y + button.height
 
         private var offset = 0
             set(value) {
